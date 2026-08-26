@@ -1,21 +1,106 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-label="AeroVista Apparel boutique interior">
   <defs>
-    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#17191d"/><stop offset="1" stop-color="#0b0d10"/></linearGradient>
-    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2b2926"/><stop offset="1" stop-color="#111214"/></linearGradient>
-    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0a0c0f"/><stop offset="1" stop-color="#1b1b1b"/></linearGradient>
-    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#0a0c0f"/><stop offset="1" stop-color="#1b1b1b"/></linearGradient>
-    <radialGradient id="warm" cx="50%" cy="25%" r="70%"><stop stop-color="#8b6c48" stop-opacity=".24"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#080a0d"/><stop offset="1" stop-color="#15171a"/></linearGradient>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1a1c20"/><stop offset=".55" stop-color="#111317"/><stop offset="1" stop-color="#090b0e"/></linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#07090c"/><stop offset=".62" stop-color="#17191c"/><stop offset="1" stop-color="#222326"/></linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#07090c"/><stop offset=".62" stop-color="#17191c"/><stop offset="1" stop-color="#222326"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#34312d"/><stop offset=".26" stop-color="#242321"/><stop offset="1" stop-color="#0b0d10"/></linearGradient>
+    <linearGradient id="portal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#15191e"/><stop offset="1" stop-color="#050608"/></linearGradient>
+    <radialGradient id="warm" cx="50%" cy="19%" r="72%"><stop stop-color="#b8915e" stop-opacity=".18"/><stop offset=".55" stop-color="#7c6041" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <radialGradient id="pool" cx="50%" cy="50%" r="50%"><stop stop-color="#d6b07d" stop-opacity=".14"/><stop offset="1" stop-color="#d6b07d" stop-opacity="0"/></radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2a3036" stop-opacity=".38"/><stop offset=".45" stop-color="#11161b" stop-opacity=".18"/><stop offset="1" stop-color="#65717a" stop-opacity=".08"/></linearGradient>
     <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="17" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .045"/></feComponentTransfer></filter>
   </defs>
-  <rect width="1672" height="941" fill="#080a0d"/>
-  <polygon points="0,0 515,145 515,610 0,941" fill="url(#wallL)"/><polygon points="1672,0 1157,145 1157,610 1672,941" fill="url(#wallR)"/>
-  <rect x="515" y="145" width="642" height="465" fill="url(#back)"/><polygon points="0,941 515,610 1157,610 1672,941" fill="url(#floor)"/><rect width="1672" height="941" fill="url(#warm)"/>
-  <g stroke="#35383a" stroke-width="2" opacity=".65"><line x1="836" y1="610" x2="836" y2="941"/><line x1="650" y1="610" x2="485" y2="941"/><line x1="1022" y1="610" x2="1187" y2="941"/><line x1="515" y1="676" x2="1157" y2="676"/><line x1="407" y1="756" x2="1265" y2="756"/><line x1="274" y1="852" x2="1398" y2="852"/></g>
-  <g stroke="#6d665c" stroke-width="3" opacity=".6"><line x1="96" y1="324" x2="468" y2="363"/><line x1="1204" y1="363" x2="1576" y2="324"/><line x1="120" y1="548" x2="454" y2="565"/><line x1="1218" y1="565" x2="1552" y2="548"/></g>
-  <g fill="#111419" stroke="#6d747a" stroke-width="2" opacity=".9"><path d="M171 350l30-15 30 15 20 48-19 14-10-22-2 88h-38l-2-88-10 22-19-14z"/><path d="M276 361l29-14 29 14 20 45-18 14-10-21-2 84h-36l-2-84-10 21-18-14z"/><path d="M1245 361l29-14 29 14 20 45-18 14-10-21-2 84h-36l-2-84-10 21-18-14z"/><path d="M1350 350l30-15 30 15 20 48-19 14-10-22-2 88h-38l-2-88-10 22-19-14z"/></g>
-  <rect x="708" y="325" width="256" height="250" fill="#080a0d" stroke="#2d3338" stroke-width="3"/><rect x="746" y="363" width="180" height="198" fill="#111419" stroke="#50575d"/><text x="836" y="313" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="17" letter-spacing="5" fill="#aeb7bf">FITTING ROOMS</text>
-  <g fill="#0d1013" stroke="#555a5e" stroke-width="2"><polygon points="686,622 986,622 1054,704 618,704"/><polygon points="647,704 1025,704 1002,825 670,825"/></g><g opacity=".75"><rect x="719" y="602" width="234" height="26" rx="4" fill="#1b1f23"/><rect x="742" y="580" width="188" height="20" rx="3" fill="#24282c"/></g>
-  <g stroke="#7a746b" stroke-width="3" opacity=".7"><line x1="538" y1="78" x2="1134" y2="78"/><line x1="579" y1="112" x2="1093" y2="112"/></g>
-  <g fill="#e0c29c" opacity=".75" filter="url(#glow)"><circle cx="650" cy="105" r="4"/><circle cx="748" cy="105" r="4"/><circle cx="836" cy="105" r="4"/><circle cx="924" cy="105" r="4"/><circle cx="1022" cy="105" r="4"/></g>
-  <g opacity=".5" stroke="#00aeef" stroke-width="1"><line x1="512" y1="610" x2="1158" y2="610"/><line x1="836" y1="154" x2="836" y2="603"/></g>
+
+  <rect width="1672" height="941" fill="#06080b"/>
+
+  <!-- architectural shell -->
+  <polygon points="0,0 515,145 1157,145 1672,0" fill="url(#ceiling)"/>
+  <polygon points="0,0 515,145 515,610 0,941" fill="url(#wallL)"/>
+  <polygon points="1672,0 1157,145 1157,610 1672,941" fill="url(#wallR)"/>
+  <rect x="515" y="145" width="642" height="465" fill="url(#back)"/>
+  <polygon points="0,941 515,610 1157,610 1672,941" fill="url(#floor)"/>
+  <rect width="1672" height="941" fill="url(#warm)"/>
+
+  <!-- ceiling coffers / depth -->
+  <g fill="none" stroke="#25292d" stroke-width="2" opacity=".9">
+    <path d="M242 42 L566 169 H1106 L1430 42"/>
+    <path d="M394 14 L620 128 H1052 L1278 14"/>
+    <path d="M570 0 L677 90 H995 L1102 0"/>
+  </g>
+  <g stroke="#9a8a73" stroke-width="3" opacity=".48">
+    <line x1="548" y1="104" x2="1124" y2="104"/>
+    <line x1="603" y1="71" x2="1069" y2="71"/>
+  </g>
+  <g fill="#f0d1a7" opacity=".72" filter="url(#glow)">
+    <circle cx="635" cy="104" r="3.5"/><circle cx="735" cy="104" r="3.5"/><circle cx="836" cy="104" r="3.5"/><circle cx="937" cy="104" r="3.5"/><circle cx="1037" cy="104" r="3.5"/>
+  </g>
+
+  <!-- side wall panel rhythm -->
+  <g stroke="#2d3033" stroke-width="2" opacity=".75">
+    <line x1="88" y1="98" x2="88" y2="884"/><line x1="207" y1="126" x2="207" y2="807"/><line x1="328" y1="158" x2="328" y2="730"/><line x1="446" y1="193" x2="446" y2="651"/>
+    <line x1="1584" y1="98" x2="1584" y2="884"/><line x1="1465" y1="126" x2="1465" y2="807"/><line x1="1344" y1="158" x2="1344" y2="730"/><line x1="1226" y1="193" x2="1226" y2="651"/>
+  </g>
+
+  <!-- merchandise wall bays: intentionally empty; live products sit above this art -->
+  <g opacity=".92">
+    <polygon points="72,238 468,294 468,579 72,701" fill="#0d1013" stroke="#33383d" stroke-width="2"/>
+    <polygon points="1204,294 1600,238 1600,701 1204,579" fill="#0d1013" stroke="#33383d" stroke-width="2"/>
+    <polygon points="92,266 449,311 449,552 92,657" fill="url(#glass)"/>
+    <polygon points="1223,311 1580,266 1580,657 1223,552" fill="url(#glass)"/>
+  </g>
+  <g stroke="#8d8478" stroke-width="3" opacity=".55">
+    <line x1="116" y1="354" x2="436" y2="386"/><line x1="1236" y1="386" x2="1556" y2="354"/>
+    <line x1="132" y1="540" x2="432" y2="552"/><line x1="1240" y1="552" x2="1540" y2="540"/>
+  </g>
+
+  <!-- back wall architecture: depth beyond the current room -->
+  <g>
+    <rect x="560" y="188" width="552" height="385" rx="2" fill="#0d1013" stroke="#2a3035" stroke-width="2"/>
+    <rect x="588" y="216" width="178" height="318" fill="url(#portal)" stroke="#333a40" stroke-width="2"/>
+    <rect x="906" y="216" width="178" height="318" fill="url(#portal)" stroke="#333a40" stroke-width="2"/>
+    <polygon points="611,239 743,239 724,510 630,510" fill="#080a0d" stroke="#22282e"/>
+    <polygon points="929,239 1061,239 1042,510 948,510" fill="#080a0d" stroke="#22282e"/>
+    <text x="677" y="205" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="10" letter-spacing="4" fill="#7e8991">STUDIO</text>
+    <text x="995" y="205" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="10" letter-spacing="4" fill="#7e8991">ARCHIVE</text>
+  </g>
+
+  <!-- center Apex signature, restrained -->
+  <g transform="translate(836 316)" fill="none" stroke-linejoin="round">
+    <path d="M-62 66 L0 -31 L62 66" stroke="#c8cbd0" stroke-width="8" opacity=".72"/>
+    <path d="M-36 66 L0 12 L36 66" stroke="#4d555c" stroke-width="5"/>
+    <line x1="-47" y1="45" x2="47" y2="45" stroke="#00aeef" stroke-width="2" opacity=".7" filter="url(#glow)"/>
+  </g>
+  <text x="836" y="425" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="11" letter-spacing="6" fill="#858f97">AEROVISTA</text>
+  <text x="836" y="450" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="7" letter-spacing="3" fill="#59636b">SEVEN DIVISIONS · ONE VISION</text>
+
+  <!-- floor perspective and material -->
+  <g stroke="#353638" stroke-width="2" opacity=".7">
+    <line x1="836" y1="610" x2="836" y2="941"/>
+    <line x1="724" y1="610" x2="595" y2="941"/><line x1="948" y1="610" x2="1077" y2="941"/>
+    <line x1="612" y1="610" x2="354" y2="941"/><line x1="1060" y1="610" x2="1318" y2="941"/>
+    <line x1="515" y1="668" x2="1157" y2="668"/><line x1="424" y1="744" x2="1248" y2="744"/><line x1="309" y1="839" x2="1363" y2="839"/>
+  </g>
+  <path d="M818 610 L790 941 H882 L854 610Z" fill="#00aeef" opacity=".025"/>
+  <line x1="836" y1="610" x2="836" y2="941" stroke="#00aeef" stroke-width="1.5" opacity=".28" filter="url(#glow)"/>
+
+  <!-- pools of gallery light -->
+  <ellipse cx="315" cy="664" rx="265" ry="122" fill="url(#pool)" transform="rotate(-7 315 664)"/>
+  <ellipse cx="1357" cy="664" rx="265" ry="122" fill="url(#pool)" transform="rotate(7 1357 664)"/>
+  <ellipse cx="836" cy="691" rx="215" ry="83" fill="url(#pool)" opacity=".65"/>
+
+  <!-- central object plinth -->
+  <g fill="#0c0f12" stroke="#4d5358" stroke-width="2">
+    <polygon points="696,640 976,640 1042,704 630,704"/>
+    <polygon points="650,704 1022,704 995,812 677,812"/>
+  </g>
+  <path d="M685 657 H987" stroke="#a7adb1" stroke-width="1" opacity=".32"/>
+  <rect x="760" y="609" width="152" height="34" rx="3" fill="#181c20" opacity=".9"/>
+
+  <!-- faint glass reflections / air -->
+  <path d="M113 274 L360 318 L222 610" fill="#fff" opacity=".012"/>
+  <path d="M1559 274 L1312 318 L1450 610" fill="#fff" opacity=".012"/>
+  <rect width="1672" height="941" filter="url(#grain)" opacity=".65"/>
 </svg>
