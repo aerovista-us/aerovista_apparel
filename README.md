@@ -1,76 +1,89 @@
-# AeroVista Apparel — Physical Storefront Prototype
+# AeroVista Apparel — Guided Spatial Storefront
 
-A React/Vite prototype for an AeroVista storefront that behaves like a physical boutique instead of a conventional product grid.
+A React/Vite storefront prototype that treats ecommerce as a **place to enter and explore**, not a product grid wearing a 3D skin.
+
+The current build uses a lightweight 2.5D spatial illusion: authored exterior/interior environments, real product photography, physical retail placement, perspective, focus shifts, gallery lighting and responsive mobile store zones. The commerce interface remains normal React/HTML so product details, sizes, bag behavior and future checkout stay fast and accessible.
 
 ## Experience
 
-1. Land outside the AeroVista storefront.
-2. Click the front door for a push-in / walk-through transition.
-3. Enter a full-room boutique scene.
-4. Merchandise is placed on reusable physical **fixtures** — racks, mannequin, center table, hat shelf, and objects case.
-5. Click the actual product object in the room to open its product drawer.
-6. Choose a size/format and add it to the prototype bag.
-7. On mobile, the room remains visible and the same inventory becomes a conventional browse grid below it.
+1. Arrive outside the AeroVista storefront.
+2. Click the front door and cross the threshold through a push-in transition.
+3. Enter a dark premium boutique with a visible central aisle, wall bays, deeper rooms and object displays.
+4. Approach merchandise directly in the room. Focus shifts bring the selected area forward and quiet the surrounding space.
+5. Select a piece to open product details, sizes and bag controls.
+6. On mobile, move vertically through the same flagship as a guided walk: apparel walls, headwear and objects remain distinct physical areas rather than collapsing into a generic grid.
 
-## Why the fixture system matters
+## Retail rules
 
-The room and inventory are intentionally separate.
+The store follows physical merchandising logic:
 
-- `src/data/products.js` = **what the merchandise is**
-- `src/data/fixtures.js` = **where it is merchandised**
-- `public/products/` = real product photography
-- `public/store/` = replaceable environment art
+- tees, hoodies, sweatshirts, long sleeves and jackets hang on wall rails
+- hats live on dedicated shelves
+- cards, prints, accessories and collectibles belong on display surfaces or in cases
+- hero pieces may receive an isolated display treatment
+- inventory is curated into the room rather than forcing every SKU onto one screen
 
-That means a real apparel image can replace a placeholder without changing the room or commerce components.
+## System boundaries
 
-### Product example
+The implementation keeps three concerns separate:
+
+- `src/data/products.js` — product identity and commerce data
+- `src/data/fixtures.js` — physical placement in the desktop room
+- `public/products/` — real product photography / artwork
+- `public/store/` — replaceable environment art
+
+The environment can become more sophisticated without forcing product data or checkout behavior to be rewritten.
+
+## Product imagery
+
+For the cleanest in-room result, use transparent PNG or WebP assets that are tightly cropped around the item. Product assets should use consistent lowercase kebab-case filenames under `public/products/`.
+
+Example:
 
 ```js
 {
-  id: 'shadow-bomber',
-  name: 'Shadow Wear Bomber',
-  type: 'bomber',
-  price: 139,
-  collection: 'Shadow Wear',
-  image: '/products/shadow-bomber.webp',
+  id: 'apex-pattern-hoodie',
+  name: 'AeroVista Apex Pattern Hoodie',
+  type: 'hoodie',
+  collection: 'Apex',
+  image: asset('products/apex-pattern-hoodie.png'),
   sizes: ['S','M','L','XL','2XL']
 }
 ```
 
-For the cleanest in-room result, use a **transparent PNG or WebP**, tightly cropped around the garment.
+## Desktop placement
 
-### Fixture example
+`src/data/fixtures.js` defines where products are physically merchandised. Apparel remains on wall systems; headwear and objects use their own display types.
 
-```js
-{
-  id: 'right-wall-rack',
-  type: 'wall-rack',
-  position: { x: 72, y: 27, w: 25, h: 38 },
-  slots: [
-    { productId: 'shadow-bomber', x: 32, y: 42, scale: 1.24, tilt: 1 }
-  ]
-}
-```
+The same product can appear in multiple areas without duplicating its product record.
 
-The fixture position is relative to the full room. Slot coordinates are relative to that fixture. The same product can appear in multiple fixtures without duplicating product data.
+## Mobile
 
-## Current reusable fixture types
+Mobile is treated as **another camera into the same store**, not a fallback catalog.
 
-- `wall-rack`
-- `hero-mannequin`
-- `table-stack`
-- `hat-shelf`
-- `accessories-case`
+- vertical scrolling moves deeper through the flagship
+- horizontal swiping moves along a wall or shelf
+- apparel stays hung and full-length
+- headwear keeps its shelf treatment
+- collectible objects retain their own display area
+- collection controls act as wayfinding
 
-The **layers icon** in the desktop store header toggles the fixture map. It is a prototype merchandising aid and is off by default for customers.
+## Spatial direction
 
-## Add a real item
+The long-term design philosophy is documented in:
 
-1. Export a transparent product image, e.g. `shadow-bomber.webp`.
-2. Put it in `public/products/`.
-3. Set `image: '/products/shadow-bomber.webp'` in `src/data/products.js`.
-4. Add or adjust a fixture slot in `src/data/fixtures.js`.
-5. Reload. The real product now appears in the physical store position and remains clickable.
+[`docs/SPATIAL_COMMERCE_PHILOSOPHY.md`](docs/SPATIAL_COMMERCE_PHILOSOPHY.md)
+
+The working concept is **Guided Spatial Commerce**: spatial discovery plus conventional commerce clarity.
+
+The roadmap intentionally escalates immersion in stages:
+
+1. illusion-first 2.5D — current
+2. authored camera zones / navigable store areas
+3. selective React Three Fiber for room shell, lighting or hero objects
+4. optional full spatial mode only after performance and mobile testing
+
+The default experience should never require game controls to shop.
 
 ## Run locally
 
@@ -85,10 +98,11 @@ Build:
 npm run build
 ```
 
-## Prototype assets
+## Primary assets
 
-- `public/store/exterior.svg` — self-contained storefront exterior
-- `public/store/interior.svg` — self-contained boutique interior
-- `public/products/apex-relic.svg` — live real-art example in the modular product system
+- `public/store/exterior.svg` — cinematic storefront threshold
+- `public/store/interior.svg` — boutique architecture and depth shell
+- `public/asset-overrides.css` — spatial illusion / focus layer
+- `public/products/` — production merchandise imagery
 
-The included environment vectors keep the repository self-contained. They are prototype art and can be replaced later by photography, rendered scenes, or higher-fidelity media without rewriting inventory, fixture, bag, or product-detail behavior.
+The environment remains intentionally replaceable. We can move from authored vectors to high-fidelity renders or selective WebGL without giving up the modular product system.
