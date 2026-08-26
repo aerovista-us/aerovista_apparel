@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-label="AeroVista Apparel storefront exterior">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#090b10"/><stop offset="1" stop-color="#171b22"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b2026"/><stop offset=".45" stop-color="#0c0f13"/><stop offset="1" stop-color="#2b241c"/></linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8a6c48" stop-opacity=".42"/><stop offset="1" stop-color="#1a1713" stop-opacity=".12"/></linearGradient>
+    <linearGradient id="wet" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1b1c1e"/><stop offset="1" stop-color="#08090b"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".7"/></filter>
+  </defs>
+  <rect width="1672" height="941" fill="url(#sky)"/>
+  <rect y="760" width="1672" height="181" fill="url(#wet)"/>
+  <path d="M0 793 H1672" stroke="#2e3034" stroke-width="2"/><path d="M0 836 H1672" stroke="#0d0f12" stroke-width="3"/>
+  <g filter="url(#shadow)">
+    <rect x="182" y="122" width="1308" height="647" rx="4" fill="#0d1014"/>
+    <rect x="214" y="153" width="1244" height="586" fill="#111419" stroke="#22272d"/>
+    <rect x="262" y="179" width="1148" height="105" fill="#0b0d10" stroke="#31363c"/>
+    <text x="836" y="244" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="53" letter-spacing="12" fill="#e8edf2">AEROVISTA APPAREL</text>
+    <line x1="344" x2="1328" y1="267" y2="267" stroke="#00aeef" stroke-width="2" opacity=".75" filter="url(#glow)"/>
+    <rect x="286" y="320" width="371" height="375" fill="url(#glass)" stroke="#333941" stroke-width="4"/><rect x="1015" y="320" width="371" height="375" fill="url(#glass)" stroke="#333941" stroke-width="4"/>
+    <rect x="286" y="320" width="371" height="375" fill="url(#warm)"/><rect x="1015" y="320" width="371" height="375" fill="url(#warm)"/>
+    <g stroke="#77818b" stroke-width="3" opacity=".7"><line x1="330" y1="470" x2="600" y2="470"/><line x1="1072" y1="470" x2="1342" y2="470"/></g>
+    <g fill="#161a1f" stroke="#8a929a" stroke-width="2">
+      <path d="M360 482l38-20 38 20 25 62-25 19-14-28-2 103h-44l-2-103-14 28-25-19z"/><path d="M475 489l31-16 31 16 24 52-22 17-12-24-2 102h-38l-2-102-12 24-22-17z"/>
+      <path d="M1113 483l36-19 36 19 26 59-23 17-13-26-2 103h-44l-2-103-13 26-23-17z"/><path d="M1236 491l29-16 29 16 23 51-20 15-12-23-2 101h-36l-2-101-12 23-20-15z"/>
+    </g>
+    <rect x="682" y="289" width="308" height="451" fill="#090b0e" stroke="#252b31" stroke-width="13"/><rect x="710" y="321" width="252" height="399" fill="#0c1015" stroke="#59636c" stroke-width="3"/>
+    <line x1="836" y1="321" x2="836" y2="720" stroke="#626b73" stroke-width="2"/><rect x="720" y="343" width="104" height="353" fill="#171b20" opacity=".7"/><rect x="848" y="343" width="104" height="353" fill="#171b20" opacity=".7"/>
+    <line x1="821" x2="821" y1="487" y2="568" stroke="#c0c0c0" stroke-width="5"/><line x1="851" x2="851" y1="487" y2="568" stroke="#c0c0c0" stroke-width="5"/><rect x="701" y="309" width="270" height="419" fill="none" stroke="#00aeef" stroke-width="2" opacity=".5" filter="url(#glow)"/>
+  </g>
+  <g fill="#0b0e11"><rect x="107" y="610" width="91" height="131" rx="8"/><ellipse cx="153" cy="610" rx="58" ry="25"/><rect x="1474" y="610" width="91" height="131" rx="8"/><ellipse cx="1520" cy="610" rx="58" ry="25"/></g>
+  <g stroke="#26323a" stroke-width="8" opacity=".8"><path d="M151 613c-7-80-43-109-62-159m67 157c13-79 48-116 73-157"/><path d="M1520 613c-7-80-43-109-62-159m67 157c13-79 48-116 73-157"/></g>
+  <g opacity=".3" stroke="#00aeef" stroke-width="2"><line x1="704" y1="824" x2="969" y2="824"/><line x1="354" y1="852" x2="610" y2="852"/><line x1="1062" y1="852" x2="1318" y2="852"/></g>
+</svg>
