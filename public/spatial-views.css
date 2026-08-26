@@ -1,0 +1,125 @@
+/* Authored camera zones for AeroVista Guided Spatial Commerce.
+   The room and merchandise move together so the 2.5D illusion stays registered. */
+
+.interior-image,.fixture-layer{
+  transition:transform .82s cubic-bezier(.2,.78,.16,1),filter .55s ease;
+  transform-origin:50% 52%;
+  will-change:transform;
+}
+
+.view-room .interior-image{transform:translate3d(0,0,0) scale(1.012)}
+.view-room .fixture-layer{transform:translate3d(0,0,0) scale(1)}
+
+.view-left .interior-image{
+  transform:translate3d(10.5%,1.2%,0) scale(1.17);
+  transform-origin:27% 51%;
+}
+.view-left .fixture-layer{
+  transform:translate3d(10.5%,1.2%,38px) scale(1.17);
+  transform-origin:27% 51%;
+}
+.view-left .room-shade{
+  background:linear-gradient(90deg,rgba(2,3,5,.10),transparent 36%,rgba(2,3,5,.54) 100%),linear-gradient(0deg,rgba(3,4,6,.34),transparent 34%);
+}
+
+.view-right .interior-image{
+  transform:translate3d(-10.5%,1.2%,0) scale(1.17);
+  transform-origin:73% 51%;
+}
+.view-right .fixture-layer{
+  transform:translate3d(-10.5%,1.2%,38px) scale(1.17);
+  transform-origin:73% 51%;
+}
+.view-right .room-shade{
+  background:linear-gradient(90deg,rgba(2,3,5,.54),transparent 64%,rgba(2,3,5,.10) 100%),linear-gradient(0deg,rgba(3,4,6,.34),transparent 34%);
+}
+
+/* Preserve the chosen camera when a customer approaches merchandise. */
+.view-room:has(.merch-item:hover) .interior-image,.view-room:has(.merch-item:focus-visible) .interior-image{
+  transform:translate3d(0,0,0) scale(1.032);
+}
+.view-left:has(.merch-item:hover) .interior-image,.view-left:has(.merch-item:focus-visible) .interior-image{
+  transform:translate3d(10.5%,1.2%,0) scale(1.195);
+}
+.view-right:has(.merch-item:hover) .interior-image,.view-right:has(.merch-item:focus-visible) .interior-image{
+  transform:translate3d(-10.5%,1.2%,0) scale(1.195);
+}
+
+/* The control reads like discreet gallery wayfinding, not a game HUD. */
+.view-nav{
+  position:absolute;
+  z-index:24;
+  right:2.4%;
+  bottom:3%;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:5px;
+  border:1px solid rgba(205,211,216,.12);
+  border-radius:999px;
+  background:rgba(6,8,11,.68);
+  box-shadow:0 14px 34px rgba(0,0,0,.38);
+  backdrop-filter:blur(12px);
+}
+.view-nav button{
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#7f8992;
+  min-height:33px;
+  padding:0 11px 0 9px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  cursor:pointer;
+  font-size:8px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  transition:background .24s,color .24s,transform .24s;
+}
+.view-nav button i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  border:1px solid #7f8992;
+  box-shadow:0 0 0 3px rgba(255,255,255,.018);
+  transition:border-color .24s,background .24s,box-shadow .24s;
+}
+.view-nav button:hover,.view-nav button:focus-visible{
+  color:#d8dde1;
+  background:rgba(255,255,255,.04);
+  outline:none;
+}
+.view-nav button.active{
+  color:#f0f3f5;
+  background:rgba(255,255,255,.055);
+}
+.view-nav button.active i{
+  border-color:#00aeef;
+  background:#00aeef;
+  box-shadow:0 0 0 4px rgba(0,174,239,.09),0 0 11px rgba(0,174,239,.55);
+}
+
+/* Camera direction also changes the position of the discreet room label. */
+.view-left .scene-label{left:4%;}
+.view-right .scene-label{left:auto;right:4%;text-align:right;border-left:0;border-right:1px solid rgba(0,174,239,.46);background:linear-gradient(270deg,rgba(5,7,10,.68),rgba(5,7,10,.14));}
+
+@media (max-width:1000px) and (min-width:761px){
+  .view-left .interior-image{transform:translate3d(8%,1%,0) scale(1.13)}
+  .view-left .fixture-layer{transform:translate3d(8%,1%,30px) scale(1.13)}
+  .view-right .interior-image{transform:translate3d(-8%,1%,0) scale(1.13)}
+  .view-right .fixture-layer{transform:translate3d(-8%,1%,30px) scale(1.13)}
+  .view-nav button span{display:none}
+  .view-nav button{padding:0 10px}
+}
+
+@media (max-width:760px){
+  .view-nav{display:none}
+  .view-left .interior-image,.view-room .interior-image,.view-right .interior-image{transform:scale(1.055)!important;transform-origin:50% 52%!important}
+  .view-left .fixture-layer,.view-room .fixture-layer,.view-right .fixture-layer{transform:none!important}
+  .view-right .scene-label{left:4%;right:auto;text-align:left;border-right:0;border-left:1px solid rgba(0,174,239,.46);background:linear-gradient(90deg,rgba(5,7,10,.82),rgba(5,7,10,.2))}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .interior-image,.fixture-layer,.view-nav button{transition:none!important}
+}
