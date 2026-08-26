@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-label="AeroVista Apparel boutique interior">
+  <defs>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#17191d"/><stop offset="1" stop-color="#0b0d10"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2b2926"/><stop offset="1" stop-color="#111214"/></linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0a0c0f"/><stop offset="1" stop-color="#1b1b1b"/></linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#0a0c0f"/><stop offset="1" stop-color="#1b1b1b"/></linearGradient>
+    <radialGradient id="warm" cx="50%" cy="25%" r="70%"><stop stop-color="#8b6c48" stop-opacity=".24"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1672" height="941" fill="#080a0d"/>
+  <polygon points="0,0 515,145 515,610 0,941" fill="url(#wallL)"/><polygon points="1672,0 1157,145 1157,610 1672,941" fill="url(#wallR)"/>
+  <rect x="515" y="145" width="642" height="465" fill="url(#back)"/><polygon points="0,941 515,610 1157,610 1672,941" fill="url(#floor)"/><rect width="1672" height="941" fill="url(#warm)"/>
+  <g stroke="#35383a" stroke-width="2" opacity=".65"><line x1="836" y1="610" x2="836" y2="941"/><line x1="650" y1="610" x2="485" y2="941"/><line x1="1022" y1="610" x2="1187" y2="941"/><line x1="515" y1="676" x2="1157" y2="676"/><line x1="407" y1="756" x2="1265" y2="756"/><line x1="274" y1="852" x2="1398" y2="852"/></g>
+  <g stroke="#6d665c" stroke-width="3" opacity=".6"><line x1="96" y1="324" x2="468" y2="363"/><line x1="1204" y1="363" x2="1576" y2="324"/><line x1="120" y1="548" x2="454" y2="565"/><line x1="1218" y1="565" x2="1552" y2="548"/></g>
+  <g fill="#111419" stroke="#6d747a" stroke-width="2" opacity=".9"><path d="M171 350l30-15 30 15 20 48-19 14-10-22-2 88h-38l-2-88-10 22-19-14z"/><path d="M276 361l29-14 29 14 20 45-18 14-10-21-2 84h-36l-2-84-10 21-18-14z"/><path d="M1245 361l29-14 29 14 20 45-18 14-10-21-2 84h-36l-2-84-10 21-18-14z"/><path d="M1350 350l30-15 30 15 20 48-19 14-10-22-2 88h-38l-2-88-10 22-19-14z"/></g>
+  <rect x="708" y="325" width="256" height="250" fill="#080a0d" stroke="#2d3338" stroke-width="3"/><rect x="746" y="363" width="180" height="198" fill="#111419" stroke="#50575d"/><text x="836" y="313" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="17" letter-spacing="5" fill="#aeb7bf">FITTING ROOMS</text>
+  <g fill="#0d1013" stroke="#555a5e" stroke-width="2"><polygon points="686,622 986,622 1054,704 618,704"/><polygon points="647,704 1025,704 1002,825 670,825"/></g><g opacity=".75"><rect x="719" y="602" width="234" height="26" rx="4" fill="#1b1f23"/><rect x="742" y="580" width="188" height="20" rx="3" fill="#24282c"/></g>
+  <g stroke="#7a746b" stroke-width="3" opacity=".7"><line x1="538" y1="78" x2="1134" y2="78"/><line x1="579" y1="112" x2="1093" y2="112"/></g>
+  <g fill="#e0c29c" opacity=".75" filter="url(#glow)"><circle cx="650" cy="105" r="4"/><circle cx="748" cy="105" r="4"/><circle cx="836" cy="105" r="4"/><circle cx="924" cy="105" r="4"/><circle cx="1022" cy="105" r="4"/></g>
+  <g opacity=".5" stroke="#00aeef" stroke-width="1"><line x1="512" y1="610" x2="1158" y2="610"/><line x1="836" y1="154" x2="836" y2="603"/></g>
+</svg>
