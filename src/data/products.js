@@ -79,7 +79,7 @@ export const products = [
     type: 'deck',
     price: 28,
     collection: 'Apex',
-    image: '/products/apex-relic.webp',
+    image: '/products/apex-relic.svg',
     accent: '#00AEEF',
     description: 'A premium collectible deck built around AeroVista’s Apex system and Seven Divisions, One Vision.',
     colors: ['Apex Relic'],
