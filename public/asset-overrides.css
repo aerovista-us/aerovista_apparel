@@ -1,2 +1,2 @@
-.exterior-image{background-image:url('/store/exterior.svg')!important}
-.interior-image{background-image:url('/store/interior.svg')!important}
+.exterior-image{background-image:url('./store/exterior.svg')!important}
+.interior-image{background-image:url('./store/interior.svg')!important}
