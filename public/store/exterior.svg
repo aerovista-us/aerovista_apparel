@@ -1,33 +1,78 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-label="AeroVista Apparel storefront exterior">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#090b10"/><stop offset="1" stop-color="#171b22"/></linearGradient>
-    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b2026"/><stop offset=".45" stop-color="#0c0f13"/><stop offset="1" stop-color="#2b241c"/></linearGradient>
-    <linearGradient id="warm" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8a6c48" stop-opacity=".42"/><stop offset="1" stop-color="#1a1713" stop-opacity=".12"/></linearGradient>
-    <linearGradient id="wet" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1b1c1e"/><stop offset="1" stop-color="#08090b"/></linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#05070b"/><stop offset=".62" stop-color="#121720"/><stop offset="1" stop-color="#24262a"/></linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1b1d20"/><stop offset="1" stop-color="#0a0c0f"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#27313a" stop-opacity=".78"/><stop offset=".42" stop-color="#0a0d11" stop-opacity=".96"/><stop offset="1" stop-color="#4c4031" stop-opacity=".72"/></linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c49862" stop-opacity=".30"/><stop offset="1" stop-color="#1a1713" stop-opacity=".05"/></linearGradient>
+    <linearGradient id="wet" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#24262a"/><stop offset="1" stop-color="#07090c"/></linearGradient>
+    <linearGradient id="doorGlass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b2229"/><stop offset=".48" stop-color="#080b0f"/><stop offset="1" stop-color="#22282d"/></linearGradient>
+    <radialGradient id="windowGlow" cx="50%" cy="45%" r="62%"><stop stop-color="#c39a69" stop-opacity=".20"/><stop offset="1" stop-color="#c39a69" stop-opacity="0"/></radialGradient>
     <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".7"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity=".78"/></filter>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="9" result="n"/><feColorMatrix in="n" type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .035"/></feComponentTransfer></filter>
   </defs>
+
   <rect width="1672" height="941" fill="url(#sky)"/>
-  <rect y="760" width="1672" height="181" fill="url(#wet)"/>
-  <path d="M0 793 H1672" stroke="#2e3034" stroke-width="2"/><path d="M0 836 H1672" stroke="#0d0f12" stroke-width="3"/>
-  <g filter="url(#shadow)">
-    <rect x="182" y="122" width="1308" height="647" rx="4" fill="#0d1014"/>
-    <rect x="214" y="153" width="1244" height="586" fill="#111419" stroke="#22272d"/>
-    <rect x="262" y="179" width="1148" height="105" fill="#0b0d10" stroke="#31363c"/>
-    <text x="836" y="244" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="53" letter-spacing="12" fill="#e8edf2">AEROVISTA APPAREL</text>
-    <line x1="344" x2="1328" y1="267" y2="267" stroke="#00aeef" stroke-width="2" opacity=".75" filter="url(#glow)"/>
-    <rect x="286" y="320" width="371" height="375" fill="url(#glass)" stroke="#333941" stroke-width="4"/><rect x="1015" y="320" width="371" height="375" fill="url(#glass)" stroke="#333941" stroke-width="4"/>
-    <rect x="286" y="320" width="371" height="375" fill="url(#warm)"/><rect x="1015" y="320" width="371" height="375" fill="url(#warm)"/>
-    <g stroke="#77818b" stroke-width="3" opacity=".7"><line x1="330" y1="470" x2="600" y2="470"/><line x1="1072" y1="470" x2="1342" y2="470"/></g>
-    <g fill="#161a1f" stroke="#8a929a" stroke-width="2">
-      <path d="M360 482l38-20 38 20 25 62-25 19-14-28-2 103h-44l-2-103-14 28-25-19z"/><path d="M475 489l31-16 31 16 24 52-22 17-12-24-2 102h-38l-2-102-12 24-22-17z"/>
-      <path d="M1113 483l36-19 36 19 26 59-23 17-13-26-2 103h-44l-2-103-13 26-23-17z"/><path d="M1236 491l29-16 29 16 23 51-20 15-12-23-2 101h-36l-2-101-12 23-20-15z"/>
-    </g>
-    <rect x="682" y="289" width="308" height="451" fill="#090b0e" stroke="#252b31" stroke-width="13"/><rect x="710" y="321" width="252" height="399" fill="#0c1015" stroke="#59636c" stroke-width="3"/>
-    <line x1="836" y1="321" x2="836" y2="720" stroke="#626b73" stroke-width="2"/><rect x="720" y="343" width="104" height="353" fill="#171b20" opacity=".7"/><rect x="848" y="343" width="104" height="353" fill="#171b20" opacity=".7"/>
-    <line x1="821" x2="821" y1="487" y2="568" stroke="#c0c0c0" stroke-width="5"/><line x1="851" x2="851" y1="487" y2="568" stroke="#c0c0c0" stroke-width="5"/><rect x="701" y="309" width="270" height="419" fill="none" stroke="#00aeef" stroke-width="2" opacity=".5" filter="url(#glow)"/>
+  <rect y="756" width="1672" height="185" fill="url(#wet)"/>
+  <path d="M0 791 H1672" stroke="#33363a" stroke-width="2"/><path d="M0 838 H1672" stroke="#0b0d10" stroke-width="3"/>
+
+  <!-- distant street reflections -->
+  <g opacity=".18" filter="url(#glow)">
+    <path d="M665 771 L1007 771 L1065 929 L606 929Z" fill="#00aeef" opacity=".10"/>
+    <path d="M314 782 L575 782 L532 931 L287 931Z" fill="#d0a16b" opacity=".07"/>
+    <path d="M1097 782 L1358 782 L1385 931 L1140 931Z" fill="#d0a16b" opacity=".07"/>
   </g>
-  <g fill="#0b0e11"><rect x="107" y="610" width="91" height="131" rx="8"/><ellipse cx="153" cy="610" rx="58" ry="25"/><rect x="1474" y="610" width="91" height="131" rx="8"/><ellipse cx="1520" cy="610" rx="58" ry="25"/></g>
-  <g stroke="#26323a" stroke-width="8" opacity=".8"><path d="M151 613c-7-80-43-109-62-159m67 157c13-79 48-116 73-157"/><path d="M1520 613c-7-80-43-109-62-159m67 157c13-79 48-116 73-157"/></g>
-  <g opacity=".3" stroke="#00aeef" stroke-width="2"><line x1="704" y1="824" x2="969" y2="824"/><line x1="354" y1="852" x2="610" y2="852"/><line x1="1062" y1="852" x2="1318" y2="852"/></g>
+
+  <g filter="url(#shadow)">
+    <!-- dark stone shell -->
+    <rect x="163" y="104" width="1346" height="665" rx="6" fill="url(#stone)" stroke="#24282d" stroke-width="2"/>
+    <rect x="194" y="136" width="1284" height="602" fill="#101317" stroke="#292e33"/>
+
+    <!-- slim canopy / brand band -->
+    <rect x="238" y="161" width="1196" height="122" fill="#090b0e" stroke="#30363b"/>
+    <rect x="238" y="282" width="1196" height="10" fill="#171a1d"/>
+    <text x="836" y="224" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="46" letter-spacing="11" fill="#e7ebee">AEROVISTA</text>
+    <text x="836" y="257" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="9" letter-spacing="5" fill="#858f97">APPAREL · OBJECTS · EDITIONS</text>
+    <line x1="390" x2="1282" y1="278" y2="278" stroke="#00aeef" stroke-width="1.7" opacity=".68" filter="url(#glow)"/>
+
+    <!-- left / right vitrines -->
+    <rect x="260" y="321" width="384" height="373" fill="url(#glass)" stroke="#353c43" stroke-width="3"/>
+    <rect x="1028" y="321" width="384" height="373" fill="url(#glass)" stroke="#353c43" stroke-width="3"/>
+    <rect x="260" y="321" width="384" height="373" fill="url(#warm)"/><rect x="1028" y="321" width="384" height="373" fill="url(#warm)"/>
+    <ellipse cx="452" cy="519" rx="186" ry="165" fill="url(#windowGlow)"/>
+    <ellipse cx="1220" cy="519" rx="186" ry="165" fill="url(#windowGlow)"/>
+
+    <!-- architectural rails visible through glass -->
+    <g stroke="#80786d" stroke-width="3" opacity=".65">
+      <line x1="311" y1="447" x2="594" y2="447"/><line x1="1079" y1="447" x2="1362" y2="447"/>
+      <line x1="326" y1="615" x2="578" y2="615"/><line x1="1094" y1="615" x2="1346" y2="615"/>
+    </g>
+    <!-- abstract hanging forms: subdued so live inventory remains the hero inside -->
+    <g fill="#12171c" stroke="#6f7880" stroke-width="1.7" opacity=".78">
+      <path d="M345 467l34-18 34 18 22 54-20 15-12-24-2 103h-42l-2-103-12 24-20-15z"/>
+      <path d="M470 477l30-15 30 15 20 48-18 14-11-22-2 96h-38l-2-96-11 22-18-14z"/>
+      <path d="M1112 467l34-18 34 18 22 54-20 15-12-24-2 103h-42l-2-103-12 24-20-15z"/>
+      <path d="M1237 477l30-15 30 15 20 48-18 14-11-22-2 96h-38l-2-96-11 22-18-14z"/>
+    </g>
+
+    <!-- central portal -->
+    <rect x="675" y="292" width="322" height="448" fill="#07090c" stroke="#242a30" stroke-width="12"/>
+    <rect x="703" y="319" width="266" height="402" fill="url(#doorGlass)" stroke="#5d6871" stroke-width="2.5"/>
+    <line x1="836" y1="319" x2="836" y2="721" stroke="#68737c" stroke-width="2"/>
+    <rect x="716" y="340" width="107" height="350" fill="#1b2127" opacity=".48"/>
+    <rect x="849" y="340" width="107" height="350" fill="#1b2127" opacity=".48"/>
+    <path d="M721 345 L806 345 L735 665" fill="#fff" opacity=".035"/>
+    <path d="M851 345 L938 345 L868 665" fill="#fff" opacity=".028"/>
+    <line x1="820" x2="820" y1="485" y2="566" stroke="#c7cbce" stroke-width="5"/>
+    <line x1="852" x2="852" y1="485" y2="566" stroke="#c7cbce" stroke-width="5"/>
+    <rect x="694" y="309" width="284" height="421" fill="none" stroke="#00aeef" stroke-width="1.8" opacity=".46" filter="url(#glow)"/>
+  </g>
+
+  <!-- side planters / grounding -->
+  <g fill="#0a0d10" stroke="#24292d"><rect x="104" y="610" width="98" height="132" rx="7"/><ellipse cx="153" cy="610" rx="61" ry="24"/><rect x="1470" y="610" width="98" height="132" rx="7"/><ellipse cx="1519" cy="610" rx="61" ry="24"/></g>
+  <g stroke="#28363e" stroke-width="8" opacity=".68"><path d="M151 612c-8-87-43-118-67-166m72 165c11-85 48-125 77-169"/><path d="M1519 612c-8-87-43-118-67-166m72 165c11-85 48-125 77-169"/></g>
+
+  <!-- reflected threshold lines -->
+  <g opacity=".28" stroke="#00aeef" stroke-width="2"><line x1="693" y1="819" x2="979" y2="819"/><line x1="329" y1="855" x2="605" y2="855"/><line x1="1067" y1="855" x2="1343" y2="855"/></g>
+  <rect width="1672" height="941" filter="url(#grain)" opacity=".6"/>
 </svg>
