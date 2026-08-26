@@ -1,5 +1,88 @@
+/* AeroVista spatial illusion layer
+   Keep commerce HTML-first while making the room behave like a place. */
+
 .exterior-image{background-image:url('./store/exterior.svg')!important}
 .interior-image{background-image:url('./store/interior.svg')!important}
 .store-header nav{overflow-x:auto;scrollbar-width:none;justify-content:flex-start;padding:0 10px}
 .store-header nav::-webkit-scrollbar{display:none}
 .store-header nav button{flex:0 0 auto}
+
+/* --- shared atmosphere --- */
+.exterior,.interior-scene{perspective:1400px;perspective-origin:50% 52%}
+.exterior-image,.interior-image{will-change:transform,filter;backface-visibility:hidden}
+.exterior:before,.interior-scene:before,.interior-scene:after{content:"";position:absolute;inset:0;pointer-events:none}
+.exterior:before{z-index:2;background:linear-gradient(112deg,transparent 0 39%,rgba(255,255,255,.018) 44%,transparent 50% 100%),radial-gradient(circle at 50% 63%,rgba(0,174,239,.05),transparent 31%);mix-blend-mode:screen}
+.interior-scene:before{z-index:2;background:linear-gradient(111deg,transparent 0 20%,rgba(219,186,143,.045) 30%,transparent 40% 60%,rgba(219,186,143,.038) 70%,transparent 80%),radial-gradient(ellipse at 50% 18%,rgba(238,203,158,.055),transparent 44%);mix-blend-mode:screen}
+.interior-scene:after{z-index:3;top:58%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.013) 22%,rgba(0,0,0,.12) 75%),radial-gradient(ellipse at 50% 10%,rgba(0,174,239,.035),transparent 45%);transform:scaleY(.72);transform-origin:top;filter:blur(.2px)}
+
+/* --- exterior: door behaves like a threshold rather than a button --- */
+.exterior-image{transform:scale(1.018);transition:transform 1.05s cubic-bezier(.2,.72,.15,1),filter .75s ease}
+.exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image{transform:scale(1.045) translateY(-.5%);filter:brightness(.9) saturate(1.04)}
+.door-hit:before{inset:-3%;border-radius:2px}
+.door-hit:hover:before,.door-hit:focus-visible:before{border-color:rgba(0,174,239,.66);box-shadow:inset 0 0 75px rgba(0,174,239,.055),0 0 38px rgba(0,174,239,.14)}
+.door-hit span{transform:translateY(0);transition:opacity .25s,border-color .25s,transform .25s,box-shadow .25s}
+.door-hit:hover span,.door-hit:focus-visible span{transform:translateY(-4px);box-shadow:0 10px 32px rgba(0,0,0,.38)}
+.brand-plaque{filter:drop-shadow(0 9px 20px rgba(0,0,0,.45))}
+
+/* --- room depth: the scene subtly focuses when merchandise is approached --- */
+.interior-image{transform:scale(1.012);transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .55s ease}
+.fixture-layer,.fixture{transform-style:preserve-3d}
+.fixture{transition:transform .42s cubic-bezier(.2,.75,.2,1),opacity .35s ease,filter .35s ease}
+.fixture-layer:has(.merch-item:hover) .fixture:not(:has(.merch-item:hover)),.fixture-layer:has(.merch-item:focus-visible) .fixture:not(:has(.merch-item:focus-visible)){opacity:.54;filter:brightness(.67) saturate(.7) blur(.3px)}
+.fixture:has(.merch-item:hover),.fixture:has(.merch-item:focus-visible){z-index:18;transform:translateZ(30px) scale(1.025)}
+.interior-scene:has(.merch-item:hover) .interior-image,.interior-scene:has(.merch-item:focus-visible) .interior-image{transform:scale(1.032);filter:brightness(.77) saturate(.92)}
+.room-shade{transition:background .45s ease,opacity .45s ease}
+.interior-scene:has(.merch-item:hover) .room-shade,.interior-scene:has(.merch-item:focus-visible) .room-shade{background:radial-gradient(circle at 50% 49%,transparent 7%,rgba(3,5,7,.12) 36%,rgba(3,5,7,.48) 100%),linear-gradient(0deg,rgba(2,3,5,.34),transparent 36%)}
+
+/* Hanging apparel gets a visual connection to the rail. */
+.merch-hoodie:before,.merch-sweatshirt:before,.merch-long-sleeve:before,.merch-tee:before,.merch-bomber:before{content:"";position:absolute;left:50%;top:-14px;width:24px;height:19px;border:1.5px solid rgba(177,183,188,.56);border-bottom:0;border-radius:14px 14px 0 0;transform:translateX(-50%) scaleX(.74);opacity:.72;filter:drop-shadow(0 3px 3px #000)}
+.merch-hoodie:after,.merch-sweatshirt:after,.merch-long-sleeve:after,.merch-tee:after,.merch-bomber:after{content:"";position:absolute;left:50%;top:-3px;width:42px;height:1px;background:linear-gradient(90deg,transparent,rgba(177,183,188,.7),transparent);transform:translateX(-50%);opacity:.6}
+.merch-item{transition:filter .28s ease,transform .34s cubic-bezier(.2,.8,.2,1),opacity .25s ease}
+.merch-item:hover,.merch-item:focus-visible{transform:translate(-50%,-57%) rotate(var(--item-tilt)) scale(calc(var(--item-scale) * 1.12));filter:drop-shadow(0 18px 20px rgba(0,0,0,.85)) drop-shadow(0 0 18px color-mix(in srgb,var(--accent) 18%,transparent))}
+.product-image.stage img{transition:transform .32s ease,filter .32s ease;filter:drop-shadow(0 9px 8px rgba(0,0,0,.7)) saturate(.96) contrast(1.015)}
+.merch-item:hover .product-image.stage img,.merch-item:focus-visible .product-image.stage img{transform:translateY(-2px) scale(1.025);filter:drop-shadow(0 16px 12px rgba(0,0,0,.76)) saturate(1.02) contrast(1.04)}
+.merch-pin{width:5px;height:5px;bottom:-4px;opacity:.22}
+.merch-tag{border-color:rgba(202,207,211,.22);background:linear-gradient(180deg,rgba(17,20,24,.96),rgba(7,9,12,.96));box-shadow:0 12px 30px rgba(0,0,0,.45);border-radius:2px;letter-spacing:.025em}
+.merch-tag:before{content:"";position:absolute;left:9px;right:9px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.55}
+
+/* Scene copy should feel like discreet gallery signage. */
+.scene-label{padding:13px 15px 13px 17px;background:linear-gradient(90deg,rgba(5,7,10,.68),rgba(5,7,10,.14));border-left:1px solid rgba(0,174,239,.46);backdrop-filter:blur(3px);text-shadow:0 2px 14px #000}
+.scene-label h1{letter-spacing:-.035em}
+.center-prompt{border-radius:999px;background:rgba(6,8,11,.64);border-color:rgba(211,217,222,.12);box-shadow:0 10px 28px rgba(0,0,0,.34)}
+.walk-back{border-radius:999px}
+
+/* --- mobile: keep the illusion of moving through a narrow flagship --- */
+.mobile-store{position:relative;background:radial-gradient(circle at 50% 2%,rgba(0,174,239,.045),transparent 22%),linear-gradient(180deg,#090b0e,#06080a 48%,#090b0e)}
+.mobile-store:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.015),transparent 8% 92%,rgba(255,255,255,.015));z-index:0}
+.mobile-store>*{position:relative;z-index:1}
+.mobile-store-intro{background:linear-gradient(180deg,rgba(17,20,24,.97),rgba(8,10,13,.98));box-shadow:0 22px 45px rgba(0,0,0,.28)}
+.mobile-collection-nav{position:sticky;top:58px;z-index:22;background:rgba(7,9,12,.93);backdrop-filter:blur(14px);box-shadow:0 12px 25px rgba(0,0,0,.24)}
+.retail-zone{position:relative;perspective:900px;overflow:hidden;border-top:1px solid rgba(255,255,255,.055);border-bottom:1px solid rgba(0,0,0,.6)}
+.retail-zone:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 28%,rgba(210,176,132,.055),transparent 55%);mix-blend-mode:screen}
+.retail-zone-header{position:relative;z-index:4;background:linear-gradient(90deg,rgba(8,10,13,.90),rgba(8,10,13,.60) 70%,transparent);backdrop-filter:blur(5px)}
+.mobile-wall{position:relative;background:linear-gradient(180deg,#16191c,#0c0f12 80%),repeating-linear-gradient(90deg,transparent 0 69px,rgba(255,255,255,.018) 70px);box-shadow:inset 0 18px 45px rgba(0,0,0,.32),inset 0 -30px 55px rgba(0,0,0,.45)}
+.mobile-wall:before{content:"";position:absolute;left:0;right:0;top:22%;height:42%;pointer-events:none;background:radial-gradient(ellipse at 50% 15%,rgba(222,191,151,.065),transparent 68%)}
+.mobile-hanging-row{scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mobile-hanging-piece{scroll-snap-align:center;transform:perspective(850px) rotateY(0deg) translateZ(0);transition:transform .28s ease,filter .28s ease}
+.mobile-hanging-piece:focus-visible,.mobile-hanging-piece:active{transform:perspective(850px) translateZ(18px) scale(1.035);filter:drop-shadow(0 16px 15px rgba(0,0,0,.65))}
+.mobile-hanging-piece .hanger-hook{filter:drop-shadow(0 3px 3px #000)}
+.retail-zone-shelf{background:linear-gradient(180deg,#0d1013,#090b0e)}
+.retail-zone-table{background:radial-gradient(ellipse at 50% 44%,rgba(211,178,135,.06),transparent 54%),#090b0e}
+.mobile-shelf-piece,.mobile-display-piece{transition:transform .28s ease,filter .28s ease}
+.mobile-shelf-piece:focus-visible,.mobile-shelf-piece:active,.mobile-display-piece:focus-visible,.mobile-display-piece:active{transform:translateY(-5px) scale(1.035);filter:drop-shadow(0 14px 16px rgba(0,0,0,.7))}
+.retail-tag{background:rgba(7,9,12,.86);backdrop-filter:blur(7px);border-top:1px solid rgba(255,255,255,.08)}
+
+/* Motion remains optional and restrained. */
+@media (prefers-reduced-motion:reduce){
+  .exterior-image,.interior-image,.fixture,.merch-item,.product-image.stage img,.mobile-hanging-piece,.mobile-shelf-piece,.mobile-display-piece{transition:none!important}
+  .exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image,.interior-scene:has(.merch-item:hover) .interior-image,.interior-scene:has(.merch-item:focus-visible) .interior-image{transform:none!important}
+}
+
+@media (max-width:760px){
+  .interior-scene{perspective:950px}
+  .interior-image{transform:scale(1.055);background-position:center 50%!important}
+  .scene-label{background:linear-gradient(90deg,rgba(5,7,10,.82),rgba(5,7,10,.2));max-width:72vw}
+  .center-prompt{display:none}
+  .exterior-image{transform:scale(1.04)}
+  .exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image{transform:scale(1.07)}
+}
