@@ -1,2 +1,5 @@
 .exterior-image{background-image:url('./store/exterior.svg')!important}
 .interior-image{background-image:url('./store/interior.svg')!important}
+.store-header nav{overflow-x:auto;scrollbar-width:none;justify-content:flex-start;padding:0 10px}
+.store-header nav::-webkit-scrollbar{display:none}
+.store-header nav button{flex:0 0 auto}
