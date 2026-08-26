@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, Bag, ChevronLeft, DoorOpen, Layers3, Minus, Plus,
+  ArrowRight, ShoppingBag, ChevronLeft, DoorOpen, Layers3, Minus,
   Search, Sparkles, X
 } from 'lucide-react'
 import { products } from './data/products'
@@ -128,7 +128,7 @@ function ProductDrawer({ product, onClose, onAdd }) {
             <span>Size / format</span>
             <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''}>{s}</button>)}</div>
           </div>
-          <button className="primary wide" onClick={() => onAdd(product, size)}>Add to bag <Bag size={17}/></button>
+          <button className="primary wide" onClick={() => onAdd(product, size)}>Add to bag <ShoppingBag size={17}/></button>
           <small>Merchandising is fixture-driven. Replacing this product image does not require changing the room or fixture layout.</small>
         </div>
       </aside>
@@ -168,7 +168,7 @@ function StoreHeader({ bagCount, onBag, onExit, collection, onCollection, showMa
     <div className="header-actions">
       <button className={`icon-btn map-toggle ${showMap ? 'active' : ''}`} onClick={onMap} aria-label="Toggle fixture map" title="Fixture map"><Layers3 size={18}/></button>
       <button className="icon-btn" aria-label="Search"><Search size={18}/></button>
-      <button className="bag-button" onClick={onBag}><Bag size={18}/><span>{bagCount}</span></button>
+      <button className="bag-button" onClick={onBag}><ShoppingBag size={18}/><span>{bagCount}</span></button>
     </div>
   </header>
 }
