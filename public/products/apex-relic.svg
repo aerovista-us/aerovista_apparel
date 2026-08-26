@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 1000" role="img" aria-label="AeroVista Apex Relic Playing Cards">
+  <defs><radialGradient id="g"><stop stop-color="#202327"/><stop offset="1" stop-color="#090a0c"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <rect x="18" y="18" width="664" height="964" rx="54" fill="url(#g)" stroke="#c0c0c0" stroke-width="8"/><rect x="45" y="45" width="610" height="910" rx="36" fill="none" stroke="#5d646b" stroke-width="3"/>
+  <g fill="none" stroke="#9ca2a8" stroke-width="3" opacity=".75"><ellipse cx="350" cy="500" rx="238" ry="330"/><ellipse cx="350" cy="500" rx="187" ry="260"/><ellipse cx="350" cy="500" rx="132" ry="184"/><path d="M350 115L575 500 350 885 125 500Z"/><path d="M350 180L515 500 350 820 185 500Z"/></g>
+  <g fill="#111419" stroke="#c0c0c0" stroke-width="4"><circle cx="350" cy="210" r="44"/><circle cx="350" cy="790" r="44"/><circle cx="170" cy="500" r="44"/><circle cx="530" cy="500" r="44"/><circle cx="230" cy="330" r="35"/><circle cx="470" cy="330" r="35"/><circle cx="230" cy="670" r="35"/><circle cx="470" cy="670" r="35"/></g>
+  <circle cx="350" cy="500" r="112" fill="#0b0d10" stroke="#d2d5d8" stroke-width="7"/><path d="M270 540L350 390 430 540M285 555L350 675 415 555" fill="none" stroke="#d5d7d9" stroke-width="22" stroke-linejoin="round"/>
+  <rect x="337" y="487" width="26" height="26" transform="rotate(45 350 500)" fill="#00aeef" filter="url(#glow)"/>
+  <text x="350" y="90" text-anchor="middle" fill="#e8edf2" font-family="Montserrat,Arial,sans-serif" font-size="28" letter-spacing="10">AEROVISTA</text><text x="350" y="930" text-anchor="middle" fill="#8b949c" font-family="Montserrat,Arial,sans-serif" font-size="16" letter-spacing="5">SEVEN DIVISIONS · ONE VISION</text>
+</svg>
