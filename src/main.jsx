@@ -49,6 +49,24 @@ const retailZones = [
   },
 ]
 
+const spaceViews = [
+  {
+    id: 'left',
+    label: 'Apex Wall',
+    note: 'Turn toward the left wall for Apex pieces and headwear.',
+  },
+  {
+    id: 'room',
+    label: 'Main Floor',
+    note: 'Take in the full room, feature wall and central aisle.',
+  },
+  {
+    id: 'right',
+    label: 'Studio Wall',
+    note: 'Turn toward the studio wall and Objects & Editions.',
+  },
+]
+
 function GarmentArt({ type, accent = '#00AEEF' }) {
   const common = { fill: '#111419', stroke: '#c8cbd0', strokeWidth: 1.5 }
   const gradientId = `g-${type}`
@@ -264,19 +282,33 @@ function MobileStore({ collection, onCollection, onProduct }) {
   </section>
 }
 
+function ViewNav({ view, onView }) {
+  return <nav className="view-nav" aria-label="Look around the store">
+    {spaceViews.map(space => (
+      <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}>
+        <i aria-hidden="true"/><span>{space.label}</span>
+      </button>
+    ))}
+  </nav>
+}
+
 function Interior({ onExit, onProduct, bagCount, onBag }) {
   const [collection, setCollection] = useState('All')
+  const [view, setView] = useState('room')
   const visibleProducts = useMemo(() => products.filter(product => collection === 'All' || product.collection === collection), [collection])
+  const currentView = spaceViews.find(space => space.id === view) ?? spaceViews[1]
+
   return <section className="interior">
     <StoreHeader bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
-    <div className="interior-scene">
+    <div className={`interior-scene view-${view}`}>
       <div className="interior-image" />
       <div className="room-shade" />
-      <div className="scene-label"><span className="eyebrow">INSIDE AEROVISTA</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>Explore the walls and select any piece for a closer look.</p></div>
+      <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
       <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Outside</button>
       <div className="fixture-layer">
         {fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} collection={collection} onOpen={onProduct}/>) }
       </div>
+      <ViewNav view={view} onView={setView}/>
       <div className="center-prompt"><Sparkles size={14}/><span>{visibleProducts.length} pieces in view</span></div>
     </div>
     <MobileStore collection={collection} onCollection={setCollection} onProduct={onProduct}/>
