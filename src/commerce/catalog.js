@@ -1,7 +1,23 @@
-const STOP_WORDS = new Set([
-  'aerovista', 'the', 'and', 'with', 'premium', 'unisex', 'apparel', 'wear',
-  'black', 'white', 'gray', 'grey', 'tee', 'shirt', 'hoodie', 'sweatshirt', 'cap', 'hat',
-])
+// Explicit bindings are the authority for live checkout identity. A presentation
+// image is allowed to differ from the catalog image, but a visual resemblance is
+// never enough to decide what Square product a customer is buying.
+const PRODUCT_BINDINGS = Object.freeze({
+  'core-tee-black': 'aerovista-core-tee',
+  'aerovista-divisions-hoodie': 'aerovista-division-hoodie',
+  'apex-glitch-tee-black': 'aerovista-apex-glitch-tee-black',
+  'apex-signal-sweatshirt': 'aerovista-apex-signal-sweatshirt',
+  'apex-vintage-tee': 'aerovista-apex-vintage-tee',
+  'apex-shadow-long-sleeve': 'aerovista-shadow-pattern-long-sleeve-tee',
+  'apex-embroidered-hat-black': 'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark',
+  'apex-camo-flexfit-hat': 'aerovista-apex-camo-flexfit-hat',
+  'glitch-orbit-cap-black': 'glitch-orbit-logo-black',
+  'architect-field-issue-tee-black': 'architect-field-issue-tee-black',
+  'architect-field-issue-tee-ash': 'architect-field-issue-tee-ash',
+  'architect-built-different-hoodie': 'architect-built-different-hoodie-black',
+  'drafted-a-premium-sweatshirt': 'drafted-a-premium-sweatshirt',
+  'drafted-a-snapback': 'aerovista-apex-mesh-trucker-cap',
+  'apex-relic-deck': 'aerovista-apex-relic-playing-cards',
+})
 
 const normalize = (value) => String(value || '')
   .normalize('NFKD')
@@ -12,32 +28,11 @@ const normalize = (value) => String(value || '')
 
 const compact = (value) => normalize(value).replace(/\s+/g, '-')
 const baseName = (value) => String(value || '').split(/[\\/]/).pop().replace(/\.[^.]+$/, '').toLowerCase()
-const tokenSet = (value) => new Set(normalize(value).split(/\s+/).filter(token => token.length > 2 && !STOP_WORDS.has(token)))
 
-function overlapScore(a, b) {
-  const left = tokenSet(a)
-  const right = tokenSet(b)
-  if (!left.size || !right.size) return 0
-  const shared = [...left].filter(token => right.has(token)).length
-  if (shared < 2) return 0
-  return (shared / Math.max(left.size, right.size)) * 60
-}
-
-function presentationSource(product) {
-  return [product.id, product.name, product.shortName, ...(product.commerceAliases || [])].filter(Boolean).join(' ')
-}
-
-function backendSource(product) {
-  return [product.id, product.name, product.title, product.slug, product.image, ...(product.tags || [])].filter(Boolean).join(' ')
-}
-
-function matchScore(presentation, backend) {
+function exactMatchScore(presentation, backend) {
   const pid = compact(presentation.id)
   const bid = compact(backend.id || backend.slug)
   if (pid && bid && pid === bid) return 100
-
-  const aliases = (presentation.commerceAliases || []).map(compact)
-  if (bid && aliases.includes(bid)) return 98
 
   const pImage = baseName(presentation.image)
   const bImage = baseName(backend.image || backend.media?.[0]?.legacySrc)
@@ -47,7 +42,7 @@ function matchScore(presentation, backend) {
   const bName = compact(backend.name || backend.title)
   if (pName && bName && pName === bName) return 92
 
-  return overlapScore(presentationSource(presentation), backendSource(backend))
+  return 0
 }
 
 function legacyVariants(product) {
@@ -111,12 +106,20 @@ function normalizeBackendProduct(product, mode, catalogVersion) {
 }
 
 function chooseMatch(presentation, candidates) {
+  const boundId = PRODUCT_BINDINGS[presentation.id]
+  if (boundId) {
+    const bound = candidates.find(candidate => candidate.id === boundId)
+    return bound ? { candidate: bound, score: 110, source: 'binding' } : null
+  }
+
+  // New presentation entries may bind automatically only on exact identity
+  // signals. No fuzzy/token matching is allowed for checkout identity.
   const ranked = candidates
-    .map(candidate => ({ candidate, score: matchScore(presentation, candidate) }))
-    .filter(result => result.score >= 42)
+    .map(candidate => ({ candidate, score: exactMatchScore(presentation, candidate), source: 'exact' }))
+    .filter(result => result.score > 0)
     .sort((a, b) => b.score - a.score)
   if (!ranked.length) return null
-  if (ranked[1] && ranked[0].score < 90 && ranked[0].score - ranked[1].score < 8) return null
+  if (ranked[1] && ranked[0].score === ranked[1].score) return null
   return ranked[0]
 }
 
@@ -156,10 +159,11 @@ export function hydratePresentationProducts(presentationProducts, catalog) {
       productId: backend.id,
       catalogVersion,
       matchScore: selected.score,
+      matchSource: selected.source,
       backendTitle: backend.title,
       variants: backend.variants,
     }
-    matches.push({ presentationId: presentation.id, productId: backend.id, score: selected.score })
+    matches.push({ presentationId: presentation.id, productId: backend.id, score: selected.score, source: selected.source })
   }
 
   return {
@@ -177,3 +181,5 @@ export function selectCommerceVariant(product, size) {
   const available = variants.filter(variant => variant.availability === 'available' && Number.isFinite(variant.price))
   return available.find(variant => variant.size === size) || (available.length === 1 ? available[0] : null)
 }
+
+export { PRODUCT_BINDINGS }
