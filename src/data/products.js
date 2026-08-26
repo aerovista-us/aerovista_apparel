@@ -1,79 +1,52 @@
 // Merchandise registry.
-// Real product photography belongs here; physical placement belongs in fixtures.js.
-// For best in-room results, use a transparent PNG/WebP with the item tightly cropped.
+// Products own WHAT they are. Fixtures own WHERE they appear in the store.
+// Prices are intentionally null until real commerce pricing is supplied.
 const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 
+const apparelSizes = ['S','M','L','XL','2XL']
+const hatSizes = ['Adjustable']
+const preview = (name, shortName, type, collection, image, accent = '#00AEEF', sizes = apparelSizes, description = '') => ({
+  id: image.replace(/^.*\//, '').replace(/\.[^.]+$/, ''),
+  name,
+  shortName,
+  type,
+  price: null,
+  collection,
+  image: asset(image),
+  accent,
+  description: description || `${name} from the AeroVista apparel archive. Prototype merchandising entry; final product copy and pricing pending.`,
+  colors: [],
+  sizes,
+  display: { objectPosition: '50% 50%' },
+})
+
 export const products = [
+  preview('AeroVista Core Tee', 'Core Tee', 'tee', 'Core', 'products/core-tee-black.png'),
+  preview('AeroVista Divisions Hoodie', 'Divisions Hoodie', 'hoodie', 'Core', 'products/aerovista-divisions-hoodie.png'),
+
+  preview('AeroVista Apex Glitch Tee — Black', 'Apex Glitch Tee', 'tee', 'Apex', 'products/apex-glitch-tee-black.png'),
   {
-    id: 'core-hoodie',
-    name: 'AeroVista Core Hoodie',
-    shortName: 'Core Hoodie',
-    type: 'hoodie',
-    price: 89,
-    collection: 'Core',
-    image: null,
-    accent: '#00AEEF',
-    description: 'Heavyweight matte-black fleece with restrained AeroVista signature detailing.',
-    colors: ['Core Black', 'Graphite'],
-    sizes: ['S','M','L','XL','2XL'],
-    display: { objectPosition: '50% 50%' },
+    ...preview('AeroVista Apex Pattern Hoodie', 'Apex Pattern Hoodie', 'hoodie', 'Apex', 'products/apex-pattern-hoodie.png'),
+    gallery: [asset('products/apex-pattern-hoodie-alt.png')],
   },
-  {
-    id: 'shadow-bomber',
-    name: 'Shadow Wear Bomber',
-    shortName: 'Shadow Bomber',
-    type: 'bomber',
-    price: 139,
-    collection: 'Shadow Wear',
-    image: null,
-    accent: '#C0C0C0',
-    description: 'Low-visibility operator jacket with tonal structure and metallic micro-details.',
-    colors: ['Blackout'],
-    sizes: ['S','M','L','XL','2XL'],
-    display: { objectPosition: '50% 50%' },
-  },
-  {
-    id: 'signal-tee',
-    name: 'Signal Line Tee',
-    shortName: 'Signal Tee',
-    type: 'tee',
-    price: 42,
-    collection: 'Core',
-    image: null,
-    accent: '#00AEEF',
-    description: 'Soft-weight technical tee with a single controlled signal-line graphic.',
-    colors: ['Core Black', 'Soft White'],
-    sizes: ['S','M','L','XL','2XL'],
-    display: { objectPosition: '50% 50%' },
-  },
-  {
-    id: 'operator-jogger',
-    name: 'Operator Jogger',
-    shortName: 'Operator Jogger',
-    type: 'jogger',
-    price: 76,
-    collection: 'Core',
-    image: null,
-    accent: '#7E8791',
-    description: 'Tapered everyday pant built for travel, studio work, and long operational days.',
-    colors: ['Graphite', 'Core Black'],
-    sizes: ['S','M','L','XL'],
-    display: { objectPosition: '50% 50%' },
-  },
-  {
-    id: 'docklife-cap',
-    name: 'DockLife Rope Cap',
-    shortName: 'DockLife Cap',
-    type: 'cap',
-    price: 36,
-    collection: 'DockLife',
-    image: null,
-    accent: '#8FA7B8',
-    description: 'North Idaho lake-life rope cap with premium embroidered detailing.',
-    colors: ['Black / Rope', 'Stone / Rope'],
-    sizes: ['Adjustable'],
-    display: { objectPosition: '50% 50%' },
-  },
+  preview('AeroVista Apex Signal Sweatshirt', 'Signal Sweatshirt', 'sweatshirt', 'Apex', 'products/apex-signal-sweatshirt.png'),
+  preview('AeroVista Apex Vintage Tee', 'Apex Vintage Tee', 'tee', 'Apex', 'products/apex-vintage-tee.png'),
+  preview('AeroVista Apex Shadow Long Sleeve', 'Shadow Long Sleeve', 'long-sleeve', 'Shadow Wear', 'products/apex-shadow-long-sleeve.png', '#777E86'),
+  preview('Apex Embroidered Hat — Black', 'Apex Hat', 'cap', 'Apex', 'products/apex-embroidered-hat-black.png', '#C0C0C0', hatSizes),
+  preview('AeroVista Apex Camo Flexfit Hat', 'Apex Camo Hat', 'cap', 'Apex', 'products/apex-camo-flexfit-hat.png', '#8A9187', hatSizes),
+  preview('Glitch Orbit Logo Cap — Black', 'Glitch Orbit Cap', 'cap', 'Apex', 'products/glitch-orbit-cap-black.png', '#AEB4BA', hatSizes),
+  preview('Glitched Orbit Gray Hat', 'Orbit Gray Hat', 'cap', 'Apex', 'products/glitch-orbit-cap-gray.png', '#9CA3AA', hatSizes),
+
+  preview('Architect Field Issue Tee — Black', 'Field Issue Tee', 'tee', 'Architect', 'products/architect-field-issue-tee-black.png', '#D5D7DA'),
+  preview('Architect Field Issue Tee — Ash', 'Field Issue Tee — Ash', 'tee', 'Architect', 'products/architect-field-issue-tee-ash.png', '#C9C3B7'),
+  preview('Architect Built Different Hoodie', 'Built Different Hoodie', 'hoodie', 'Architect', 'products/architect-built-different-hoodie.png', '#D0D2D4'),
+  preview('Drafted A Premium Sweatshirt', 'Drafted A Sweatshirt', 'sweatshirt', 'Architect', 'products/drafted-a-premium-sweatshirt.png', '#D0D2D4'),
+  preview('Drafted A Snapback', 'Drafted A Snapback', 'cap', 'Architect', 'products/drafted-a-snapback.png', '#D0D2D4', hatSizes),
+
+  preview('Vespera Moonscript Hoodie', 'Moonscript Hoodie', 'hoodie', 'Vespera', 'products/vespera-moonscript-hoodie.png', '#B8B2C8'),
+  preview('SoundGoat Hoodie', 'SoundGoat Hoodie', 'hoodie', 'EchoVerse', 'products/soundgoat-hoodie.png', '#9FD279'),
+  preview('Powder Peaks V2', 'Powder Peaks', 'hoodie', 'Shadow Wear', 'products/powder-peaks-v2.png', '#B6C2CA'),
+
   {
     id: 'apex-relic-deck',
     name: 'AeroVista Apex Relic Playing Cards',
