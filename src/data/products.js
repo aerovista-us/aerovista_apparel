@@ -1,6 +1,8 @@
 // Merchandise registry.
 // Real product photography belongs here; physical placement belongs in fixtures.js.
 // For best in-room results, use a transparent PNG/WebP with the item tightly cropped.
+const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
+
 export const products = [
   {
     id: 'core-hoodie',
@@ -79,7 +81,7 @@ export const products = [
     type: 'deck',
     price: 28,
     collection: 'Apex',
-    image: '/products/apex-relic.svg',
+    image: asset('products/apex-relic.svg'),
     accent: '#00AEEF',
     description: 'A premium collectible deck built around AeroVista’s Apex system and Seven Divisions, One Vision.',
     colors: ['Apex Relic'],
