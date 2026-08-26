@@ -44,16 +44,17 @@
     <line x1="1584" y1="98" x2="1584" y2="884"/><line x1="1465" y1="126" x2="1465" y2="807"/><line x1="1344" y1="158" x2="1344" y2="730"/><line x1="1226" y1="193" x2="1226" y2="651"/>
   </g>
 
-  <!-- merchandise wall bays: intentionally empty; live products sit above this art -->
+  <!-- perspective-calibrated merchandise wall bays. Every horizontal feature
+       is derived from the same side-wall plane, so rails converge with the room. -->
   <g opacity=".92">
-    <polygon points="72,238 468,294 468,579 72,701" fill="#0d1013" stroke="#33383d" stroke-width="2"/>
-    <polygon points="1204,294 1600,238 1600,701 1204,579" fill="#0d1013" stroke="#33383d" stroke-width="2"/>
-    <polygon points="92,266 449,311 449,552 92,657" fill="url(#glass)"/>
-    <polygon points="1223,311 1580,266 1580,657 1223,552" fill="url(#glass)"/>
+    <polygon points="72,283 468,284 468,518 72,685" fill="#0d1013" stroke="#33383d" stroke-width="2"/>
+    <polygon points="1204,284 1600,283 1600,685 1204,518" fill="#0d1013" stroke="#33383d" stroke-width="2"/>
+    <polygon points="92,317 449,305 449,505 92,642" fill="url(#glass)"/>
+    <polygon points="1223,305 1580,317 1580,642 1223,505" fill="url(#glass)"/>
   </g>
-  <g stroke="#8d8478" stroke-width="3" opacity=".55">
-    <line x1="116" y1="354" x2="436" y2="386"/><line x1="1236" y1="386" x2="1556" y2="354"/>
-    <line x1="132" y1="540" x2="432" y2="552"/><line x1="1240" y1="552" x2="1540" y2="540"/>
+  <g stroke="#8d8478" stroke-width="3" opacity=".58">
+    <line x1="116" y1="425" x2="436" y2="376"/><line x1="1236" y1="376" x2="1556" y2="425"/>
+    <line x1="132" y1="594" x2="432" y2="490"/><line x1="1240" y1="490" x2="1540" y2="594"/>
   </g>
 
   <!-- back wall architecture: depth beyond the current room -->
