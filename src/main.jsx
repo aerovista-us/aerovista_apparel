@@ -10,6 +10,7 @@ import './styles.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const productMap = new Map(products.map(product => [product.id, product]))
+const priceLabel = (product) => Number.isFinite(product?.price) ? money.format(product.price) : 'Price TBD'
 
 function GarmentArt({ type, accent = '#00AEEF' }) {
   const common = { fill: '#111419', stroke: '#c8cbd0', strokeWidth: 1.5 }
@@ -72,7 +73,7 @@ function MerchItem({ product, slot, onOpen }) {
     <button className={`merch-item merch-${product.type}`} style={style} onClick={() => onOpen(product)} aria-label={`View ${product.name}`}>
       <span className="merch-object"><ProductImage product={product} stage /></span>
       <span className="merch-pin" />
-      <span className="merch-tag"><b>{product.shortName}</b><em>{money.format(product.price)}</em></span>
+      <span className="merch-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
     </button>
   )
 }
@@ -122,14 +123,14 @@ function ProductDrawer({ product, onClose, onAdd }) {
         <div className="drawer-content">
           <span className="eyebrow">{product.collection}</span>
           <h2>{product.name}</h2>
-          <p className="price">{money.format(product.price)}</p>
+          <p className="price">{priceLabel(product)}</p>
           <p>{product.description}</p>
           <div className="selector">
             <span>Size / format</span>
             <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''}>{s}</button>)}</div>
           </div>
           <button className="primary wide" onClick={() => onAdd(product, size)}>Add to bag <ShoppingBag size={17}/></button>
-          <small>Merchandising is fixture-driven. Replacing this product image does not require changing the room or fixture layout.</small>
+          <small>Prototype inventory. Final pricing and commerce data will replace preview values without changing the room layout.</small>
         </div>
       </aside>
     </div>
@@ -137,7 +138,8 @@ function ProductDrawer({ product, onClose, onAdd }) {
 }
 
 function BagDrawer({ bag, onClose, onRemove }) {
-  const total = bag.reduce((sum, item) => sum + item.product.price, 0)
+  const hasTbd = bag.some(item => !Number.isFinite(item.product.price))
+  const total = bag.reduce((sum, item) => sum + (Number.isFinite(item.product.price) ? item.product.price : 0), 0)
   return (
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label="Shopping bag">
       <button className="drawer-scrim" onClick={onClose} aria-label="Close bag" />
@@ -148,11 +150,11 @@ function BagDrawer({ bag, onClose, onRemove }) {
           {bag.length === 0 ? <p className="empty">Nothing here yet. Walk the floor and select an item.</p> : bag.map((item, index) => (
             <div className="bag-row" key={`${item.product.id}-${index}`}>
               <ProductImage product={item.product}/>
-              <div><b>{item.product.shortName}</b><span>{item.size}</span><span>{money.format(item.product.price)}</span></div>
+              <div><b>{item.product.shortName}</b><span>{item.size}</span><span>{priceLabel(item.product)}</span></div>
               <button className="icon-btn" onClick={() => onRemove(index)}><Minus size={15}/></button>
             </div>
           ))}
-          <div className="bag-total"><span>Total</span><b>{money.format(total)}</b></div>
+          <div className="bag-total"><span>Total</span><b>{hasTbd ? 'TBD' : money.format(total)}</b></div>
           <button className="primary wide" disabled={!bag.length}>Checkout prototype <ArrowRight size={17}/></button>
         </div>
       </aside>
@@ -161,7 +163,7 @@ function BagDrawer({ bag, onClose, onRemove }) {
 }
 
 function StoreHeader({ bagCount, onBag, onExit, collection, onCollection, showMap, onMap }) {
-  const collections = ['All', 'Core', 'Shadow Wear', 'DockLife', 'Apex']
+  const collections = ['All', ...Array.from(new Set(products.map(product => product.collection)))]
   return <header className="store-header">
     <button className="wordmark" onClick={onExit}><span className="apex">/\\</span> AEROVISTA</button>
     <nav>{collections.map(name => <button key={name} className={collection === name ? 'active' : ''} onClick={() => onCollection(name)}>{name === 'All' ? 'Shop all' : name}</button>)}</nav>
@@ -203,7 +205,7 @@ function Interior({ onExit, onProduct, bagCount, onBag }) {
     </div>
     <section className="mobile-merch">
       <div className="mobile-title"><span className="eyebrow">BROWSE THE FLOOR</span><h2>{collection === 'All' ? 'Current pieces' : collection}</h2></div>
-      <div className="mobile-grid">{visibleProducts.map(product => <button className="mobile-card" key={product.id} onClick={() => onProduct(product)}><ProductImage product={product}/><span><b>{product.shortName}</b><em>{money.format(product.price)}</em></span></button>)}</div>
+      <div className="mobile-grid">{visibleProducts.map(product => <button className="mobile-card" key={product.id} onClick={() => onProduct(product)}><ProductImage product={product}/><span><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>)}</div>
     </section>
   </section>
 }
