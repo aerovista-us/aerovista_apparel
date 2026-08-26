@@ -5,11 +5,26 @@ import {
 } from 'lucide-react'
 import { products } from './data/products'
 import { fixtures } from './data/fixtures'
+import { hydratePresentationProducts, selectCommerceVariant } from './commerce/catalog'
+import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import './styles.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const productMap = new Map(products.map(product => [product.id, product]))
-const priceLabel = (product) => Number.isFinite(product?.price) ? money.format(product.price) : 'Price TBD'
+
+function priceLabel(product) {
+  if (product?.commerceStatus === 'presentation-only') return 'Preview'
+  if (product?.commerceStatus === 'unavailable') return 'Unavailable'
+  if (product?.commerceStatus === 'offline') return 'Catalog offline'
+  return Number.isFinite(product?.price) ? money.format(product.price) : 'Price TBD'
+}
+
+function commerceNote(product) {
+  if (product?.commerceStatus === 'connected') return 'Live size, availability and pricing are verified by AeroVista Commerce.'
+  if (product?.commerceStatus === 'unavailable') return 'This piece is in the catalog but is not currently available for checkout.'
+  if (product?.commerceStatus === 'offline') return 'Live catalog details are temporarily unavailable.'
+  return 'This display piece is not connected to the live catalog yet.'
+}
 
 const retailZones = [
   {
@@ -50,21 +65,9 @@ const retailZones = [
 ]
 
 const spaceViews = [
-  {
-    id: 'left',
-    label: 'Apex Wall',
-    note: 'Turn toward the left wall for Apex pieces and headwear.',
-  },
-  {
-    id: 'room',
-    label: 'Main Floor',
-    note: 'Take in the full room, feature wall and central aisle.',
-  },
-  {
-    id: 'right',
-    label: 'Studio Wall',
-    note: 'Turn toward the studio wall and Objects & Editions.',
-  },
+  { id: 'left', label: 'Apex Wall', note: 'Turn toward the left wall for Apex pieces and headwear.' },
+  { id: 'room', label: 'Main Floor', note: 'Take in the full room, feature wall and central aisle.' },
+  { id: 'right', label: 'Studio Wall', note: 'Turn toward the studio wall and Objects & Editions.' },
 ]
 
 function GarmentArt({ type, accent = '#00AEEF' }) {
@@ -162,6 +165,8 @@ function ProductDrawer({ product, onClose, onAdd }) {
   const [size, setSize] = useState(product?.sizes?.[0] ?? '')
   useEffect(() => setSize(product?.sizes?.[0] ?? ''), [product])
   if (!product) return null
+  const variant = selectCommerceVariant(product, size)
+  const canAdd = Boolean(variant && product.commerceStatus === 'connected')
   return (
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label={product.name}>
       <button className="drawer-scrim" onClick={onClose} aria-label="Close product" />
@@ -177,17 +182,19 @@ function ProductDrawer({ product, onClose, onAdd }) {
             <span>Size / format</span>
             <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''}>{s}</button>)}</div>
           </div>
-          <button className="primary wide" onClick={() => onAdd(product, size)}>Add to bag <ShoppingBag size={17}/></button>
-          <small>Release availability and final pricing may vary.</small>
+          <button className="primary wide" disabled={!canAdd} onClick={() => onAdd(product, size, variant)}>
+            {canAdd ? <>Add to bag <ShoppingBag size={17}/></> : 'Preview only'}
+          </button>
+          <small>{commerceNote(product)}</small>
         </div>
       </aside>
     </div>
   )
 }
 
-function BagDrawer({ bag, onClose, onRemove }) {
-  const hasTbd = bag.some(item => !Number.isFinite(item.product.price))
-  const total = bag.reduce((sum, item) => sum + (Number.isFinite(item.product.price) ? item.product.price : 0), 0)
+function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutError }) {
+  const hasUnready = bag.some(item => !item.variant || !Number.isFinite(item.variant.price))
+  const total = bag.reduce((sum, item) => sum + (Number.isFinite(item.variant?.price) ? item.variant.price * (item.quantity || 1) : 0), 0)
   return (
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label="Shopping bag">
       <button className="drawer-scrim" onClick={onClose} aria-label="Close bag" />
@@ -196,14 +203,18 @@ function BagDrawer({ bag, onClose, onRemove }) {
         <div className="drawer-content bag-content">
           <span className="eyebrow">AEROVISTA STORE</span><h2>Your bag</h2>
           {bag.length === 0 ? <p className="empty">Nothing here yet. Explore the walls and select a piece.</p> : bag.map((item, index) => (
-            <div className="bag-row" key={`${item.product.id}-${index}`}>
+            <div className="bag-row" key={`${item.product.id}-${item.variant?.id || item.size}-${index}`}>
               <ProductImage product={item.product}/>
-              <div><b>{item.product.shortName}</b><span>{item.size}</span><span>{priceLabel(item.product)}</span></div>
+              <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{Number.isFinite(item.variant?.price) ? money.format(item.variant.price) : priceLabel(item.product)}</span></div>
               <button className="icon-btn" onClick={() => onRemove(index)}><Minus size={15}/></button>
             </div>
           ))}
-          <div className="bag-total"><span>Total</span><b>{hasTbd ? 'TBD' : money.format(total)}</b></div>
-          <button className="primary wide" disabled={!bag.length || hasTbd}>{hasTbd ? 'Checkout coming soon' : 'Checkout'} <ArrowRight size={17}/></button>
+          <div className="bag-total"><span>Total</span><b>{hasUnready ? 'TBD' : money.format(total)}</b></div>
+          {checkoutError && <p className="checkout-error">{checkoutError}</p>}
+          <button className="primary wide" disabled={!bag.length || hasUnready || checkoutBusy} onClick={onCheckout}>
+            {checkoutBusy ? 'Opening checkout…' : <>Checkout <ArrowRight size={17}/></>}
+          </button>
+          <small>Final totals are verified by AeroVista Commerce before Square checkout.</small>
         </div>
       </aside>
     </div>
@@ -321,18 +332,52 @@ function App() {
   const [selected, setSelected] = useState(null)
   const [bagOpen, setBagOpen] = useState(false)
   const [bag, setBag] = useState([])
+  const [catalogState, setCatalogState] = useState({ status: 'loading', matched: 0, total: products.length })
+  const [checkoutBusy, setCheckoutBusy] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    Promise.allSettled([loadCommerceCatalog(), loadCommerceBootstrap()]).then(([catalogResult, bootstrapResult]) => {
+      if (!active) return
+      if (catalogResult.status === 'fulfilled') {
+        const report = hydratePresentationProducts(products, catalogResult.value)
+        setCatalogState({ status: 'ready', ...report, bootstrap: bootstrapResult.status === 'fulfilled' ? bootstrapResult.value : null })
+      } else {
+        products.forEach(product => { product.commerceStatus = 'offline'; product.commerce = null })
+        setCatalogState({ status: 'offline', matched: 0, total: products.length, error: catalogResult.reason?.message || 'Catalog unavailable' })
+      }
+    })
+    return () => { active = false }
+  }, [])
 
   function enter() {
     setEntering(true)
     window.setTimeout(() => { setInside(true); setEntering(false) }, 1050)
   }
   function leave() { setSelected(null); setBagOpen(false); setInside(false) }
-  function add(product, size) { setBag(current => [...current, { product, size }]); setSelected(null); setBagOpen(true) }
+  function add(product, size, variant) {
+    setBag(current => [...current, { product, size, variant, quantity: 1 }])
+    setSelected(null)
+    setCheckoutError('')
+    setBagOpen(true)
+  }
+  async function checkout() {
+    setCheckoutBusy(true)
+    setCheckoutError('')
+    try {
+      const result = await beginCheckout(bag)
+      window.location.assign(result.checkoutUrl)
+    } catch (error) {
+      setCheckoutError(error?.message || 'Checkout is temporarily unavailable.')
+      setCheckoutBusy(false)
+    }
+  }
 
-  return <main className="app">
+  return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
     {!inside ? <Exterior entering={entering} onEnter={enter}/> : <Interior onExit={leave} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>} 
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
-    {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))}/>} 
+    {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
   </main>
 }
 

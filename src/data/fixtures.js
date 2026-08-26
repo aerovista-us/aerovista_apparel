@@ -7,34 +7,35 @@ export const fixtures = [
     id: 'left-wall-rack',
     type: 'wall-rack',
     label: 'Apex Wall',
-    position: { x: 4.3, y: 25.3, w: 23.9, h: 49.2 },
+    // A tiny inward correction keeps the two side walls visually balanced on wide screens.
+    position: { x: 4.5, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      // Upper rail — front/left to back/right.
-      { productId: 'core-tee-black', x: 14, y: 50.3, scale: 1.12, tilt: -1 },
-      { productId: 'apex-vintage-tee', x: 39, y: 47.0, scale: 1.04, tilt: 0 },
-      { productId: 'apex-signal-sweatshirt', x: 64, y: 43.7, scale: .96, tilt: 0 },
-      { productId: 'apex-pattern-hoodie', x: 89, y: 40.5, scale: .88, tilt: 1 },
-      // Lower rail stays toward the rear half so it does not collide with headwear.
-      { productId: 'aerovista-divisions-hoodie', x: 45, y: 77.8, scale: .97, tilt: -1 },
-      { productId: 'apex-glitch-tee-black', x: 65, y: 71.8, scale: .92, tilt: 0 },
-      { productId: 'apex-shadow-long-sleeve', x: 85, y: 65.9, scale: .87, tilt: 1 },
+      // Upper rail — raised slightly, with a modest scale increase.
+      { productId: 'core-tee-black', x: 14, y: 47.5, scale: 1.17, tilt: -1 },
+      { productId: 'apex-vintage-tee', x: 39, y: 44.2, scale: 1.09, tilt: 0 },
+      { productId: 'apex-signal-sweatshirt', x: 64, y: 40.9, scale: 1.01, tilt: 0 },
+      { productId: 'apex-pattern-hoodie', x: 89, y: 37.7, scale: .93, tilt: 1 },
+      // Lower rail — raised more so it separates cleanly from Headwear.
+      { productId: 'aerovista-divisions-hoodie', x: 45, y: 72.8, scale: 1.03, tilt: -1 },
+      { productId: 'apex-glitch-tee-black', x: 65, y: 67.0, scale: .98, tilt: 0 },
+      { productId: 'apex-shadow-long-sleeve', x: 85, y: 61.3, scale: .93, tilt: 1 },
     ],
   },
   {
     id: 'right-wall-rack',
     type: 'wall-rack',
     label: 'Studio Wall',
-    position: { x: 71.8, y: 25.3, w: 23.9, h: 49.2 },
+    position: { x: 71.6, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      // Upper rail — back/left to front/right.
-      { productId: 'architect-field-issue-tee-black', x: 11, y: 40.5, scale: .88, tilt: -1 },
-      { productId: 'architect-field-issue-tee-ash', x: 36, y: 43.7, scale: .96, tilt: 0 },
-      { productId: 'vespera-moonscript-hoodie', x: 61, y: 47.0, scale: 1.04, tilt: 0 },
-      { productId: 'soundgoat-hoodie', x: 86, y: 50.3, scale: 1.12, tilt: 1 },
+      // Upper rail — mirrored depth progression.
+      { productId: 'architect-field-issue-tee-black', x: 11, y: 37.7, scale: .93, tilt: -1 },
+      { productId: 'architect-field-issue-tee-ash', x: 36, y: 40.9, scale: 1.01, tilt: 0 },
+      { productId: 'vespera-moonscript-hoodie', x: 61, y: 44.2, scale: 1.09, tilt: 0 },
+      { productId: 'soundgoat-hoodie', x: 86, y: 47.5, scale: 1.17, tilt: 1 },
       // Lower rail.
-      { productId: 'architect-built-different-hoodie', x: 15, y: 65.9, scale: .87, tilt: -1 },
-      { productId: 'drafted-a-premium-sweatshirt', x: 45, y: 74.8, scale: .97, tilt: 0 },
-      { productId: 'powder-peaks-v2', x: 75, y: 83.7, scale: 1.07, tilt: 1 },
+      { productId: 'architect-built-different-hoodie', x: 15, y: 61.3, scale: .93, tilt: -1 },
+      { productId: 'drafted-a-premium-sweatshirt', x: 45, y: 69.8, scale: 1.03, tilt: 0 },
+      { productId: 'powder-peaks-v2', x: 75, y: 78.3, scale: 1.13, tilt: 1 },
     ],
   },
   {
