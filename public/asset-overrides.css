@@ -7,25 +7,25 @@
 .store-header nav::-webkit-scrollbar{display:none}
 .store-header nav button{flex:0 0 auto}
 
-/* --- scene registration ---
-   The environment art is 1672 x 941. The merchandise layer now uses the exact
-   same cover-sized plane, so ultrawide and short desktop viewports cannot make
-   the products drift away from the rails. */
-.interior-scene{container-type:size}
+/* --- stable scene registration ---
+   Keep the room and live merchandise locked to the viewport. The previous
+   container-query cover-plane experiment could collapse/crop the desktop scene
+   on wide displays. We keep architectural calibration in the fixture data and
+   perspective styling instead of allowing the scene wrapper to alter layout. */
+.interior-scene{position:relative;overflow:hidden}
 .interior-image,.fixture-layer{
-  inset:auto!important;
-  left:50%;
-  top:50%;
-  width:100%;
-  height:100%;
+  position:absolute!important;
+  inset:0!important;
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
 }
-@supports(width:100cqw){
-  .interior-image,.fixture-layer{
-    width:max(100cqw,calc(100cqh * 1.7768331562));
-    height:max(100cqh,calc(100cqw / 1.7768331562));
-  }
+.interior-image{
+  background-size:cover!important;
+  background-position:center 48%!important;
+  background-repeat:no-repeat!important;
 }
-.interior-image{background-size:100% 100%!important;background-position:center!important}
 
 /* --- shared atmosphere --- */
 .exterior,.interior-scene{perspective:1400px;perspective-origin:50% 52%}
@@ -54,21 +54,17 @@
 .interior-scene:has(.merch-item:hover) .room-shade,.interior-scene:has(.merch-item:focus-visible) .room-shade{background:radial-gradient(circle at 50% 49%,transparent 7%,rgba(3,5,7,.12) 36%,rgba(3,5,7,.48) 100%),linear-gradient(0deg,rgba(2,3,5,.34),transparent 36%)}
 
 /* --- physical calibration of the main room --- */
-/* The side architecture already contains perspective-correct rails. Do not draw
-   a second flat programming rail on top of them. */
+/* The side architecture already contains perspective-correct rails. */
 .fixture-wall-rack .fixture-structure{display:none}
 /* The center SVG already contains the physical plinth. */
 .fixture-table-stack .fixture-structure{display:none}
 
-/* Give apparel enough physical presence. Transparent source art often contains
-   its own breathing room, so a slightly larger object box reads more naturally. */
 @media (min-width:761px){
   .fixture-wall-rack .merch-item:not(.merch-cap):not(.merch-deck){width:88px;height:114px}
   .fixture-hat-shelf .merch-cap{width:88px;height:74px}
   .fixture-table-stack .merch-deck{width:66px;height:98px}
 
-  /* Side-wall garments sit parallel to their architectural plane rather than
-     facing the camera like flat stickers. */
+  /* Products inherit the visual angle of their wall plane. */
   .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
     transform:perspective(720px) rotateY(7deg) skewY(1deg);
     transform-origin:right center;
@@ -119,7 +115,6 @@
 .mobile-shelf-piece:focus-visible,.mobile-shelf-piece:active,.mobile-display-piece:focus-visible,.mobile-display-piece:active{transform:translateY(-5px) scale(1.035);filter:drop-shadow(0 14px 16px rgba(0,0,0,.7))}
 .retail-tag{background:rgba(7,9,12,.86);backdrop-filter:blur(7px);border-top:1px solid rgba(255,255,255,.08)}
 
-/* Motion remains optional and restrained. */
 @media (prefers-reduced-motion:reduce){
   .exterior-image,.interior-image,.fixture,.merch-item,.product-image.stage img,.mobile-hanging-piece,.mobile-shelf-piece,.mobile-display-piece{transition:none!important}
 }
