@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, DoorOpen, Layers3, Minus,
-  Search, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, DoorOpen, Minus, Search, Sparkles, X
 } from 'lucide-react'
 import { products } from './data/products'
 import { fixtures } from './data/fixtures'
@@ -11,6 +10,44 @@ import './styles.css'
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 const productMap = new Map(products.map(product => [product.id, product]))
 const priceLabel = (product) => Number.isFinite(product?.price) ? money.format(product.price) : 'Price TBD'
+
+const retailZones = [
+  {
+    id: 'apex-wall',
+    label: 'Apex Wall',
+    note: 'Signature pieces, hung full-length against the dark wall.',
+    kind: 'wall',
+    productIds: ['apex-pattern-hoodie', 'apex-signal-sweatshirt', 'apex-vintage-tee', 'apex-glitch-tee-black'],
+  },
+  {
+    id: 'architect-wall',
+    label: 'Architect Wall',
+    note: 'Field Issue and Built Different pieces presented as a complete wall collection.',
+    kind: 'wall',
+    productIds: ['architect-field-issue-tee-black', 'architect-field-issue-tee-ash', 'architect-built-different-hoodie', 'drafted-a-premium-sweatshirt'],
+  },
+  {
+    id: 'studio-wall',
+    label: 'Studio Wall',
+    note: 'AeroVista core and division pieces together in one rotating wall.',
+    kind: 'wall',
+    productIds: ['core-tee-black', 'aerovista-divisions-hoodie', 'apex-shadow-long-sleeve', 'vespera-moonscript-hoodie', 'soundgoat-hoodie', 'powder-peaks-v2'],
+  },
+  {
+    id: 'headwear',
+    label: 'Headwear',
+    note: 'Caps displayed open and face-forward on dedicated shelves.',
+    kind: 'shelf',
+    productIds: ['apex-embroidered-hat-black', 'apex-camo-flexfit-hat', 'glitch-orbit-cap-black', 'glitch-orbit-cap-gray', 'drafted-a-snapback'],
+  },
+  {
+    id: 'objects',
+    label: 'Objects & Editions',
+    note: 'Collectibles and limited objects stay on the display surface — never mixed into apparel walls.',
+    kind: 'table',
+    productIds: ['apex-relic-deck'],
+  },
+]
 
 function GarmentArt({ type, accent = '#00AEEF' }) {
   const common = { fill: '#111419', stroke: '#c8cbd0', strokeWidth: 1.5 }
@@ -23,7 +60,7 @@ function GarmentArt({ type, accent = '#00AEEF' }) {
           <stop offset="1" stopColor="#080a0d" />
         </linearGradient>
       </defs>
-      {type === 'hoodie' && <>
+      {(type === 'hoodie' || type === 'sweatshirt' || type === 'long-sleeve') && <>
         <path d="M66 40 Q90 20 114 40 L128 58 153 75 140 105 124 96 121 148 59 148 56 96 40 105 27 75 52 58Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
         <path d="M67 42 Q90 66 113 42 Q112 23 90 23 Q68 23 67 42Z" {...common}/><path d="M90 54V139" stroke={accent} opacity=".65"/>
       </>}
@@ -34,10 +71,6 @@ function GarmentArt({ type, accent = '#00AEEF' }) {
       {type === 'tee' && <>
         <path d="M68 38 78 31h24l10 7 30 16-13 29-20-9v74H71V74l-20 9-13-29Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
         <path d="M78 32 Q90 49 102 32" fill="none" stroke={accent}/><path d="M72 91h36" stroke={accent} opacity=".75"/>
-      </>}
-      {type === 'jogger' && <>
-        <path d="M63 30h54l-4 38-10 82H82L90 74l-12 76H57L64 68Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
-        <path d="M65 42h50" stroke={accent}/>
       </>}
       {type === 'cap' && <>
         <path d="M48 96 Q54 45 92 42 Q132 43 137 91 Q98 83 48 96Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
@@ -56,7 +89,6 @@ function ProductImage({ product, large = false, stage = false }) {
       {product.image
         ? <img src={product.image} alt={product.name} style={style} />
         : <GarmentArt type={product.type} accent={product.accent} />}
-      {!product.image && !stage && <span className="replace-label">IMAGE SLOT</span>}
     </div>
   )
 }
@@ -78,33 +110,31 @@ function MerchItem({ product, slot, onOpen }) {
   )
 }
 
-function FixtureShell({ fixture, children, showMap }) {
+function FixtureShell({ fixture, children }) {
   const style = {
     left: `${fixture.position.x}%`, top: `${fixture.position.y}%`,
     width: `${fixture.position.w}%`, height: `${fixture.position.h}%`,
   }
   return (
-    <div className={`fixture fixture-${fixture.type} ${showMap ? 'show-map' : ''}`} style={style}>
+    <div className={`fixture fixture-${fixture.type}`} style={style}>
       <div className="fixture-structure" aria-hidden="true">
         {fixture.type === 'wall-rack' && <><i className="rail"/><i className="rack-leg a"/><i className="rack-leg b"/></>}
-        {fixture.type === 'hero-mannequin' && <><i className="mannequin-head"/><i className="mannequin-stand"/></>}
         {fixture.type === 'table-stack' && <><i className="table-top"/><i className="table-base"/></>}
         {fixture.type === 'hat-shelf' && <><i className="shelf a"/><i className="shelf b"/></>}
         {fixture.type === 'accessories-case' && <><i className="case-glass"/><i className="case-base"/></>}
       </div>
       {children}
-      <span className="fixture-label">{fixture.label}</span>
     </div>
   )
 }
 
-function Fixture({ fixture, collection, onOpen, showMap }) {
+function Fixture({ fixture, collection, onOpen }) {
   const items = fixture.slots
     .map(slot => ({ slot, product: productMap.get(slot.productId) }))
     .filter(({ product }) => product && (collection === 'All' || product.collection === collection))
   if (!items.length) return null
   return (
-    <FixtureShell fixture={fixture} showMap={showMap}>
+    <FixtureShell fixture={fixture}>
       {items.map(({ product, slot }, index) => <MerchItem key={`${fixture.id}-${product.id}-${index}`} product={product} slot={slot} onOpen={onOpen}/>) }
     </FixtureShell>
   )
@@ -130,7 +160,7 @@ function ProductDrawer({ product, onClose, onAdd }) {
             <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''}>{s}</button>)}</div>
           </div>
           <button className="primary wide" onClick={() => onAdd(product, size)}>Add to bag <ShoppingBag size={17}/></button>
-          <small>Prototype inventory. Final pricing and commerce data will replace preview values without changing the room layout.</small>
+          <small>Release availability and final pricing may vary.</small>
         </div>
       </aside>
     </div>
@@ -147,7 +177,7 @@ function BagDrawer({ bag, onClose, onRemove }) {
         <button className="icon-btn drawer-close" onClick={onClose}><X size={20}/></button>
         <div className="drawer-content bag-content">
           <span className="eyebrow">AEROVISTA STORE</span><h2>Your bag</h2>
-          {bag.length === 0 ? <p className="empty">Nothing here yet. Walk the floor and select an item.</p> : bag.map((item, index) => (
+          {bag.length === 0 ? <p className="empty">Nothing here yet. Explore the walls and select a piece.</p> : bag.map((item, index) => (
             <div className="bag-row" key={`${item.product.id}-${index}`}>
               <ProductImage product={item.product}/>
               <div><b>{item.product.shortName}</b><span>{item.size}</span><span>{priceLabel(item.product)}</span></div>
@@ -155,21 +185,30 @@ function BagDrawer({ bag, onClose, onRemove }) {
             </div>
           ))}
           <div className="bag-total"><span>Total</span><b>{hasTbd ? 'TBD' : money.format(total)}</b></div>
-          <button className="primary wide" disabled={!bag.length}>Checkout prototype <ArrowRight size={17}/></button>
+          <button className="primary wide" disabled={!bag.length || hasTbd}>{hasTbd ? 'Checkout coming soon' : 'Checkout'} <ArrowRight size={17}/></button>
         </div>
       </aside>
     </div>
   )
 }
 
-function StoreHeader({ bagCount, onBag, onExit, collection, onCollection, showMap, onMap }) {
+function CollectionNav({ collection, onCollection, mobile = false }) {
   const collections = ['All', ...Array.from(new Set(products.map(product => product.collection)))]
+  return <nav className={mobile ? 'mobile-collection-nav' : ''} aria-label="Collections">
+    {collections.map(name => (
+      <button key={name} className={collection === name ? 'active' : ''} onClick={() => onCollection(name)}>
+        {name === 'All' ? 'Shop all' : name}
+      </button>
+    ))}
+  </nav>
+}
+
+function StoreHeader({ bagCount, onBag, onExit, collection, onCollection }) {
   return <header className="store-header">
     <button className="wordmark" onClick={onExit}><span className="apex">/\\</span> AEROVISTA</button>
-    <nav>{collections.map(name => <button key={name} className={collection === name ? 'active' : ''} onClick={() => onCollection(name)}>{name === 'All' ? 'Shop all' : name}</button>)}</nav>
+    <CollectionNav collection={collection} onCollection={onCollection}/>
     <div className="header-actions">
-      <button className={`icon-btn map-toggle ${showMap ? 'active' : ''}`} onClick={onMap} aria-label="Toggle fixture map" title="Fixture map"><Layers3 size={18}/></button>
-      <button className="icon-btn" aria-label="Search"><Search size={18}/></button>
+      <button className="icon-btn search-button" aria-label="Search"><Search size={18}/></button>
       <button className="bag-button" onClick={onBag}><ShoppingBag size={18}/><span>{bagCount}</span></button>
     </div>
   </header>
@@ -179,34 +218,68 @@ function Exterior({ entering, onEnter }) {
   return <section className={`exterior ${entering ? 'entering' : ''}`}>
     <div className="exterior-image" />
     <div className="vignette" />
-    <div className="brand-plaque"><span>THE AEROVISTA STORE</span><small>COEUR D'ALENE · PROTOTYPE 02</small></div>
+    <div className="brand-plaque"><span>THE AEROVISTA STORE</span><small>COEUR D'ALENE · AEROVISTA APPAREL</small></div>
     <button className="door-hit" onClick={onEnter} aria-label="Enter AeroVista Store"><span><DoorOpen size={20}/> Enter store</span></button>
-    <div className="outside-copy"><span className="eyebrow">A PHYSICAL-DIGITAL STOREFRONT</span><h1>Walk in.<br/>Look around.</h1><p>A real-room shopping concept where products are merchandised onto reusable racks, tables, shelves and displays.</p></div>
+    <div className="outside-copy"><span className="eyebrow">AEROVISTA APPAREL</span><h1>Walk in.<br/>Look around.</h1><p>Apparel, headwear and limited objects presented as a place to explore — not a product grid.</p></div>
     <div className="outside-foot"><span>SEVEN DIVISIONS · ONE VISION</span><span>Click the front door to enter</span></div>
+  </section>
+}
+
+function MobileHangingPiece({ product, onOpen }) {
+  return <button className="mobile-hanging-piece" onClick={() => onOpen(product)} aria-label={`View ${product.name}`}>
+    <span className="hanger-hook" aria-hidden="true" />
+    <ProductImage product={product} stage />
+    <span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
+  </button>
+}
+
+function MobileShelfPiece({ product, onOpen }) {
+  return <button className="mobile-shelf-piece" onClick={() => onOpen(product)} aria-label={`View ${product.name}`}>
+    <ProductImage product={product} stage />
+    <span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
+  </button>
+}
+
+function MobileStore({ collection, onCollection, onProduct }) {
+  const zones = retailZones.map(zone => ({
+    ...zone,
+    items: zone.productIds.map(id => productMap.get(id)).filter(product => product && (collection === 'All' || product.collection === collection)),
+  })).filter(zone => zone.items.length)
+
+  return <section className="mobile-store">
+    <div className="mobile-store-intro">
+      <span className="eyebrow">INSIDE AEROVISTA</span>
+      <h2>Shop the walls</h2>
+      <p>Swipe along each display. Apparel stays hung and full-length; headwear and objects have their own dedicated surfaces.</p>
+    </div>
+    <CollectionNav collection={collection} onCollection={onCollection} mobile />
+    {zones.map(zone => (
+      <section key={zone.id} className={`retail-zone retail-zone-${zone.kind}`}>
+        <header className="retail-zone-header"><div><span>{zone.label}</span><p>{zone.note}</p></div><small>{zone.items.length} pieces</small></header>
+        {zone.kind === 'wall' && <div className="mobile-wall"><div className="mobile-rail" aria-hidden="true"/><div className="mobile-hanging-row">{zone.items.map(product => <MobileHangingPiece key={product.id} product={product} onOpen={onProduct}/>)}</div></div>}
+        {zone.kind === 'shelf' && <div className="mobile-shelf"><div className="mobile-shelf-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct}/>)}</div><div className="shelf-edge" aria-hidden="true"/></div>}
+        {zone.kind === 'table' && <div className="mobile-display-table"><div className="mobile-object-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct}/>)}</div><div className="display-table-edge" aria-hidden="true"/></div>}
+      </section>
+    ))}
   </section>
 }
 
 function Interior({ onExit, onProduct, bagCount, onBag }) {
   const [collection, setCollection] = useState('All')
-  const [showMap, setShowMap] = useState(false)
   const visibleProducts = useMemo(() => products.filter(product => collection === 'All' || product.collection === collection), [collection])
   return <section className="interior">
-    <StoreHeader bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection} showMap={showMap} onMap={() => setShowMap(value => !value)}/>
+    <StoreHeader bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
     <div className="interior-scene">
       <div className="interior-image" />
       <div className="room-shade" />
-      <div className="scene-label"><span className="eyebrow">STORE FLOOR · 01</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{visibleProducts.length} live product modules · click the merchandise itself.</p></div>
+      <div className="scene-label"><span className="eyebrow">INSIDE AEROVISTA</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>Explore the walls and select any piece for a closer look.</p></div>
       <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Outside</button>
-      <div className={`fixture-layer ${showMap ? 'map-on' : ''}`}>
-        {fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} collection={collection} onOpen={onProduct} showMap={showMap}/>) }
+      <div className="fixture-layer">
+        {fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} collection={collection} onOpen={onProduct}/>) }
       </div>
-      <div className="center-prompt"><Sparkles size={14}/><span>Click a garment or object to pick it up</span></div>
-      <div className={`map-note ${showMap ? 'visible' : ''}`}><Layers3 size={14}/><span>Fixture map is a prototype merchandising tool. Customer view is clean by default.</span></div>
+      <div className="center-prompt"><Sparkles size={14}/><span>{visibleProducts.length} pieces in view</span></div>
     </div>
-    <section className="mobile-merch">
-      <div className="mobile-title"><span className="eyebrow">BROWSE THE FLOOR</span><h2>{collection === 'All' ? 'Current pieces' : collection}</h2></div>
-      <div className="mobile-grid">{visibleProducts.map(product => <button className="mobile-card" key={product.id} onClick={() => onProduct(product)}><ProductImage product={product}/><span><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>)}</div>
-    </section>
+    <MobileStore collection={collection} onCollection={setCollection} onProduct={onProduct}/>
   </section>
 }
 
