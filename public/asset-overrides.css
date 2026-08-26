@@ -7,6 +7,26 @@
 .store-header nav::-webkit-scrollbar{display:none}
 .store-header nav button{flex:0 0 auto}
 
+/* --- scene registration ---
+   The environment art is 1672 x 941. The merchandise layer now uses the exact
+   same cover-sized plane, so ultrawide and short desktop viewports cannot make
+   the products drift away from the rails. */
+.interior-scene{container-type:size}
+.interior-image,.fixture-layer{
+  inset:auto!important;
+  left:50%;
+  top:50%;
+  width:100%;
+  height:100%;
+}
+@supports(width:100cqw){
+  .interior-image,.fixture-layer{
+    width:max(100cqw,calc(100cqh * 1.7768331562));
+    height:max(100cqh,calc(100cqw / 1.7768331562));
+  }
+}
+.interior-image{background-size:100% 100%!important;background-position:center!important}
+
 /* --- shared atmosphere --- */
 .exterior,.interior-scene{perspective:1400px;perspective-origin:50% 52%}
 .exterior-image,.interior-image{will-change:transform,filter;backface-visibility:hidden}
@@ -25,16 +45,43 @@
 .brand-plaque{filter:drop-shadow(0 9px 20px rgba(0,0,0,.45))}
 
 /* --- room depth: the scene subtly focuses when merchandise is approached --- */
-.interior-image{transform:scale(1.012);transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .55s ease}
+.interior-image{transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .55s ease}
 .fixture-layer,.fixture{transform-style:preserve-3d}
 .fixture{transition:transform .42s cubic-bezier(.2,.75,.2,1),opacity .35s ease,filter .35s ease}
 .fixture-layer:has(.merch-item:hover) .fixture:not(:has(.merch-item:hover)),.fixture-layer:has(.merch-item:focus-visible) .fixture:not(:has(.merch-item:focus-visible)){opacity:.54;filter:brightness(.67) saturate(.7) blur(.3px)}
 .fixture:has(.merch-item:hover),.fixture:has(.merch-item:focus-visible){z-index:18;transform:translateZ(30px) scale(1.025)}
-.interior-scene:has(.merch-item:hover) .interior-image,.interior-scene:has(.merch-item:focus-visible) .interior-image{transform:scale(1.032);filter:brightness(.77) saturate(.92)}
 .room-shade{transition:background .45s ease,opacity .45s ease}
 .interior-scene:has(.merch-item:hover) .room-shade,.interior-scene:has(.merch-item:focus-visible) .room-shade{background:radial-gradient(circle at 50% 49%,transparent 7%,rgba(3,5,7,.12) 36%,rgba(3,5,7,.48) 100%),linear-gradient(0deg,rgba(2,3,5,.34),transparent 36%)}
 
-/* Hanging apparel gets a visual connection to the rail. */
+/* --- physical calibration of the main room --- */
+/* The side architecture already contains perspective-correct rails. Do not draw
+   a second flat programming rail on top of them. */
+.fixture-wall-rack .fixture-structure{display:none}
+/* The center SVG already contains the physical plinth. */
+.fixture-table-stack .fixture-structure{display:none}
+
+/* Give apparel enough physical presence. Transparent source art often contains
+   its own breathing room, so a slightly larger object box reads more naturally. */
+@media (min-width:761px){
+  .fixture-wall-rack .merch-item:not(.merch-cap):not(.merch-deck){width:88px;height:114px}
+  .fixture-hat-shelf .merch-cap{width:88px;height:74px}
+  .fixture-table-stack .merch-deck{width:66px;height:98px}
+
+  /* Side-wall garments sit parallel to their architectural plane rather than
+     facing the camera like flat stickers. */
+  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
+    transform:perspective(720px) rotateY(7deg) skewY(1deg);
+    transform-origin:right center;
+  }
+  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-object{
+    transform:perspective(720px) rotateY(-7deg) skewY(-1deg);
+    transform-origin:left center;
+  }
+  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-tag{transform-origin:left top}
+  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-tag{transform-origin:right top}
+}
+
+/* Hanging apparel gets a visual connection to the real rail. */
 .merch-hoodie:before,.merch-sweatshirt:before,.merch-long-sleeve:before,.merch-tee:before,.merch-bomber:before{content:"";position:absolute;left:50%;top:-14px;width:24px;height:19px;border:1.5px solid rgba(177,183,188,.56);border-bottom:0;border-radius:14px 14px 0 0;transform:translateX(-50%) scaleX(.74);opacity:.72;filter:drop-shadow(0 3px 3px #000)}
 .merch-hoodie:after,.merch-sweatshirt:after,.merch-long-sleeve:after,.merch-tee:after,.merch-bomber:after{content:"";position:absolute;left:50%;top:-3px;width:42px;height:1px;background:linear-gradient(90deg,transparent,rgba(177,183,188,.7),transparent);transform:translateX(-50%);opacity:.6}
 .merch-item{transition:filter .28s ease,transform .34s cubic-bezier(.2,.8,.2,1),opacity .25s ease}
@@ -75,12 +122,10 @@
 /* Motion remains optional and restrained. */
 @media (prefers-reduced-motion:reduce){
   .exterior-image,.interior-image,.fixture,.merch-item,.product-image.stage img,.mobile-hanging-piece,.mobile-shelf-piece,.mobile-display-piece{transition:none!important}
-  .exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image,.interior-scene:has(.merch-item:hover) .interior-image,.interior-scene:has(.merch-item:focus-visible) .interior-image{transform:none!important}
 }
 
 @media (max-width:760px){
   .interior-scene{perspective:950px}
-  .interior-image{transform:scale(1.055);background-position:center 50%!important}
   .scene-label{background:linear-gradient(90deg,rgba(5,7,10,.82),rgba(5,7,10,.2));max-width:72vw}
   .center-prompt{display:none}
   .exterior-image{transform:scale(1.04)}
