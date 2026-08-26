@@ -87,8 +87,8 @@ npm run build
 
 ## Prototype assets
 
-- `public/store/exterior.webp` — storefront exterior
-- `public/store/interior.webp` — boutique interior
-- `public/products/apex-relic.webp` — live real-art example in the modular product system
+- `public/store/exterior.svg` — self-contained storefront exterior
+- `public/store/interior.svg` — self-contained boutique interior
+- `public/products/apex-relic.svg` — live real-art example in the modular product system
 
-Environment imagery is prototype art. It can be replaced later without rewriting inventory, fixture, bag, or product-detail behavior.
+The included environment vectors keep the repository self-contained. They are prototype art and can be replaced later by photography, rendered scenes, or higher-fidelity media without rewriting inventory, fixture, bag, or product-detail behavior.
