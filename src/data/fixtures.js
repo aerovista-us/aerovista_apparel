@@ -1,64 +1,60 @@
 // Physical retail plan for the desktop room.
-// Apparel belongs on wall rails. Headwear belongs on shelves. Objects belong on display surfaces.
+// Coordinates are calibrated to public/store/interior.svg (1672 x 941).
+// Side-wall product scale intentionally changes with depth: merchandise nearer the
+// customer is larger; merchandise nearer the back wall is smaller.
 export const fixtures = [
   {
     id: 'left-wall-rack',
     type: 'wall-rack',
     label: 'Apex Wall',
-    position: { x: 6.5, y: 25, w: 31, h: 39 },
+    // Matches the left architectural merchandise bay.
+    position: { x: 4.3, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      { productId: 'core-tee-black', x: 11, y: 44, scale: .88, tilt: -2 },
-      { productId: 'apex-vintage-tee', x: 30, y: 43, scale: .91, tilt: 1 },
-      { productId: 'apex-signal-sweatshirt', x: 50, y: 43, scale: .96, tilt: -1 },
-      { productId: 'apex-shadow-long-sleeve', x: 70, y: 44, scale: .92, tilt: 1 },
-      { productId: 'apex-glitch-tee-black', x: 89, y: 43, scale: .89, tilt: -1 },
-    ],
-  },
-  {
-    id: 'back-wall-rack',
-    type: 'wall-rack',
-    label: 'Feature Wall',
-    position: { x: 37.5, y: 22, w: 27, h: 36 },
-    slots: [
-      { productId: 'apex-pattern-hoodie', x: 17, y: 45, scale: 1.02, tilt: -1 },
-      { productId: 'aerovista-divisions-hoodie', x: 39, y: 45, scale: .97, tilt: 1 },
-      { productId: 'architect-built-different-hoodie', x: 62, y: 45, scale: .98, tilt: -1 },
-      { productId: 'drafted-a-premium-sweatshirt', x: 84, y: 45, scale: .94, tilt: 1 },
+      { productId: 'core-tee-black', x: 8,  y: 35.0, scale: 1.12, tilt: -1 },
+      { productId: 'apex-vintage-tee', x: 25, y: 35.8, scale: 1.08, tilt: 0 },
+      { productId: 'apex-signal-sweatshirt', x: 42, y: 36.7, scale: 1.03, tilt: 0 },
+      { productId: 'apex-shadow-long-sleeve', x: 59, y: 37.7, scale: .98, tilt: 0 },
+      { productId: 'apex-glitch-tee-black', x: 76, y: 38.7, scale: .93, tilt: 0 },
+      { productId: 'apex-pattern-hoodie', x: 92, y: 39.6, scale: .88, tilt: 1 },
     ],
   },
   {
     id: 'right-wall-rack',
     type: 'wall-rack',
     label: 'Studio Wall',
-    position: { x: 68.5, y: 25, w: 30, h: 40 },
+    // Mirror of the right architectural merchandise bay.
+    position: { x: 71.8, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      { productId: 'architect-field-issue-tee-black', x: 10, y: 44, scale: .88, tilt: 1 },
-      { productId: 'architect-field-issue-tee-ash', x: 29, y: 44, scale: .89, tilt: -1 },
-      { productId: 'vespera-moonscript-hoodie', x: 49, y: 44, scale: .98, tilt: 1 },
-      { productId: 'soundgoat-hoodie', x: 69, y: 44, scale: .98, tilt: -1 },
-      { productId: 'powder-peaks-v2', x: 89, y: 44, scale: .96, tilt: 1 },
+      { productId: 'architect-field-issue-tee-black', x: 8,  y: 39.6, scale: .88, tilt: -1 },
+      { productId: 'architect-field-issue-tee-ash', x: 24, y: 38.7, scale: .93, tilt: 0 },
+      { productId: 'vespera-moonscript-hoodie', x: 41, y: 37.7, scale: .98, tilt: 0 },
+      { productId: 'soundgoat-hoodie', x: 58, y: 36.7, scale: 1.03, tilt: 0 },
+      { productId: 'powder-peaks-v2', x: 75, y: 35.8, scale: 1.08, tilt: 0 },
+      { productId: 'architect-built-different-hoodie', x: 92, y: 35.0, scale: 1.12, tilt: 1 },
     ],
   },
   {
     id: 'hat-shelf',
     type: 'hat-shelf',
     label: 'Headwear',
-    position: { x: 5, y: 64, w: 25, h: 19 },
+    position: { x: 4.7, y: 66.0, w: 25.7, h: 18.5 },
     slots: [
-      { productId: 'apex-embroidered-hat-black', x: 10, y: 42, scale: .78, tilt: -3 },
-      { productId: 'apex-camo-flexfit-hat', x: 30, y: 41, scale: .78, tilt: 2 },
-      { productId: 'glitch-orbit-cap-black', x: 50, y: 42, scale: .78, tilt: -1 },
-      { productId: 'glitch-orbit-cap-gray', x: 70, y: 41, scale: .78, tilt: 2 },
-      { productId: 'drafted-a-snapback', x: 90, y: 42, scale: .78, tilt: -2 },
+      { productId: 'apex-embroidered-hat-black', x: 9,  y: 41, scale: 1.04, tilt: -2 },
+      { productId: 'apex-camo-flexfit-hat', x: 29, y: 41, scale: .99, tilt: 1 },
+      { productId: 'glitch-orbit-cap-black', x: 49, y: 41, scale: .95, tilt: 0 },
+      { productId: 'glitch-orbit-cap-gray', x: 69, y: 41, scale: .91, tilt: 1 },
+      { productId: 'drafted-a-snapback', x: 89, y: 41, scale: .87, tilt: -1 },
     ],
   },
   {
-    id: 'objects-case',
-    type: 'accessories-case',
+    id: 'center-editions-table',
+    type: 'table-stack',
     label: 'Objects & Editions',
-    position: { x: 73, y: 64, w: 20, h: 21 },
+    // The playing cards now occupy the real center plinth instead of floating
+    // against the right wall.
+    position: { x: 39.2, y: 64.1, w: 21.6, h: 22.2 },
     slots: [
-      { productId: 'apex-relic-deck', x: 50, y: 42, scale: .88, tilt: -3 },
+      { productId: 'apex-relic-deck', x: 50, y: 29, scale: 1.18, tilt: -2 },
     ],
   },
 ]
