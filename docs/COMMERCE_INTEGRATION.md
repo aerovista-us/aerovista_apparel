@@ -2,18 +2,27 @@
 
 ## Goal
 
-Keep the spatial storefront responsible for presentation and physical placement while AeroVista Commerce remains authoritative for product identity, variants, availability, price, checkout, orders, and fulfillment.
+The new spatial storefront is a presentation layer for the existing AeroVista commerce system. It must never invent a product identity, price, size, SKU, or Square variation.
+
+## Catalog-first rule
+
+The current production catalog (`square_products_latest.json`) is the merchandise source of truth, just as it is for the existing Gear storefront.
+
+A product can enter the spatial room only by its canonical catalog ID. `src/data/fixtures.js` and `src/data/merchandising.js` contain placement/presentation data keyed by those IDs; they contain no checkout identity.
+
+See `CATALOG_FIRST_SPATIAL_STORE.md` for the first-room assortment and identity flow.
 
 ## Current production-safe strategy
 
-The frontend defaults to `legacy` commerce mode because Gear's existing `/api/square/*` purchase path is the protected live production path. The additive `/v1` API remains available behind a frontend mode switch for the later controlled production rollout.
+The frontend defaults to `legacy` mode because Gear's `/api/square/*` contract is the current protected production path. Commerce V1 remains an additive future cutover.
 
 ### Legacy mode
 
-- Catalog: published Gear `square_products_latest.json`
-- Bootstrap: `GET /api/square/bootstrap`
+- Catalog: `square_products_latest.json`
+- Readiness: `GET /api/square/bootstrap`
 - Checkout: `POST /api/square/checkout`
-- Price submitted by the browser is never authoritative; checkout is resolved by Square variation identity on the backend.
+- Bag identity: canonical `productId` + compatibility cart key + exact Square `variationId`
+- Browser price is display-only; the backend remains authoritative.
 
 ### V1 mode
 
@@ -22,34 +31,54 @@ The frontend defaults to `legacy` commerce mode because Gear's existing `/api/sq
 - Checkout: `POST /v1/checkout/session`
 - Status: `GET /v1/checkout/{sessionId}`
 
-Switch with `VITE_COMMERCE_MODE=v1` only after the existing production `/v1` release gates are approved.
+Switch with `VITE_COMMERCE_MODE=v1` only after the existing production V1 release gates are approved.
 
-## Spatial/commercial separation
+## Data ownership
 
-`src/data/products.js` remains the presentation registry: local imagery, collection presentation, accents, and fallback copy.
+### Commerce catalog owns
 
-`src/data/fixtures.js` remains the physical-space registry: which wall/shelf/table a product occupies and its visual position/scale.
+- product identity
+- visibility
+- names/descriptions
+- source collection/category
+- Square item ID
+- variants
+- sizes/colors
+- prices
+- merchant SKUs
+- Square variation IDs
 
-`src/commerce/catalog.js` matches presentation products to the published commerce catalog and hydrates only commerce-owned fields such as price, size choices, availability, product ID, and variant identity.
+### Spatial merchandising owns
 
-`src/commerce/client.js` owns catalog loading and checkout handoff. The React scene does not know or care whether the active backend adapter is legacy or `/v1`.
+- room selection
+- wall/shelf/table assignment
+- position
+- scale
+- tilt
+- display short name
+- restrained visual accent
+- camera/navigation behavior
 
-## Matching safety
+## Variant price behavior
 
-The catalog hydrator prefers exact IDs, explicit aliases, exact image basenames, and exact normalized product names. Fuzzy matching requires multiple meaningful shared tokens. Ambiguous matches fail closed: the product remains a visible showroom preview but cannot be added to the live checkout bag.
+The product-level price is treated as a starting/minimum price. Once a size/format is selected, the product drawer and bag display the selected variant's catalog price.
 
-This prevents a visually similar item from being charged as the wrong Square variation.
+## Same-origin production routing
 
-## Preview-host limitation
+The intended public hostname is `apparel.aerovista.us`.
 
-The current production backend CORS defaults do not include `https://aerovistaapparel.vercel.app`. The Vercel preview can still exercise the spatial UI and public catalog hydration, but live legacy checkout should not be considered verified there until one of these controlled choices is made:
+The companion infrastructure change in `aerovista-us/store` stages a Cloudflare edge so the browser can use same-origin:
 
-1. approve the Vercel preview origin in the backend allowlist for testing; or
-2. test checkout on the canonical `gear.aerovista.us` origin; or
-3. add an approved same-origin proxy/rewrite for the preview environment.
+- `/square_products_latest.json`
+- `/api/*`
+- future `/v1/*`
 
-The preferred production end state is the spatial frontend on the canonical Gear/Apparel hostname so checkout remains same-origin.
+This avoids granting temporary Vercel preview hosts direct production API trust.
+
+## Preview behavior
+
+A Vercel preview may load the catalog through Gear or the public GitHub catalog fallback. Live checkout is not considered verified from the preview hostname because the current production API intentionally restricts allowed origins.
 
 ## Deployment discipline
 
-Vercel is on the Hobby tier. Integration work should be accumulated and reviewed off `main`. Promote one meaningful batch only after catalog binding, cart identity, checkout payloads, mobile behavior, and the visual pass are reviewed together.
+Vercel is on the Hobby tier. Accumulate integration work off `main`, validate the complete batch, and promote only meaningful checkpoints.
