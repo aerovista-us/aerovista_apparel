@@ -1,0 +1,223 @@
+/* Integration-branch spatial polish.
+   Kept separate so commerce work can be reviewed without disturbing the proven room layer. */
+
+@media (min-width:761px){
+  /* A very small bay-light lift keeps dark garments readable without flattening the room. */
+  .fixture-wall-rack:before{
+    content:"";
+    position:absolute;
+    inset:-3% -2%;
+    pointer-events:none;
+    z-index:-1;
+    background:
+      radial-gradient(ellipse at 50% 43%,rgba(210,190,166,.075),transparent 58%),
+      linear-gradient(180deg,rgba(255,255,255,.018),transparent 35% 78%,rgba(0,0,0,.035));
+    mix-blend-mode:screen;
+    opacity:.82;
+  }
+
+  .fixture-wall-rack .merch-hoodie:before,
+  .fixture-wall-rack .merch-sweatshirt:before,
+  .fixture-wall-rack .merch-long-sleeve:before,
+  .fixture-wall-rack .merch-tee:before,
+  .fixture-wall-rack .merch-bomber:before{
+    border-color:rgba(183,189,194,.60);
+    opacity:.74;
+  }
+  .fixture-wall-rack .merch-hoodie:after,
+  .fixture-wall-rack .merch-sweatshirt:after,
+  .fixture-wall-rack .merch-long-sleeve:after,
+  .fixture-wall-rack .merch-tee:after,
+  .fixture-wall-rack .merch-bomber:after{
+    opacity:.62;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive registered scene
+   --------------------------------------------------------------------------
+   The SVG architecture and merchandise layer are the same 1672 x 941 camera
+   plane. The plane follows the window until a deliberate max camera width,
+   after which zooming farther out reveals more room instead of only shrinking
+   the merchandise. Merchandise dimensions use scene container units so browser
+   zoom and window resizing cannot change product-to-room proportions. */
+@media (min-width:901px){
+  .interior-scene{
+    background:
+      radial-gradient(ellipse at 50% 48%,rgba(28,31,34,.55),rgba(6,8,11,.96) 76%),
+      #07090c;
+  }
+
+  .interior-image,
+  .fixture-layer{
+    inset:auto!important;
+    left:50%!important;
+    top:50%!important;
+    width:min(100%,2200px)!important;
+    height:auto!important;
+    aspect-ratio:1672 / 941;
+  }
+
+  .fixture-layer{container-type:size}
+
+  .interior-image{
+    background-size:100% 100%!important;
+    background-position:center!important;
+    background-repeat:no-repeat!important;
+  }
+
+  /* Cancel the old <=1050 fixture shrink. Depth comes from the room camera,
+     not from independently scaling merchandise fixtures. */
+  .interior-scene .fixture{transform:none}
+
+  /* Architecture and merchandise always receive exactly the same camera. */
+  .view-room .interior-image,
+  .view-room .fixture-layer{
+    transform:translate(-50%,-50%) scale(1.008)!important;
+    transform-origin:50% 52%!important;
+  }
+  .view-left .interior-image,
+  .view-left .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.15)!important;
+    transform-origin:27% 51%!important;
+  }
+  .view-right .interior-image,
+  .view-right .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.15)!important;
+    transform-origin:73% 51%!important;
+  }
+
+  .view-room:has(.merch-item:hover) .interior-image,
+  .view-room:has(.merch-item:hover) .fixture-layer,
+  .view-room:has(.merch-item:focus-visible) .interior-image,
+  .view-room:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) scale(1.02)!important;
+  }
+  .view-left:has(.merch-item:hover) .interior-image,
+  .view-left:has(.merch-item:hover) .fixture-layer,
+  .view-left:has(.merch-item:focus-visible) .interior-image,
+  .view-left:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.17)!important;
+  }
+  .view-right:has(.merch-item:hover) .interior-image,
+  .view-right:has(.merch-item:hover) .fixture-layer,
+  .view-right:has(.merch-item:focus-visible) .interior-image,
+  .view-right:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.17)!important;
+  }
+
+  /* Product boxes are now a percentage of the physical scene, not fixed px. */
+  .fixture-wall-rack .merch-item:not(.merch-cap):not(.merch-deck){
+    width:4.8cqw!important;
+    height:11.1cqh!important;
+  }
+  .fixture-hat-shelf .merch-cap{
+    width:4.8cqw!important;
+    height:7.6cqh!important;
+  }
+  .fixture-table-stack .merch-deck{
+    width:3.6cqw!important;
+    height:9.3cqh!important;
+  }
+
+  /* Hanger geometry belongs to the same scene scale. */
+  .fixture-wall-rack .merch-hoodie:before,
+  .fixture-wall-rack .merch-sweatshirt:before,
+  .fixture-wall-rack .merch-long-sleeve:before,
+  .fixture-wall-rack .merch-tee:before,
+  .fixture-wall-rack .merch-bomber:before{
+    top:-1.15cqh!important;
+    width:1.34cqw!important;
+    height:1.62cqh!important;
+  }
+  .fixture-wall-rack .merch-hoodie:after,
+  .fixture-wall-rack .merch-sweatshirt:after,
+  .fixture-wall-rack .merch-long-sleeve:after,
+  .fixture-wall-rack .merch-tee:after,
+  .fixture-wall-rack .merch-bomber:after{
+    top:-.12cqh!important;
+    width:2.3cqw!important;
+  }
+
+  /* Garment art is fuller on the wall while the hanger anchor stays on the
+     authored rail. Upper-rail art is lifted a touch more. */
+  .fixture-wall-rack .merch-object{
+    --merch-art-scale:1.07;
+    --merch-art-lift:-.20cqh;
+  }
+  .fixture-wall-rack .merch-item:nth-of-type(-n+4) .merch-object{
+    --merch-art-scale:1.12;
+    --merch-art-lift:-.62cqh;
+  }
+  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
+    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(7deg) skewY(1deg) scale(var(--merch-art-scale))!important;
+    transform-origin:right center;
+  }
+  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-object{
+    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(-7deg) skewY(-1deg) scale(var(--merch-art-scale))!important;
+    transform-origin:left center;
+  }
+
+  .fixture:has(.merch-item:hover),
+  .fixture:has(.merch-item:focus-visible){
+    transform:translateZ(30px) scale(1.025)
+  }
+}
+
+/* Compact desktop/tablet camera. The scene itself now shrinks with the window,
+   so this breakpoint only simplifies chrome. */
+@media (max-width:1180px) and (min-width:901px){
+  .scene-label{max-width:300px}
+  .scene-label h1{font-size:26px}
+  .store-header>nav{gap:10px}
+  .view-nav button span{display:none}
+  .view-nav button{padding:0 10px}
+}
+
+/* At narrow widths the store deliberately changes camera instead of squeezing
+   the two-wall perspective. The room becomes an establishing shot and shopping
+   continues through the physical wall/shelf/table zones below. */
+@media (max-width:900px){
+  .store-header{height:58px;padding:0 12px;position:sticky;top:0}
+  .store-header>nav{display:none}
+  .wordmark{font-size:12px;letter-spacing:.17em}
+  .search-button{display:none}
+  .bag-button{height:36px}
+  .header-actions{margin-left:auto}
+
+  .interior-scene{height:43svh;min-height:330px;max-height:470px;perspective:950px}
+  .interior-image{
+    inset:0!important;
+    left:0!important;
+    top:0!important;
+    width:100%!important;
+    height:100%!important;
+    aspect-ratio:auto!important;
+    background-size:cover!important;
+    background-position:center 46%!important;
+  }
+  .view-left .interior-image,
+  .view-room .interior-image,
+  .view-right .interior-image{
+    transform:scale(1.035)!important;
+    transform-origin:50% 52%!important;
+  }
+  .fixture-layer{display:none!important}
+  .view-nav{display:none!important}
+  .scene-label{top:6%;left:5%;right:auto;max-width:58vw;text-align:left;border-right:0;border-left:1px solid rgba(0,174,239,.46);background:linear-gradient(90deg,rgba(5,7,10,.82),rgba(5,7,10,.2))}
+  .scene-label h1{font-size:21px;margin-top:5px}
+  .scene-label p{display:none}
+  .walk-back{right:4%;top:5%;padding:8px 10px;background:rgba(6,8,10,.78)}
+  .center-prompt{display:none}
+  .mobile-store{display:block!important}
+}
+
+.checkout-error{
+  margin:0 0 14px;
+  padding:10px 12px;
+  border:1px solid rgba(210,105,105,.30);
+  background:rgba(115,32,32,.14);
+  color:#d9b8b8;
+  font-size:10px;
+  line-height:1.55;
+}
