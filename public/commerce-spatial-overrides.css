@@ -40,6 +40,136 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   Registered scene plane
+   --------------------------------------------------------------------------
+   The interior artwork is 1672 x 941. On desktop the SVG and the live fixture
+   layer are given the exact same cover-sized plane, then the authored camera is
+   applied to both. This prevents the wall/product perspective from drifting as
+   the browser changes aspect ratio. */
+@media (min-width:901px){
+  .interior-image,
+  .fixture-layer{
+    inset:auto!important;
+    left:50%!important;
+    top:50%!important;
+    width:max(100vw,1155px,calc(177.6833vh - 120.824px))!important;
+    height:auto!important;
+    aspect-ratio:1672 / 941;
+  }
+
+  .interior-image{
+    background-size:100% 100%!important;
+    background-position:center!important;
+  }
+
+  /* Architecture and merchandise always receive the same camera transform. */
+  .view-room .interior-image,
+  .view-room .fixture-layer{
+    transform:translate(-50%,-50%) scale(1.008)!important;
+    transform-origin:50% 52%!important;
+  }
+  .view-left .interior-image,
+  .view-left .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.15)!important;
+    transform-origin:27% 51%!important;
+  }
+  .view-right .interior-image,
+  .view-right .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.15)!important;
+    transform-origin:73% 51%!important;
+  }
+
+  /* Approaching a product can move the camera, but both registered layers move
+     together so the product never slides off its physical wall. */
+  .view-room:has(.merch-item:hover) .interior-image,
+  .view-room:has(.merch-item:hover) .fixture-layer,
+  .view-room:has(.merch-item:focus-visible) .interior-image,
+  .view-room:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) scale(1.02)!important;
+  }
+  .view-left:has(.merch-item:hover) .interior-image,
+  .view-left:has(.merch-item:hover) .fixture-layer,
+  .view-left:has(.merch-item:focus-visible) .interior-image,
+  .view-left:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.17)!important;
+  }
+  .view-right:has(.merch-item:hover) .interior-image,
+  .view-right:has(.merch-item:hover) .fixture-layer,
+  .view-right:has(.merch-item:focus-visible) .interior-image,
+  .view-right:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.17)!important;
+  }
+
+  /* Garments become more legible without moving the hanger anchor. The first
+     four buttons in each wall fixture are the authored upper rail. Their art is
+     lifted closer to the hanger and enlarged a little more than the lower rail. */
+  .fixture-wall-rack .merch-object{
+    --merch-art-scale:1.06;
+    --merch-art-lift:-2px;
+  }
+  .fixture-wall-rack .merch-item:nth-of-type(-n+4) .merch-object{
+    --merch-art-scale:1.10;
+    --merch-art-lift:-7px;
+  }
+  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
+    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(7deg) skewY(1deg) scale(var(--merch-art-scale))!important;
+    transform-origin:right center;
+  }
+  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-object{
+    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(-7deg) skewY(-1deg) scale(var(--merch-art-scale))!important;
+    transform-origin:left center;
+  }
+}
+
+/* Compact desktop/tablet camera. Keep the spatial room until it becomes too
+   narrow to honestly show both merchandise walls. */
+@media (max-width:1180px) and (min-width:901px){
+  .scene-label{max-width:300px}
+  .scene-label h1{font-size:26px}
+  .store-header>nav{gap:10px}
+  .view-nav button span{display:none}
+  .view-nav button{padding:0 10px}
+}
+
+/* At narrow widths the store deliberately changes camera instead of squeezing
+   the two-wall perspective. The room becomes an establishing shot and shopping
+   continues through the physical wall/shelf/table zones below. */
+@media (max-width:900px){
+  .store-header{height:58px;padding:0 12px;position:sticky;top:0}
+  .store-header>nav{display:none}
+  .wordmark{font-size:12px;letter-spacing:.17em}
+  .search-button{display:none}
+  .bag-button{height:36px}
+  .header-actions{margin-left:auto}
+
+  .interior-scene{height:43svh;min-height:330px;max-height:470px;perspective:950px}
+  .interior-image{
+    inset:0!important;
+    left:0!important;
+    top:0!important;
+    width:100%!important;
+    height:100%!important;
+    aspect-ratio:auto!important;
+    background-size:cover!important;
+    background-position:center 46%!important;
+  }
+  .view-left .interior-image,
+  .view-room .interior-image,
+  .view-right .interior-image{
+    transform:scale(1.035)!important;
+    transform-origin:50% 52%!important;
+  }
+  .fixture-layer{display:none!important}
+  .view-nav{display:none!important}
+  .scene-label{top:6%;left:5%;right:auto;max-width:58vw;text-align:left;border-right:0;border-left:1px solid rgba(0,174,239,.46);background:linear-gradient(90deg,rgba(5,7,10,.82),rgba(5,7,10,.2))}
+  .scene-label h1{font-size:21px;margin-top:5px}
+  .scene-label p{display:none}
+  .walk-back{right:4%;top:5%;padding:8px 10px;background:rgba(6,8,10,.78)}
+  .center-prompt{display:none}
+  .mobile-store{display:block!important}
+}
+
 .checkout-error{
   margin:0 0 14px;
   padding:10px 12px;

@@ -5,6 +5,7 @@ const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const browserOrigin = () => (typeof window === 'undefined' ? '' : window.location.origin)
 const browserHost = () => (typeof window === 'undefined' ? '' : window.location.hostname)
 const isCanonicalStoreHost = () => ['gear.aerovista.us', 'apparel.aerovista.us'].includes(browserHost())
+const isVercelPreviewHost = () => browserHost().endsWith('.vercel.app') && !isCanonicalStoreHost()
 
 const configuredApiBase = cleanBase(import.meta.env.VITE_COMMERCE_API_BASE)
 const API_BASE = configuredApiBase || (isCanonicalStoreHost() ? browserOrigin() : 'https://gear.aerovista.us')
@@ -64,6 +65,9 @@ export async function loadCommerceCatalog() {
 
 export async function loadCommerceBootstrap() {
   if (MODE === 'v1') return { mode: 'v1', currency: 'USD' }
+  // Temporary Vercel hosts are intentionally not trusted by the production API.
+  // Skip the protected bootstrap there instead of generating a known CORS error.
+  if (isVercelPreviewHost()) return null
   return fetchJson(`${API_BASE}/api/square/bootstrap`, { cache: 'no-store' })
 }
 
@@ -80,6 +84,10 @@ function cartKeyForVariant(variant) {
 }
 
 async function beginLegacyCheckout(bag) {
+  if (isVercelPreviewHost()) {
+    throw new Error('Checkout is intentionally disabled on the Vercel preview. Live checkout will be tested on apparel.aerovista.us through the same-origin AeroVista commerce route.')
+  }
+
   const cart = bag.map((item) => ({
     productId: item.product.commerce?.productId || item.product.id,
     sku: cartKeyForVariant(item.variant),
@@ -143,4 +151,5 @@ export const commerceConfig = {
   mode: MODE,
   apiBase: API_BASE,
   v1Base: V1_BASE,
+  previewCheckoutDisabled: isVercelPreviewHost(),
 }
