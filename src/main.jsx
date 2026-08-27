@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, DoorOpen, Minus, Search, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, DoorOpen, Minus, Sparkles, X
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
@@ -19,16 +19,29 @@ function priceLabel(product, variant = null) {
 }
 
 function commerceNote(product) {
-  if (product?.commerceStatus === 'connected') return 'Product, size, price and Square variation are supplied by the AeroVista commerce catalog.'
-  if (product?.commerceStatus === 'unavailable') return 'This catalog product is not currently available for checkout.'
-  return 'Live catalog details are temporarily unavailable.'
+  if (product?.commerceStatus === 'connected') return 'Live price and availability verified from the AeroVista catalog.'
+  if (product?.commerceStatus === 'unavailable') return 'This piece is currently unavailable for checkout.'
+  return 'Live availability is temporarily unavailable.'
 }
 
 const spaceViews = [
-  { id: 'left', label: 'Apex Wall', note: 'Turn toward the left wall for Apex, Glitch and Shadow pieces.' },
-  { id: 'room', label: 'Main Floor', note: 'Take in the full room, feature wall and central aisle.' },
-  { id: 'right', label: 'Studio Wall', note: 'Turn toward Architect, Core and Objects & Editions.' },
+  { id: 'left', label: 'Tees & Bombers', note: 'Turn toward tees on the upper rail, with bombers and Shadow Wear bottoms below.' },
+  { id: 'room', label: 'Main Floor', note: 'Take in the full room, feature wall and central editions table.' },
+  { id: 'right', label: 'Hoodie Wall', note: 'Turn toward the dedicated hoodie wall for AeroVista, Architect and Shadow Wear layers.' },
 ]
+
+function useCompactStore() {
+  const query = '(max-width: 900px)'
+  const [compact, setCompact] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches)
+  useEffect(() => {
+    const media = window.matchMedia(query)
+    const update = () => setCompact(media.matches)
+    update()
+    media.addEventListener?.('change', update)
+    return () => media.removeEventListener?.('change', update)
+  }, [])
+  return compact
+}
 
 function GarmentArt({ type, accent = '#00AEEF' }) {
   const common = { fill: '#111419', stroke: '#c8cbd0', strokeWidth: 1.5 }
@@ -48,6 +61,10 @@ function GarmentArt({ type, accent = '#00AEEF' }) {
         <path d="M68 38 78 31h24l10 7 30 16-13 29-20-9v74H71V74l-20 9-13-29Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
         <path d="M78 32 Q90 49 102 32" fill="none" stroke={accent}/><path d="M72 91h36" stroke={accent} opacity=".75"/>
       </>}
+      {type === 'bottom' && <>
+        <path d="M67 34h46l4 31-12 82H91L90 83l-1 64H75L63 65Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
+        <path d="M65 52h50" stroke={accent} opacity=".75"/><path d="M90 52v34" stroke="#9299a2" opacity=".7"/>
+      </>}
       {type === 'cap' && <>
         <path d="M48 96 Q54 45 92 42 Q132 43 137 91 Q98 83 48 96Z" fill={`url(#${gradientId})`} stroke="#c8cbd0" strokeWidth="2"/>
         <path d="M79 93 Q117 82 155 100 Q121 116 79 104Z" fill="#101318" stroke="#aeb4ba" strokeWidth="2"/><path d="M62 78 Q92 62 126 78" fill="none" stroke={accent}/>
@@ -65,7 +82,16 @@ function ProductImage({ product, large = false, stage = false }) {
   return (
     <div className={`product-image ${large ? 'large' : ''} ${stage ? 'stage' : ''}`}>
       {product?.image && !failed
-        ? <img src={product.image} alt={product.name} style={style} onError={() => setFailed(true)}/>
+        ? <img
+            src={product.image}
+            alt={product.name}
+            style={style}
+            loading={large ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={large ? 'high' : 'low'}
+            draggable={false}
+            onError={() => setFailed(true)}
+          />
         : <GarmentArt type={product?.type || 'object'} accent={product?.accent}/>} 
     </div>
   )
@@ -79,7 +105,14 @@ function MerchItem({ product, slot, onOpen }) {
     '--accent': product.accent,
   }
   return (
-    <button className={`merch-item merch-${product.type}`} style={style} onClick={() => onOpen(product)} aria-label={`View ${product.name}`}>
+    <button
+      className={`merch-item merch-${product.type}`}
+      data-product={product.id}
+      style={style}
+      onClick={() => onOpen(product)}
+      aria-label={`View ${product.name}`}
+      aria-haspopup="dialog"
+    >
       <span className="merch-object"><ProductImage product={product} stage/></span>
       <span className="merch-pin"/>
       <span className="merch-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
@@ -90,7 +123,7 @@ function MerchItem({ product, slot, onOpen }) {
 function FixtureShell({ fixture, children }) {
   const style = { left: `${fixture.position.x}%`, top: `${fixture.position.y}%`, width: `${fixture.position.w}%`, height: `${fixture.position.h}%` }
   return (
-    <div className={`fixture fixture-${fixture.type}`} style={style}>
+    <div className={`fixture fixture-${fixture.type} fixture-${fixture.id}`} data-fixture={fixture.id} style={style}>
       <div className="fixture-structure" aria-hidden="true">
         {fixture.type === 'wall-rack' && <><i className="rail"/><i className="rack-leg a"/><i className="rack-leg b"/></>}
         {fixture.type === 'table-stack' && <><i className="table-top"/><i className="table-base"/></>}
@@ -115,23 +148,27 @@ function ProductDrawer({ product, onClose, onAdd }) {
   if (!product) return null
   const variant = selectCommerceVariant(product, size)
   const canAdd = Boolean(variant && product.commerceStatus === 'connected')
+  const optionLabel = product.sizes.length > 1 ? 'Size' : 'Format'
   return (
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label={product.name}>
       <button className="drawer-scrim" onClick={onClose} aria-label="Close product"/>
       <aside className="drawer">
-        <button className="icon-btn drawer-close" onClick={onClose}><X size={20}/></button>
+        <button className="icon-btn drawer-close" onClick={onClose} aria-label="Close product details"><X size={20}/></button>
         <ProductImage product={product} large/>
         <div className="drawer-content">
           <span className="eyebrow">{product.collection}</span>
           <h2>{product.name}</h2>
-          <p className="price">{priceLabel(product, variant)}</p>
-          <p>{product.description}</p>
+          <div className="product-meta-row">
+            <p className="price">{priceLabel(product, variant)}</p>
+            <span className={`availability-line ${canAdd ? 'available' : 'unavailable'}`}><i aria-hidden="true"/>{canAdd ? 'Available' : 'Unavailable'}</span>
+          </div>
+          <p className="product-description">{product.description}</p>
           <div className="selector">
-            <span>Size / format</span>
-            <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''}>{s}</button>)}</div>
+            <span>{optionLabel}</span>
+            <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''} aria-pressed={size === s}>{s}</button>)}</div>
           </div>
           <button className="primary wide" disabled={!canAdd} onClick={() => onAdd(product, size, variant)}>
-            {canAdd ? <>Add to bag <ShoppingBag size={17}/></> : 'Unavailable'}
+            {canAdd ? <>Add to bag <ShoppingBag size={17}/></> : 'Currently unavailable'}
           </button>
           <small>{commerceNote(product)}</small>
         </div>
@@ -147,22 +184,22 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label="Shopping bag">
       <button className="drawer-scrim" onClick={onClose} aria-label="Close bag"/>
       <aside className="drawer bag-drawer">
-        <button className="icon-btn drawer-close" onClick={onClose}><X size={20}/></button>
+        <button className="icon-btn drawer-close" onClick={onClose} aria-label="Close shopping bag"><X size={20}/></button>
         <div className="drawer-content bag-content">
           <span className="eyebrow">AEROVISTA STORE</span><h2>Your bag</h2>
           {bag.length === 0 ? <p className="empty">Nothing here yet. Explore the walls and select a piece.</p> : bag.map((item, index) => (
             <div className="bag-row" key={`${item.product.id}-${item.variant?.id || item.size}-${index}`}>
               <ProductImage product={item.product}/>
               <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{priceLabel(item.product, item.variant)}</span></div>
-              <button className="icon-btn" onClick={() => onRemove(index)}><Minus size={15}/></button>
+              <button className="icon-btn" onClick={() => onRemove(index)} aria-label={`Remove ${item.product.shortName} from bag`}><Minus size={15}/></button>
             </div>
           ))}
           <div className="bag-total"><span>Total</span><b>{hasUnready ? 'TBD' : money.format(total)}</b></div>
-          {checkoutError && <p className="checkout-error">{checkoutError}</p>}
-          <button className="primary wide" disabled={!bag.length || hasUnready || checkoutBusy} onClick={onCheckout}>
-            {checkoutBusy ? 'Opening checkout…' : <>Checkout <ArrowRight size={17}/></>}
+          {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
+          <button className={`primary wide ${checkoutBusy ? 'is-busy' : ''}`} disabled={!bag.length || hasUnready || checkoutBusy} onClick={onCheckout} aria-live="polite">
+            {checkoutBusy ? 'Opening secure checkout…' : <>Checkout <ArrowRight size={17}/></>}
           </button>
-          <small>Every bag line retains its catalog product ID and exact Square variation identity.</small>
+          <small>Secure checkout through AeroVista Commerce.</small>
         </div>
       </aside>
     </div>
@@ -172,42 +209,54 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
 function CollectionNav({ products, collection, onCollection, mobile = false }) {
   const collections = ['All', ...Array.from(new Set(products.map(product => product.collection)))]
   return <nav className={mobile ? 'mobile-collection-nav' : ''} aria-label="Collections">
-    {collections.map(name => <button key={name} className={collection === name ? 'active' : ''} onClick={() => onCollection(name)}>{name === 'All' ? 'Shop all' : name}</button>)}
+    {collections.map(name => <button key={name} className={collection === name ? 'active' : ''} onClick={() => onCollection(name)} aria-pressed={collection === name}>{name === 'All' ? 'Shop all' : name}</button>)}
   </nav>
 }
 
 function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollection }) {
   return <header className="store-header">
-    <button className="wordmark" onClick={onExit}><span className="apex">/\\</span> AEROVISTA</button>
+    <button className="wordmark" onClick={onExit} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
     <CollectionNav products={products} collection={collection} onCollection={onCollection}/>
     <div className="header-actions">
-      <button className="icon-btn search-button" aria-label="Search"><Search size={18}/></button>
-      <button className="bag-button" onClick={onBag}><ShoppingBag size={18}/><span>{bagCount}</span></button>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
     </div>
   </header>
 }
 
-function Exterior({ entering, onEnter }) {
+function Exterior({ entering, onEnter, onWarm }) {
   return <section className={`exterior ${entering ? 'entering' : ''}`}>
     <div className="exterior-image"/><div className="vignette"/>
     <div className="brand-plaque"><span>THE AEROVISTA STORE</span><small>COEUR D'ALENE · AEROVISTA APPAREL</small></div>
-    <button className="door-hit" onClick={onEnter} aria-label="Enter AeroVista Store"><span><DoorOpen size={20}/> Enter store</span></button>
-    <div className="outside-copy"><span className="eyebrow">AEROVISTA APPAREL</span><h1>Walk in.<br/>Look around.</h1><p>Real AeroVista catalog pieces presented as a place to explore — not a product grid.</p></div>
-    <div className="outside-foot"><span>SEVEN DIVISIONS · ONE VISION</span><span>Click the front door to enter</span></div>
+    <button
+      className="door-hit"
+      onClick={onEnter}
+      onPointerEnter={onWarm}
+      onPointerDown={onWarm}
+      onFocus={onWarm}
+      disabled={entering}
+      aria-label="Enter AeroVista Store"
+    ><span><DoorOpen size={20}/> {entering ? 'Opening…' : 'Enter store'}</span></button>
+    <div className="outside-copy"><span className="eyebrow">AEROVISTA APPAREL</span><h1>Walk in.<br/>Look around.</h1><p>Real AeroVista pieces presented as a place to explore — not a product grid.</p></div>
+    <div className="outside-foot"><span>SEVEN DIVISIONS · ONE VISION</span><span>Enter through the front door</span></div>
   </section>
 }
 
 function MobileHangingPiece({ product, onOpen }) {
-  return <button className="mobile-hanging-piece" onClick={() => onOpen(product)} aria-label={`View ${product.name}`}><span className="hanger-hook" aria-hidden="true"/><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
+  return <button className="mobile-hanging-piece" data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><span className="hanger-hook" aria-hidden="true"/><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
 }
 function MobileShelfPiece({ product, onOpen }) {
-  return <button className="mobile-shelf-piece" onClick={() => onOpen(product)} aria-label={`View ${product.name}`}><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
+  return <button className="mobile-shelf-piece" data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
 }
 
-function MobileStore({ products, productMap, collection, onCollection, onProduct }) {
+function MobileStore({ products, productMap, collection, onCollection, onProduct, catalogState }) {
   const zones = retailZones.map(zone => ({ ...zone, items: zone.productIds.map(id => productMap.get(id)).filter(product => product && (collection === 'All' || product.collection === collection)) })).filter(zone => zone.items.length)
+  const introCopy = catalogState.status === 'loading'
+    ? 'Preparing current sizes and availability while you enter.'
+    : catalogState.status === 'offline'
+      ? 'The room is open, but live availability is temporarily offline.'
+      : 'Browse by department, then select any piece for current sizes and availability.'
   return <section className="mobile-store">
-    <div className="mobile-store-intro"><span className="eyebrow">INSIDE AEROVISTA</span><h2>Shop the walls</h2><p>Each displayed piece comes directly from the current AeroVista commerce catalog.</p></div>
+    <div className="mobile-store-intro"><span className="eyebrow">INSIDE AEROVISTA</span><h2>Shop the walls</h2><p>{introCopy}</p></div>
     <CollectionNav products={products} collection={collection} onCollection={onCollection} mobile/>
     {zones.map(zone => <section key={zone.id} className={`retail-zone retail-zone-${zone.kind}`}>
       <header className="retail-zone-header"><div><span>{zone.label}</span><p>{zone.note}</p></div><small>{zone.items.length} pieces</small></header>
@@ -222,24 +271,30 @@ function ViewNav({ view, onView }) {
   return <nav className="view-nav" aria-label="Look around the store">{spaceViews.map(space => <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}><i aria-hidden="true"/><span>{space.label}</span></button>)}</nav>
 }
 
-function Interior({ products, onExit, onProduct, bagCount, onBag }) {
+function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag }) {
   const [collection, setCollection] = useState('All')
   const [view, setView] = useState('room')
+  const compact = useCompactStore()
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
   const visibleProducts = useMemo(() => products.filter(product => collection === 'All' || product.collection === collection), [products, collection])
   const currentView = spaceViews.find(space => space.id === view) ?? spaceViews[1]
+  const floorMessage = catalogState.status === 'loading'
+    ? 'Preparing the floor…'
+    : catalogState.status === 'offline'
+      ? 'Live catalog unavailable'
+      : `${visibleProducts.length} ${visibleProducts.length === 1 ? 'piece' : 'pieces'} on the floor`
 
-  return <section className="interior">
+  return <section className="interior" data-catalog-status={catalogState.status}>
     <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
     <div className={`interior-scene view-${view}`}>
       <div className="interior-image"/><div className="room-shade"/>
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
       <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Outside</button>
-      <div className="fixture-layer">{fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} collection={collection} onOpen={onProduct}/>)}</div>
+      {!compact && <div className="fixture-layer">{fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} collection={collection} onOpen={onProduct}/>)}</div>}
       <ViewNav view={view} onView={setView}/>
-      <div className="center-prompt"><Sparkles size={14}/><span>{visibleProducts.length} catalog pieces in view</span></div>
+      <div className="center-prompt floor-status" data-status={catalogState.status} role="status" aria-live="polite"><Sparkles size={14}/><span>{floorMessage}</span></div>
     </div>
-    <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct}/>
+    {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} catalogState={catalogState}/>} 
   </section>
 }
 
@@ -250,28 +305,57 @@ function App() {
   const [bagOpen, setBagOpen] = useState(false)
   const [bag, setBag] = useState([])
   const [showroomProducts, setShowroomProducts] = useState([])
-  const [catalogState, setCatalogState] = useState({ status: 'loading', visibleCatalogCount: 0, showroomCount: 0 })
+  const [catalogState, setCatalogState] = useState({ status: 'idle', visibleCatalogCount: 0, showroomCount: 0 })
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
+  const commercePromiseRef = useRef(null)
 
-  useEffect(() => {
-    let active = true
-    Promise.allSettled([loadCommerceCatalog(), loadCommerceBootstrap()]).then(([catalogResult, bootstrapResult]) => {
-      if (!active) return
+  function warmCommerce() {
+    if (catalogState.status === 'ready') return Promise.resolve(catalogState)
+    if (commercePromiseRef.current) return commercePromiseRef.current
+    setCatalogState(current => ({ ...current, status: 'loading' }))
+    const promise = Promise.allSettled([loadCommerceCatalog(), loadCommerceBootstrap()]).then(([catalogResult, bootstrapResult]) => {
       if (catalogResult.status === 'fulfilled') {
         const bootstrap = bootstrapResult.status === 'fulfilled' ? bootstrapResult.value : null
         const report = buildCatalogProducts(catalogResult.value, bootstrap)
         setShowroomProducts(report.showroomProducts)
-        setCatalogState({ status: 'ready', ...report, bootstrapReady: Boolean(bootstrap) })
-      } else {
-        setShowroomProducts([])
-        setCatalogState({ status: 'offline', visibleCatalogCount: 0, showroomCount: 0, error: catalogResult.reason?.message || 'Catalog unavailable' })
+        const nextState = { status: 'ready', ...report, bootstrapReady: Boolean(bootstrap) }
+        setCatalogState(nextState)
+        return nextState
       }
+      setShowroomProducts([])
+      const nextState = { status: 'offline', visibleCatalogCount: 0, showroomCount: 0, error: catalogResult.reason?.message || 'Catalog unavailable' }
+      setCatalogState(nextState)
+      commercePromiseRef.current = null
+      return nextState
     })
-    return () => { active = false }
-  }, [])
+    commercePromiseRef.current = promise
+    return promise
+  }
 
-  function enter() { setEntering(true); window.setTimeout(() => { setInside(true); setEntering(false) }, 1050) }
+  useEffect(() => {
+    const modalOpen = Boolean(selected || bagOpen)
+    if (!modalOpen) return undefined
+    const priorOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return
+      setSelected(null)
+      setBagOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = priorOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [selected, bagOpen])
+
+  function enter() {
+    if (entering) return
+    warmCommerce()
+    setEntering(true)
+    window.setTimeout(() => { setInside(true); setEntering(false) }, 980)
+  }
   function leave() { setSelected(null); setBagOpen(false); setInside(false) }
   function add(product, size, variant) {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
@@ -289,7 +373,9 @@ function App() {
   }
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
-    {!inside ? <Exterior entering={entering} onEnter={enter}/> : <Interior products={showroomProducts} onExit={leave} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>} 
+    {!inside
+      ? <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>
+      : <Interior products={showroomProducts} catalogState={catalogState} onExit={leave} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>} 
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
   </main>

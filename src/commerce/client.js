@@ -51,7 +51,9 @@ async function loadLegacyCatalog() {
   let lastError = null
   for (const url of legacyCatalogCandidates()) {
     try {
-      const catalog = await fetchJson(url, { cache: 'no-store' })
+      // The public catalog is versioned upstream and safe to use from the browser cache.
+      // Bootstrap and checkout remain no-store below because they carry live commerce state.
+      const catalog = await fetchJson(url, { cache: 'default' })
       if (Array.isArray(catalog?.products)) return { mode: 'legacy', sourceUrl: url, ...catalog }
     } catch (error) {
       lastError = error
@@ -62,7 +64,7 @@ async function loadLegacyCatalog() {
 
 async function loadV1Catalog() {
   const url = `${V1_BASE}/v1/storefront/${STORE_ID}/catalog`
-  const catalog = await fetchJson(url, { cache: 'no-store' })
+  const catalog = await fetchJson(url, { cache: 'default' })
   return { mode: 'v1', sourceUrl: url, ...catalog }
 }
 

@@ -1,143 +1,157 @@
-/* Flagship polish: facade hierarchy, exact doorway geometry, window sets and final wall merchandising. */
+/* Final retail polish pass — visual hierarchy, interaction clarity and render discipline. */
 
-/* The architectural canopy sign is the exterior headline. Keep the real logo in
-   the interior header, but remove the second floating facade header. */
-.exterior .brand-plaque{display:none!important}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:1px solid rgba(0,174,239,.88);outline-offset:3px}
+.app{min-height:100dvh}
 
-/* Register the exterior artwork as one 1672x941 cover-sized physical plane.
-   The window sets are attached to this plane, so facade, windows and set pieces
-   crop/zoom together instead of behaving like unrelated webpage layers. */
-.exterior .exterior-image{
-  inset:auto!important;
-  left:50%!important;
-  top:50%!important;
-  width:max(100vw,177.6833vh)!important;
-  height:auto!important;
-  aspect-ratio:1672 / 941;
-  background-size:100% 100%!important;
-  background-position:center!important;
-  background-repeat:no-repeat!important;
-  transform:translate(-50%,-50%) scale(1.018)!important;
-  overflow:visible;
-}
-.exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image{
-  transform:translate(-50%,-50%) scale(1.045) translateY(-.5%)!important;
-}
-.exterior.entering .exterior-image{
-  transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important;
-}
+/* Exterior — keep the façade cinematic without making the UI feel like an overlay. */
+.exterior .brand-plaque,
+.exterior .outside-copy,
+.exterior .outside-foot{transition:opacity .42s ease,transform .58s cubic-bezier(.2,.72,.15,1)}
+.exterior.entering .brand-plaque,
+.exterior.entering .outside-copy,
+.exterior.entering .outside-foot{opacity:0;transform:translateY(-6px)}
+.exterior.entering .brand-plaque{transform:translate(-50%,-6px)}
+.outside-copy h1{text-wrap:balance;max-width:7ch}
+.outside-copy p{max-width:340px}
+.door-hit span{border-radius:999px;box-shadow:0 12px 34px rgba(0,0,0,.28)}
+.door-hit:disabled{cursor:wait}
+.door-hit:disabled span{opacity:1;border-color:rgba(0,174,239,.48);background:rgba(8,14,18,.88)}
+.brand-plaque span{filter:drop-shadow(0 8px 20px rgba(0,0,0,.5))}
 
-/* Exterior vitrines use the authored photographic sets supplied for this store.
-   Keep them behind the glass and let the existing facade supply the frame. */
-.exterior .exterior-image:before,.exterior .exterior-image:after{
-  content:"";
-  position:absolute;
-  top:34.113%;
-  width:22.967%;
-  height:39.639%;
-  pointer-events:none;
-  z-index:1;
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:cover;
-  border:1px solid rgba(182,174,162,.13);
-  box-shadow:
-    inset 0 0 62px rgba(0,0,0,.30),
-    0 12px 30px rgba(0,0,0,.20);
-  filter:brightness(.80) saturate(.88) contrast(1.04);
-  opacity:.96;
+/* Header — less chrome, clearer store identity. */
+.store-header{
+  box-shadow:0 10px 32px rgba(0,0,0,.18);
+  background:linear-gradient(180deg,rgba(11,14,18,.975),rgba(7,9,12,.955));
 }
-.exterior .exterior-image:before{
-  left:15.55%;
-  background-image:url('./store/window-sets/window-set-left.png');
-}
-.exterior .exterior-image:after{
-  left:61.483%;
-  background-image:url('./store/window-sets/window-set-right.png');
-}
+.wordmark{transition:color .2s ease,opacity .2s ease}
+.wordmark:hover{color:#fff}
+.header-actions{margin-left:10px}
+.bag-button{border-color:rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018))}
+.bag-button:hover{border-color:rgba(0,174,239,.48);background:rgba(0,174,239,.055)}
+.bag-button span{box-shadow:0 0 18px rgba(0,174,239,.24)}
 
-/* Back-wall Studio / Archive displays.
-   These are part of the interior artwork layer itself, so authored camera moves,
-   browser zoom and room scaling affect the images and architecture together. */
-.interior-image:before,.interior-image:after{
-  content:"";
-  position:absolute;
-  top:22.95%;
-  width:10.65%;
-  height:33.80%;
-  pointer-events:none;
-  background-repeat:no-repeat;
-  background-position:center bottom;
-  background-size:auto 96%;
-  clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);
-  filter:brightness(.68) saturate(.78) contrast(1.08);
-  opacity:.88;
-  box-shadow:inset 0 0 30px rgba(0,0,0,.28);
-}
-.interior-image:before{
-  left:35.17%;
-  background-image:url('./store/window-sets/inside-left.png');
-}
-.interior-image:after{
-  left:54.19%;
-  background-image:url('./store/window-sets/inside-right.png');
-}
+/* Room signage and navigation. */
+.scene-label{max-width:370px}
+.scene-label h1{text-wrap:balance}
+.scene-label p{margin-bottom:0}
+.walk-back{transition:border-color .2s ease,background .2s ease,transform .2s ease}
+.walk-back:hover{border-color:rgba(0,174,239,.44);background:rgba(8,14,18,.88);transform:translateY(-1px)}
+.view-nav button{transition:color .2s ease,background .2s ease,border-color .2s ease,transform .2s ease}
+.view-nav button:hover{transform:translateY(-1px)}
+.center-prompt.floor-status{min-width:172px;justify-content:center;border-color:rgba(255,255,255,.12);box-shadow:0 12px 28px rgba(0,0,0,.28)}
+.center-prompt.floor-status[data-status="loading"]{border-color:rgba(0,174,239,.24);color:#c6dce5}
+.center-prompt.floor-status[data-status="offline"]{border-color:rgba(196,111,111,.24);color:#d0bcbc}
+.center-prompt.floor-status[data-status="loading"] svg{animation:storeSpin 1.8s linear infinite}
+@keyframes storeSpin{to{transform:rotate(360deg)}}
 
-/* The static cyan doorway in exterior.svg is x=694 y=309 w=284 h=421 on the
-   1672x941 scene. These aspect-ratio branches reproduce the same cover math. */
-.door-hit:before{
-  inset:0!important;
-  border-radius:0!important;
-  border:1.5px solid transparent!important;
-}
-.door-hit:hover:before,.door-hit:focus-visible:before{
-  border-color:rgba(0,174,239,.72)!important;
-  box-shadow:inset 0 0 72px rgba(0,174,239,.05),0 0 30px rgba(0,174,239,.16)!important;
-}
-@media (min-aspect-ratio:1672/941){
-  .door-hit{
-    left:41.507vw!important;
-    top:calc(50% - 9.66vw)!important;
-    width:16.986vw!important;
-    height:25.18vw!important;
-  }
-}
-@media (max-aspect-ratio:1672/941){
-  .door-hit{
-    left:calc(50% - 15.09vh)!important;
-    top:32.838%!important;
-    width:30.18vh!important;
-    height:44.739%!important;
-  }
-}
+/* Merchandise — stronger physical silhouettes, cleaner focus, restrained labels. */
+.merch-item{outline:none}
+.merch-item:focus-visible{filter:drop-shadow(0 16px 20px rgba(0,0,0,.82)) drop-shadow(0 0 16px rgba(0,174,239,.22))}
+.merch-tag{min-width:136px;padding:8px 9px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.merch-tag b{max-width:94px;overflow:hidden;text-overflow:ellipsis}
+.merch-tag em{font-variant-numeric:tabular-nums}
+.product-image.stage img{will-change:auto}
 
-/* Hat shelf interaction keeps the last hat in motion briefly after pointer exit.
-   Entering a new hat is immediate; release is delayed so moving across the shelf
-   reads as one continuous physical interaction rather than a sequence of snaps. */
-@media (hover:hover) and (pointer:fine){
-  .fixture-hat-shelf .merch-cap{
-    transition:filter .28s ease .10s,transform .34s cubic-bezier(.2,.8,.2,1) .16s,opacity .25s ease;
-  }
-  .fixture-hat-shelf .merch-cap:hover,.fixture-hat-shelf .merch-cap:focus-visible{
-    transition-delay:0s;
-  }
-  .fixture-hat-shelf:has(.merch-cap:hover),.fixture-hat-shelf:has(.merch-cap:focus-visible){z-index:19}
-}
-
-/* Garment presence stays full, but position is owned by fixtures + the rail. */
 @media (min-width:901px){
-  .fixture-wall-rack .merch-object{
-    --merch-art-scale:1.10;
-    --merch-art-lift:-.28cqh;
+  /* Bottoms need a different silhouette budget than tops. */
+  .fixture-left-wall-rack [data-product="shadow-pants"]{
+    width:4.2cqw!important;
+    height:13.4cqh!important;
   }
-  .fixture-wall-rack .merch-item:nth-of-type(-n+4) .merch-object{
-    --merch-art-scale:1.17;
-    --merch-art-lift:-.72cqh;
+  .fixture-left-wall-rack [data-product="men-s-ghost-shorts"]{
+    width:4.75cqw!important;
+    height:9.0cqh!important;
+  }
+  .fixture-left-wall-rack .merch-bomber{
+    width:5.05cqw!important;
+    height:11.5cqh!important;
+  }
+  .fixture-right-wall-rack .merch-hoodie{
+    width:4.9cqw!important;
+    height:11.35cqh!important;
   }
 }
 
-@media (max-width:760px){
-  .exterior .exterior-image{transform:translate(-50%,-50%) scale(1.04)!important}
-  .exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image{transform:translate(-50%,-50%) scale(1.07)!important}
-  .exterior.entering .exterior-image{transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important}
+/* Drawers — premium retail detail rather than debug/commerce UI. */
+.drawer-shell{animation:drawerShellIn .2s ease both}
+.drawer-scrim{background:rgba(0,0,0,.68);backdrop-filter:blur(4px)}
+.drawer{
+  width:min(460px,96vw);
+  height:100dvh;
+  overscroll-behavior:contain;
+  background:linear-gradient(180deg,#11151a 0%,#0b0e12 42%,#090c0f 100%);
+  border-left-color:rgba(255,255,255,.11);
+  box-shadow:-32px 0 80px rgba(0,0,0,.62);
+  scrollbar-width:thin;
+  scrollbar-color:#343b42 transparent;
+}
+.drawer::-webkit-scrollbar{width:7px}
+.drawer::-webkit-scrollbar-thumb{background:#343b42;border-radius:999px}
+.drawer-close{border-radius:999px!important;backdrop-filter:blur(10px)}
+.product-image.large{height:clamp(290px,38vh,360px);background:radial-gradient(ellipse at 50% 42%,#252b33 0%,#14181e 42%,#090c10 76%)}
+.product-image.large:after{content:"";position:absolute;left:16%;right:16%;bottom:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,174,239,.34),transparent);opacity:.48}
+.product-image.large img{padding:22px 28px 14px;filter:drop-shadow(0 18px 18px rgba(0,0,0,.42))}
+.drawer-content{padding:28px 28px max(28px,env(safe-area-inset-bottom))}
+.drawer-content h2{font-size:clamp(22px,3vw,27px);letter-spacing:-.025em}
+.product-meta-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:4px 0 2px}
+.product-meta-row .price{margin:0;font-size:17px;font-variant-numeric:tabular-nums}
+.availability-line{display:inline-flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#88939c;white-space:nowrap}
+.availability-line i{width:6px;height:6px;border-radius:50%;background:#59636b;box-shadow:0 0 0 4px rgba(255,255,255,.025)}
+.availability-line.available{color:#a8c4b1}
+.availability-line.available i{background:#7fb18f;box-shadow:0 0 0 4px rgba(127,177,143,.08)}
+.availability-line.unavailable{color:#a78f8f}
+.product-description{max-height:158px;overflow:auto;padding-right:8px;scrollbar-width:thin;scrollbar-color:#343b42 transparent}
+.selector{padding-top:2px}
+.chips button{min-width:40px;border-radius:2px;transition:border-color .18s ease,background .18s ease,transform .18s ease}
+.chips button:hover{border-color:rgba(255,255,255,.34);transform:translateY(-1px)}
+.chips button.active{background:rgba(0,174,239,.07)}
+.primary{min-height:46px;background:linear-gradient(180deg,#10252e,#0b1b22);box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.primary:not(:disabled):hover{background:linear-gradient(180deg,#15313c,#0d222a);transform:translateY(-1px);box-shadow:0 12px 28px rgba(0,0,0,.26)}
+.primary.is-busy{cursor:progress}
+.bag-content h2{margin-bottom:18px}
+.bag-row{grid-template-columns:62px 1fr 38px;padding:14px 0}
+.bag-row .product-image{border-radius:2px;background:radial-gradient(circle at 50% 42%,#20262d,#0a0d10 72%)}
+.bag-total{padding-top:4px;font-size:13px}
+.bag-total b{font-size:17px;font-variant-numeric:tabular-nums}
+.checkout-error{border-radius:2px}
+@keyframes drawerShellIn{from{opacity:.72}to{opacity:1}}
+
+/* Mobile — one physical store, not a hidden desktop store plus a second DOM. */
+@media (max-width:900px){
+  .store-header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+  .interior-scene{border-bottom:1px solid rgba(255,255,255,.07)}
+  .scene-label{max-width:62vw}
+  .center-prompt.floor-status{min-width:0;max-width:52vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mobile-store{padding-bottom:env(safe-area-inset-bottom)}
+  .mobile-store-intro{padding:30px 20px 20px}
+  .mobile-store-intro h2{letter-spacing:-.025em}
+  .retail-zone{content-visibility:auto;contain-intrinsic-size:500px}
+  .retail-zone-header{padding-bottom:18px}
+  .mobile-wall,.mobile-shelf{border-color:rgba(255,255,255,.08);box-shadow:0 22px 40px rgba(0,0,0,.24)}
+  .mobile-hanging-piece,.mobile-shelf-piece{outline:none}
+  .mobile-hanging-piece:focus-visible,.mobile-shelf-piece:focus-visible{outline:1px solid rgba(0,174,239,.72);outline-offset:-1px}
+  .retail-tag{background:linear-gradient(180deg,rgba(7,9,12,.02),rgba(7,9,12,.82));padding:12px 4px 3px}
+  .retail-tag b{font-size:9.5px}
+  .drawer{width:100vw;border-left:0}
+  .drawer-scrim{backdrop-filter:blur(2px)}
+  .drawer-content{padding-left:22px;padding-right:22px}
+  .product-description{max-height:140px}
+}
+
+@media (max-width:520px){
+  .outside-copy{bottom:14%}
+  .outside-copy h1{font-size:34px}
+  .brand-plaque small{max-width:78vw;overflow:hidden;text-overflow:ellipsis}
+  .product-image.large{height:260px}
+  .product-meta-row{align-items:flex-start;flex-direction:column;gap:7px}
+  .mobile-hanging-row{padding-left:14px;padding-right:14px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .center-prompt.floor-status[data-status="loading"] svg{animation:none}
+  .exterior .brand-plaque,.exterior .outside-copy,.exterior .outside-foot{transition:none}
 }
