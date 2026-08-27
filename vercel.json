@@ -1,0 +1,37 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/square_products_latest.json",
+      "destination": "https://gear.aerovista.us/square_products_latest.json"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.aerovista.us/api/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "https://api.aerovista.us/v1/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "x-vercel-enable-rewrite-caching",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "source": "/v1/:path*",
+      "headers": [
+        {
+          "key": "x-vercel-enable-rewrite-caching",
+          "value": "0"
+        }
+      ]
+    }
+  ]
+}
