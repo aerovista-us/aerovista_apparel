@@ -1,1 +1,57 @@
-placeholder
+/* First-paint performance and final department styling. */
+
+/* The authored storefront windows are intentionally deferred until after the
+   facade has painted. The existing architectural silhouettes remain as the
+   immediate placeholder, so first paint does not wait on ~4 MB of photography. */
+.exterior .exterior-image:before,
+.exterior .exterior-image:after{
+  background-image:none!important;
+  opacity:.18!important;
+  transition:opacity .45s ease,filter .45s ease;
+}
+html.window-sets-ready .exterior .exterior-image:before{
+  background-image:url('./store/window-sets/window-set-left.png')!important;
+  opacity:.96!important;
+}
+html.window-sets-ready .exterior .exterior-image:after{
+  background-image:url('./store/window-sets/window-set-right.png')!important;
+  opacity:.96!important;
+}
+
+/* Pants and shorts use the same physical hanger language as tops when they are
+   merchandised on a rail. */
+.fixture-wall-rack .merch-bottom:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-1.15cqh;
+  width:1.34cqw;
+  height:1.62cqh;
+  border:1.5px solid rgba(183,189,194,.60);
+  border-bottom:0;
+  border-radius:14px 14px 0 0;
+  transform:translateX(-50%) scaleX(.74);
+  opacity:.74;
+  filter:drop-shadow(0 3px 3px #000);
+}
+.fixture-wall-rack .merch-bottom:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-.12cqh;
+  width:2.3cqw;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(177,183,188,.7),transparent);
+  transform:translateX(-50%);
+  opacity:.62;
+}
+
+@media (max-width:900px){
+  .fixture-wall-rack .merch-bottom:before,
+  .fixture-wall-rack .merch-bottom:after{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .exterior .exterior-image:before,
+  .exterior .exterior-image:after{transition:none!important}
+}
