@@ -38,6 +38,7 @@ function typeForProduct(product) {
   const hay = `${product.name || ''} ${product.category || ''}`.toLowerCase()
   if (/playing cards|card deck|\bdeck\b/.test(hay)) return 'deck'
   if (/\bhat\b|\bcap\b|trucker|snapback|flexfit/.test(hay)) return 'cap'
+  if (/\bpants?\b|\bshorts?\b|\bbottoms?\b/.test(hay)) return 'bottom'
   if (/bomber|jacket/.test(hay)) return 'bomber'
   if (/long.?sleeve/.test(hay)) return 'long-sleeve'
   if (/sweatshirt|crewneck/.test(hay)) return 'sweatshirt'
