@@ -1,0 +1,24 @@
+.wordmark{
+  width:158px;
+  height:40px;
+  padding:0;
+  font-size:0;
+  background:url('./img/aa_logo.png') left center/contain no-repeat;
+  filter:drop-shadow(0 0 10px rgba(0,174,239,.08));
+}
+.wordmark .apex{display:none}
+
+.brand-plaque span{
+  width:clamp(220px,22vw,360px);
+  height:clamp(58px,6vw,92px);
+  display:block;
+  font-size:0;
+  background:url('./img/aa_logo.png') center/contain no-repeat;
+  filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));
+}
+.brand-plaque small{margin-top:-6px}
+
+@media (max-width:760px){
+  .wordmark{width:126px;height:34px}
+  .brand-plaque span{width:210px;height:58px}
+}
