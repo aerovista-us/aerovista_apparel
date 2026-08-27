@@ -1,12 +1,73 @@
-/* Flagship polish: facade hierarchy, exact doorway hit geometry and final wall merchandising lift. */
+/* Flagship polish: facade hierarchy, exact doorway geometry, window sets and final wall merchandising. */
 
 /* The architectural canopy sign is the exterior headline. Keep the real logo in
    the interior header, but remove the second floating facade header. */
 .exterior .brand-plaque{display:none!important}
 
+/* Register the exterior artwork as one 1672x941 cover-sized physical plane.
+   The model window sets are attached to this plane, so facade, windows and set
+   pieces crop/zoom together instead of behaving like unrelated webpage layers. */
+.exterior .exterior-image{
+  inset:auto!important;
+  left:50%!important;
+  top:50%!important;
+  width:max(100vw,177.6833vh)!important;
+  height:auto!important;
+  aspect-ratio:1672 / 941;
+  background-size:100% 100%!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  transform:translate(-50%,-50%) scale(1.018)!important;
+  overflow:visible;
+}
+.exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image{
+  transform:translate(-50%,-50%) scale(1.045) translateY(-.5%)!important;
+}
+.exterior.entering .exterior-image{
+  transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important;
+}
+
+/* Window Set 01 / 02.
+   The references show that the illusion is strongest when the display reads as
+   a lit stage behind glass: full-height people, a grounded plinth, dark negative
+   space, and subdued reflections. The source models are composed into two
+   transparent sets; these boxes supply the glass-space lighting and depth. */
+.exterior .exterior-image:before,.exterior .exterior-image:after{
+  content:"";
+  position:absolute;
+  top:34.113%;
+  width:22.967%;
+  height:39.639%;
+  pointer-events:none;
+  z-index:1;
+  background-repeat:no-repeat;
+  background-position:center bottom,center,center;
+  background-size:97% auto,100% 100%,100% 100%;
+  border:1px solid rgba(182,174,162,.13);
+  box-shadow:
+    inset 0 0 75px rgba(0,0,0,.58),
+    inset 0 28px 65px rgba(208,177,137,.055),
+    0 12px 30px rgba(0,0,0,.20);
+  filter:brightness(.82) saturate(.82) contrast(1.04);
+  opacity:.94;
+}
+.exterior .exterior-image:before{
+  left:15.55%;
+  background-image:
+    url('./store/window-sets/shadow-set-left.webp'),
+    radial-gradient(ellipse at 50% 22%,rgba(207,173,130,.16),transparent 48%),
+    linear-gradient(180deg,rgba(10,11,12,.94),rgba(12,13,14,.70) 62%,rgba(4,5,6,.96));
+}
+.exterior .exterior-image:after{
+  left:61.483%;
+  background-image:
+    url('./store/window-sets/shadow-set-right.webp'),
+    radial-gradient(ellipse at 50% 22%,rgba(207,173,130,.15),transparent 48%),
+    linear-gradient(180deg,rgba(10,11,12,.94),rgba(12,13,14,.70) 62%,rgba(4,5,6,.96));
+}
+
 /* The static cyan doorway in exterior.svg is x=694 y=309 w=284 h=421 on the
-   1672x941 scene. These two aspect-ratio branches reproduce the same cover math
-   as the facade artwork so the interactive outline lands on that exact frame. */
+   1672x941 scene. These aspect-ratio branches reproduce the same cover math. */
 .door-hit:before{
   inset:0!important;
   border-radius:0!important;
@@ -16,7 +77,6 @@
   border-color:rgba(0,174,239,.72)!important;
   box-shadow:inset 0 0 72px rgba(0,174,239,.05),0 0 30px rgba(0,174,239,.16)!important;
 }
-
 @media (min-aspect-ratio:1672/941){
   .door-hit{
     left:41.507vw!important;
@@ -34,8 +94,7 @@
   }
 }
 
-/* Final merchandise presence pass. The rail + hanger anchor moves in fixtures.js
-   and interior.svg; these values only make the garment itself read fuller. */
+/* Garment presence stays full, but position is owned by fixtures + the rail. */
 @media (min-width:901px){
   .fixture-wall-rack .merch-object{
     --merch-art-scale:1.10;
@@ -45,4 +104,10 @@
     --merch-art-scale:1.17;
     --merch-art-lift:-.72cqh;
   }
+}
+
+@media (max-width:760px){
+  .exterior .exterior-image{transform:translate(-50%,-50%) scale(1.04)!important}
+  .exterior:has(.door-hit:hover) .exterior-image,.exterior:has(.door-hit:focus-visible) .exterior-image{transform:translate(-50%,-50%) scale(1.07)!important}
+  .exterior.entering .exterior-image{transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important}
 }

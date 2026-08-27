@@ -9,10 +9,11 @@ export const fixtures = [
     label: 'Apex Wall',
     position: { x: 4.5, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      { productId: 'aerovista-apex-vintage-tee', x: 14, y: 43.6, scale: 1.17, tilt: -1 },
-      { productId: 'aerovista-apex-signal-sweatshirt', x: 39, y: 40.3, scale: 1.09, tilt: 0 },
-      { productId: 'aerovista-apex-glitch-tee-black', x: 64, y: 37.0, scale: 1.01, tilt: 0 },
-      { productId: 'aerovista-shadow-pattern-hoodie', x: 89, y: 33.8, scale: .93, tilt: 1 },
+      // Upper rail now follows the user-marked target line near the top of the bay.
+      { productId: 'aerovista-apex-vintage-tee', x: 14, y: 29.6, scale: 1.17, tilt: -1 },
+      { productId: 'aerovista-apex-signal-sweatshirt', x: 39, y: 28.4, scale: 1.09, tilt: 0 },
+      { productId: 'aerovista-apex-glitch-tee-black', x: 64, y: 27.1, scale: 1.01, tilt: 0 },
+      { productId: 'aerovista-shadow-pattern-hoodie', x: 89, y: 25.9, scale: .93, tilt: 1 },
       { productId: 'aerovista-shadow-pattern-long-sleeve-tee', x: 45, y: 70.2, scale: 1.03, tilt: -1 },
       { productId: 'shadow-wear-ghost-ridge', x: 65, y: 64.4, scale: .98, tilt: 0 },
       { productId: 'aerovista-apex-pattern-bomber-jacket', x: 85, y: 58.7, scale: .93, tilt: 1 },
@@ -24,10 +25,11 @@ export const fixtures = [
     label: 'Studio Wall',
     position: { x: 71.6, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      { productId: 'architect-field-issue-tee-black', x: 11, y: 33.8, scale: .93, tilt: -1 },
-      { productId: 'architect-field-issue-tee-ash', x: 36, y: 37.0, scale: 1.01, tilt: 0 },
-      { productId: 'architect-built-different-hoodie-black', x: 61, y: 40.3, scale: 1.09, tilt: 0 },
-      { productId: 'drafted-a-premium-sweatshirt', x: 86, y: 43.6, scale: 1.17, tilt: 1 },
+      // Mirror of the target upper rail: shallow perspective slope, high on wall.
+      { productId: 'architect-field-issue-tee-black', x: 11, y: 25.9, scale: .93, tilt: -1 },
+      { productId: 'architect-field-issue-tee-ash', x: 36, y: 27.1, scale: 1.01, tilt: 0 },
+      { productId: 'architect-built-different-hoodie-black', x: 61, y: 28.4, scale: 1.09, tilt: 0 },
+      { productId: 'drafted-a-premium-sweatshirt', x: 86, y: 29.6, scale: 1.17, tilt: 1 },
       { productId: 'aerovista-core-hoodie', x: 15, y: 58.7, scale: .93, tilt: -1 },
       { productId: 'aerovista-division-hoodie', x: 45, y: 67.2, scale: 1.03, tilt: 0 },
       { productId: 'aerovista-the-blue-witness-urban-hoodie-black', x: 75, y: 75.7, scale: 1.13, tilt: 1 },
