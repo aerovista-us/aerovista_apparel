@@ -16,16 +16,11 @@
     opacity:.82;
   }
 
-  /* One hanger language across every apparel type. The product scale changes with
-     depth, but hook geometry and garment-to-hook spacing remain visually consistent. */
   .fixture-wall-rack .merch-hoodie:before,
   .fixture-wall-rack .merch-sweatshirt:before,
   .fixture-wall-rack .merch-long-sleeve:before,
   .fixture-wall-rack .merch-tee:before,
   .fixture-wall-rack .merch-bomber:before{
-    top:-12px;
-    width:23px;
-    height:17px;
     border-color:rgba(183,189,194,.60);
     opacity:.74;
   }
@@ -34,36 +29,48 @@
   .fixture-wall-rack .merch-long-sleeve:after,
   .fixture-wall-rack .merch-tee:after,
   .fixture-wall-rack .merch-bomber:after{
-    top:-1px;
-    width:40px;
     opacity:.62;
   }
 }
 
 /* --------------------------------------------------------------------------
-   Registered scene plane
+   Responsive registered scene
    --------------------------------------------------------------------------
-   The interior artwork is 1672 x 941. On desktop the SVG and the live fixture
-   layer are given the exact same cover-sized plane, then the authored camera is
-   applied to both. This prevents the wall/product perspective from drifting as
-   the browser changes aspect ratio. */
+   The SVG architecture and merchandise layer are the same 1672 x 941 camera
+   plane. The plane follows the window until a deliberate max camera width,
+   after which zooming farther out reveals more room instead of only shrinking
+   the merchandise. Merchandise dimensions use scene container units so browser
+   zoom and window resizing cannot change product-to-room proportions. */
 @media (min-width:901px){
+  .interior-scene{
+    background:
+      radial-gradient(ellipse at 50% 48%,rgba(28,31,34,.55),rgba(6,8,11,.96) 76%),
+      #07090c;
+  }
+
   .interior-image,
   .fixture-layer{
     inset:auto!important;
     left:50%!important;
     top:50%!important;
-    width:max(100vw,1155px,calc(177.6833vh - 120.824px))!important;
+    width:min(100%,2200px)!important;
     height:auto!important;
     aspect-ratio:1672 / 941;
   }
 
+  .fixture-layer{container-type:size}
+
   .interior-image{
     background-size:100% 100%!important;
     background-position:center!important;
+    background-repeat:no-repeat!important;
   }
 
-  /* Architecture and merchandise always receive the same camera transform. */
+  /* Cancel the old <=1050 fixture shrink. Depth comes from the room camera,
+     not from independently scaling merchandise fixtures. */
+  .interior-scene .fixture{transform:none}
+
+  /* Architecture and merchandise always receive exactly the same camera. */
   .view-room .interior-image,
   .view-room .fixture-layer{
     transform:translate(-50%,-50%) scale(1.008)!important;
@@ -80,8 +87,6 @@
     transform-origin:73% 51%!important;
   }
 
-  /* Approaching a product can move the camera, but both registered layers move
-     together so the product never slides off its physical wall. */
   .view-room:has(.merch-item:hover) .interior-image,
   .view-room:has(.merch-item:hover) .fixture-layer,
   .view-room:has(.merch-item:focus-visible) .interior-image,
@@ -101,16 +106,48 @@
     transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.17)!important;
   }
 
-  /* Garments become more legible without moving the hanger anchor. The first
-     four buttons in each wall fixture are the authored upper rail. Their art is
-     lifted closer to the hanger and enlarged a little more than the lower rail. */
+  /* Product boxes are now a percentage of the physical scene, not fixed px. */
+  .fixture-wall-rack .merch-item:not(.merch-cap):not(.merch-deck){
+    width:4.8cqw!important;
+    height:11.1cqh!important;
+  }
+  .fixture-hat-shelf .merch-cap{
+    width:4.8cqw!important;
+    height:7.6cqh!important;
+  }
+  .fixture-table-stack .merch-deck{
+    width:3.6cqw!important;
+    height:9.3cqh!important;
+  }
+
+  /* Hanger geometry belongs to the same scene scale. */
+  .fixture-wall-rack .merch-hoodie:before,
+  .fixture-wall-rack .merch-sweatshirt:before,
+  .fixture-wall-rack .merch-long-sleeve:before,
+  .fixture-wall-rack .merch-tee:before,
+  .fixture-wall-rack .merch-bomber:before{
+    top:-1.15cqh!important;
+    width:1.34cqw!important;
+    height:1.62cqh!important;
+  }
+  .fixture-wall-rack .merch-hoodie:after,
+  .fixture-wall-rack .merch-sweatshirt:after,
+  .fixture-wall-rack .merch-long-sleeve:after,
+  .fixture-wall-rack .merch-tee:after,
+  .fixture-wall-rack .merch-bomber:after{
+    top:-.12cqh!important;
+    width:2.3cqw!important;
+  }
+
+  /* Garment art is fuller on the wall while the hanger anchor stays on the
+     authored rail. Upper-rail art is lifted a touch more. */
   .fixture-wall-rack .merch-object{
-    --merch-art-scale:1.06;
-    --merch-art-lift:-2px;
+    --merch-art-scale:1.07;
+    --merch-art-lift:-.20cqh;
   }
   .fixture-wall-rack .merch-item:nth-of-type(-n+4) .merch-object{
-    --merch-art-scale:1.10;
-    --merch-art-lift:-7px;
+    --merch-art-scale:1.12;
+    --merch-art-lift:-.62cqh;
   }
   .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
     transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(7deg) skewY(1deg) scale(var(--merch-art-scale))!important;
@@ -120,10 +157,15 @@
     transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(-7deg) skewY(-1deg) scale(var(--merch-art-scale))!important;
     transform-origin:left center;
   }
+
+  .fixture:has(.merch-item:hover),
+  .fixture:has(.merch-item:focus-visible){
+    transform:translateZ(30px) scale(1.025)
+  }
 }
 
-/* Compact desktop/tablet camera. Keep the spatial room until it becomes too
-   narrow to honestly show both merchandise walls. */
+/* Compact desktop/tablet camera. The scene itself now shrinks with the window,
+   so this breakpoint only simplifies chrome. */
 @media (max-width:1180px) and (min-width:901px){
   .scene-label{max-width:300px}
   .scene-label h1{font-size:26px}
