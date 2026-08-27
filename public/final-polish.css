@@ -5,8 +5,8 @@
 .exterior .brand-plaque{display:none!important}
 
 /* Register the exterior artwork as one 1672x941 cover-sized physical plane.
-   The model window sets are attached to this plane, so facade, windows and set
-   pieces crop/zoom together instead of behaving like unrelated webpage layers. */
+   The window sets are attached to this plane, so facade, windows and set pieces
+   crop/zoom together instead of behaving like unrelated webpage layers. */
 .exterior .exterior-image{
   inset:auto!important;
   left:50%!important;
@@ -27,11 +27,8 @@
   transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important;
 }
 
-/* Window Set 01 / 02.
-   The references show that the illusion is strongest when the display reads as
-   a lit stage behind glass: full-height people, a grounded plinth, dark negative
-   space, and subdued reflections. The source models are composed into two
-   transparent sets; these boxes supply the glass-space lighting and depth. */
+/* Exterior vitrines use the authored photographic sets supplied for this store.
+   Keep them behind the glass and let the existing facade supply the frame. */
 .exterior .exterior-image:before,.exterior .exterior-image:after{
   content:"";
   position:absolute;
@@ -41,29 +38,49 @@
   pointer-events:none;
   z-index:1;
   background-repeat:no-repeat;
-  background-position:center bottom,center,center;
-  background-size:97% auto,100% 100%,100% 100%;
+  background-position:center;
+  background-size:cover;
   border:1px solid rgba(182,174,162,.13);
   box-shadow:
-    inset 0 0 75px rgba(0,0,0,.58),
-    inset 0 28px 65px rgba(208,177,137,.055),
+    inset 0 0 62px rgba(0,0,0,.30),
     0 12px 30px rgba(0,0,0,.20);
-  filter:brightness(.82) saturate(.82) contrast(1.04);
-  opacity:.94;
+  filter:brightness(.80) saturate(.88) contrast(1.04);
+  opacity:.96;
 }
 .exterior .exterior-image:before{
   left:15.55%;
-  background-image:
-    url('./store/window-sets/shadow-set-left.webp'),
-    radial-gradient(ellipse at 50% 22%,rgba(207,173,130,.16),transparent 48%),
-    linear-gradient(180deg,rgba(10,11,12,.94),rgba(12,13,14,.70) 62%,rgba(4,5,6,.96));
+  background-image:url('./store/window-sets/window-set-left.png');
 }
 .exterior .exterior-image:after{
   left:61.483%;
-  background-image:
-    url('./store/window-sets/shadow-set-right.webp'),
-    radial-gradient(ellipse at 50% 22%,rgba(207,173,130,.15),transparent 48%),
-    linear-gradient(180deg,rgba(10,11,12,.94),rgba(12,13,14,.70) 62%,rgba(4,5,6,.96));
+  background-image:url('./store/window-sets/window-set-right.png');
+}
+
+/* Back-wall Studio / Archive displays.
+   These are part of the interior artwork layer itself, so authored camera moves,
+   browser zoom and room scaling affect the images and architecture together. */
+.interior-image:before,.interior-image:after{
+  content:"";
+  position:absolute;
+  top:22.95%;
+  width:10.65%;
+  height:33.80%;
+  pointer-events:none;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  background-size:auto 96%;
+  clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);
+  filter:brightness(.68) saturate(.78) contrast(1.08);
+  opacity:.88;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.28);
+}
+.interior-image:before{
+  left:35.17%;
+  background-image:url('./store/window-sets/inside-left.png');
+}
+.interior-image:after{
+  left:54.19%;
+  background-image:url('./store/window-sets/inside-right.png');
 }
 
 /* The static cyan doorway in exterior.svg is x=694 y=309 w=284 h=421 on the
@@ -92,6 +109,19 @@
     width:30.18vh!important;
     height:44.739%!important;
   }
+}
+
+/* Hat shelf interaction keeps the last hat in motion briefly after pointer exit.
+   Entering a new hat is immediate; release is delayed so moving across the shelf
+   reads as one continuous physical interaction rather than a sequence of snaps. */
+@media (hover:hover) and (pointer:fine){
+  .fixture-hat-shelf .merch-cap{
+    transition:filter .28s ease .10s,transform .34s cubic-bezier(.2,.8,.2,1) .16s,opacity .25s ease;
+  }
+  .fixture-hat-shelf .merch-cap:hover,.fixture-hat-shelf .merch-cap:focus-visible{
+    transition-delay:0s;
+  }
+  .fixture-hat-shelf:has(.merch-cap:hover),.fixture-hat-shelf:has(.merch-cap:focus-visible){z-index:19}
 }
 
 /* Garment presence stays full, but position is owned by fixtures + the rail. */
