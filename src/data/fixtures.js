@@ -9,14 +9,16 @@ export const fixtures = [
     label: 'Apex Wall',
     position: { x: 4.5, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      // Upper rail now follows the user-marked target line near the top of the bay.
+      // Upper rail: tees first. This row is the clearest read from the main aisle.
       { productId: 'aerovista-apex-vintage-tee', x: 14, y: 29.6, scale: 1.17, tilt: -1 },
-      { productId: 'aerovista-apex-signal-sweatshirt', x: 39, y: 28.4, scale: 1.09, tilt: 0 },
-      { productId: 'aerovista-apex-glitch-tee-black', x: 64, y: 27.1, scale: 1.01, tilt: 0 },
-      { productId: 'aerovista-shadow-pattern-hoodie', x: 89, y: 25.9, scale: .93, tilt: 1 },
-      { productId: 'aerovista-shadow-pattern-long-sleeve-tee', x: 45, y: 70.2, scale: 1.03, tilt: -1 },
-      { productId: 'shadow-wear-ghost-ridge', x: 65, y: 64.4, scale: .98, tilt: 0 },
-      { productId: 'aerovista-apex-pattern-bomber-jacket', x: 85, y: 58.7, scale: .93, tilt: 1 },
+      { productId: 'aerovista-apex-glitch-tee-black', x: 39, y: 28.4, scale: 1.09, tilt: 0 },
+      { productId: 'architect-field-issue-tee-black', x: 64, y: 27.1, scale: 1.01, tilt: 0 },
+      { productId: 'aerovista-core-tee', x: 89, y: 25.9, scale: .93, tilt: 1 },
+      // Lower rail: heavier outerwear plus the two current Shadow Wear bottoms.
+      { productId: 'shadow-wear-tactical-bomber-jacket-summit-edition', x: 24, y: 70.2, scale: 1.03, tilt: -1 },
+      { productId: 'aerovista-apex-pattern-bomber-jacket', x: 45, y: 66.0, scale: 1.00, tilt: 0 },
+      { productId: 'shadow-pants', x: 66, y: 61.8, scale: .97, tilt: 0 },
+      { productId: 'men-s-ghost-shorts', x: 86, y: 58.0, scale: .92, tilt: 1 },
     ],
   },
   {
@@ -25,13 +27,13 @@ export const fixtures = [
     label: 'Studio Wall',
     position: { x: 71.6, y: 25.3, w: 23.9, h: 49.2 },
     slots: [
-      // Mirror of the target upper rail: shallow perspective slope, high on wall.
-      { productId: 'architect-field-issue-tee-black', x: 11, y: 25.9, scale: .93, tilt: -1 },
-      { productId: 'architect-field-issue-tee-ash', x: 36, y: 27.1, scale: 1.01, tilt: 0 },
-      { productId: 'architect-built-different-hoodie-black', x: 61, y: 28.4, scale: 1.09, tilt: 0 },
-      { productId: 'drafted-a-premium-sweatshirt', x: 86, y: 29.6, scale: 1.17, tilt: 1 },
-      { productId: 'aerovista-core-hoodie', x: 15, y: 58.7, scale: .93, tilt: -1 },
-      { productId: 'aerovista-division-hoodie', x: 45, y: 67.2, scale: 1.03, tilt: 0 },
+      // Right wall is the hoodie wall: clean, layered and intentionally dense.
+      { productId: 'aerovista-shadow-pattern-hoodie', x: 11, y: 25.9, scale: .93, tilt: -1 },
+      { productId: 'architect-built-different-hoodie-black', x: 36, y: 27.1, scale: 1.01, tilt: 0 },
+      { productId: 'aerovista-core-hoodie', x: 61, y: 28.4, scale: 1.09, tilt: 0 },
+      { productId: 'aerovista-division-hoodie', x: 86, y: 29.6, scale: 1.17, tilt: 1 },
+      { productId: 'aerovista-apex-draft-full-zip-hoodie-black', x: 15, y: 58.7, scale: .93, tilt: -1 },
+      { productId: 'aerovista-apex-draft-pullover-hoodie-black', x: 45, y: 67.2, scale: 1.03, tilt: 0 },
       { productId: 'aerovista-the-blue-witness-urban-hoodie-black', x: 75, y: 75.7, scale: 1.13, tilt: 1 },
     ],
   },
