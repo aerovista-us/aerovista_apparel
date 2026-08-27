@@ -53,8 +53,8 @@
     <polygon points="1223,305 1580,317 1580,642 1223,505" fill="url(#glass)"/>
   </g>
   <g stroke="#8d8478" stroke-width="3" opacity=".58">
-    <line x1="116" y1="425" x2="436" y2="376"/><line x1="1236" y1="376" x2="1556" y2="425"/>
-    <line x1="132" y1="594" x2="432" y2="490"/><line x1="1240" y1="490" x2="1540" y2="594"/>
+    <line x1="116" y1="407" x2="436" y2="358"/><line x1="1236" y1="358" x2="1556" y2="407"/>
+    <line x1="132" y1="582" x2="432" y2="478"/><line x1="1240" y1="478" x2="1540" y2="582"/>
   </g>
 
   <!-- back wall architecture: depth beyond the current room -->
