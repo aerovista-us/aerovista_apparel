@@ -1,65 +1,70 @@
-// Explicit bindings are the authority for live checkout identity. A presentation
-// image is allowed to differ from the catalog image, but a visual resemblance is
-// never enough to decide what Square product a customer is buying.
-const PRODUCT_BINDINGS = Object.freeze({
-  'core-tee-black': 'aerovista-core-tee',
-  'aerovista-divisions-hoodie': 'aerovista-division-hoodie',
-  'apex-glitch-tee-black': 'aerovista-apex-glitch-tee-black',
-  'apex-signal-sweatshirt': 'aerovista-apex-signal-sweatshirt',
-  'apex-vintage-tee': 'aerovista-apex-vintage-tee',
-  'apex-shadow-long-sleeve': 'aerovista-shadow-pattern-long-sleeve-tee',
-  'apex-embroidered-hat-black': 'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark',
-  'apex-camo-flexfit-hat': 'aerovista-apex-camo-flexfit-hat',
-  'glitch-orbit-cap-black': 'glitch-orbit-logo-black',
-  'architect-field-issue-tee-black': 'architect-field-issue-tee-black',
-  'architect-field-issue-tee-ash': 'architect-field-issue-tee-ash',
-  'architect-built-different-hoodie': 'architect-built-different-hoodie-black',
-  'drafted-a-premium-sweatshirt': 'drafted-a-premium-sweatshirt',
-  'drafted-a-snapback': 'aerovista-apex-mesh-trucker-cap',
-  'apex-relic-deck': 'aerovista-apex-relic-playing-cards',
-})
+import { productPresentation, showroomProductIds } from '../data/merchandising'
 
-const normalize = (value) => String(value || '')
-  .normalize('NFKD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .toLowerCase()
-  .replace(/[^a-z0-9]+/g, ' ')
-  .trim()
+const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
+const IMAGE_BASE = cleanBase(import.meta.env.VITE_CATALOG_IMAGE_BASE) || 'https://gear.aerovista.us/img'
 
-const compact = (value) => normalize(value).replace(/\s+/g, '-')
-const baseName = (value) => String(value || '').split(/[\\/]/).pop().replace(/\.[^.]+$/, '').toLowerCase()
+const titleCase = (value) => String(value || '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .map(word => word.slice(0, 1).toUpperCase() + word.slice(1))
+  .join(' ')
 
-function exactMatchScore(presentation, backend) {
-  const pid = compact(presentation.id)
-  const bid = compact(backend.id || backend.slug)
-  if (pid && bid && pid === bid) return 100
+const encodePath = (value) => String(value || '')
+  .split('/')
+  .filter(Boolean)
+  .map(part => encodeURIComponent(part))
+  .join('/')
 
-  const pImage = baseName(presentation.image)
-  const bImage = baseName(backend.image || backend.media?.[0]?.legacySrc)
-  if (pImage && bImage && pImage === bImage) return 96
-
-  const pName = compact(presentation.name)
-  const bName = compact(backend.name || backend.title)
-  if (pName && bName && pName === bName) return 92
-
-  return 0
+function catalogImageUrl(value) {
+  const raw = String(value || '').trim()
+  if (/^https?:\/\//i.test(raw)) return raw
+  const path = encodePath(raw)
+  return path ? `${IMAGE_BASE}/${path}` : ''
 }
 
-function legacyVariants(product) {
+function laneForProduct(product) {
+  const collection = String(product.collection || '').trim().toLowerCase()
+  if (collection === 'core' || collection === 'division') return 'Core'
+  if (collection === 'shadow wear' || collection === 'shadowwear' || collection === 'apex pattern') return 'Shadow Wear'
+  if (collection === 'apex') return 'Apex'
+  if (collection === 'glitch line' || collection === 'glitch') return 'Glitch'
+  if (collection === 'draft series' || collection === 'architect') return 'Architect'
+  if (collection === 'docklife' || collection === 'dock life') return 'DockLife'
+  if (collection === 'accessories' || collection === 'accessory' || collection === 'gear') return 'Accessories'
+  return product.collection ? titleCase(product.collection) : 'Other'
+}
+
+function typeForProduct(product) {
+  const hay = `${product.name || ''} ${product.category || ''}`.toLowerCase()
+  if (/playing cards|card deck|\bdeck\b/.test(hay)) return 'deck'
+  if (/\bhat\b|\bcap\b|trucker|snapback|flexfit/.test(hay)) return 'cap'
+  if (/bomber|jacket/.test(hay)) return 'bomber'
+  if (/long.?sleeve/.test(hay)) return 'long-sleeve'
+  if (/sweatshirt|crewneck/.test(hay)) return 'sweatshirt'
+  if (/hoodie|pullover/.test(hay)) return 'hoodie'
+  if (/tee|t-shirt|shirt/.test(hay)) return 'tee'
+  return 'object'
+}
+
+function legacyVariants(product, sellableKeys) {
   return (product.variants || []).map((variant, index) => {
     const size = String(variant.size || 'One Size').trim() || 'One Size'
     const color = String(variant.color || product.color || '').trim()
-    const numericPrice = Number(variant.price ?? product.price)
+    const price = Number(variant.price ?? product.price)
     const providerVariationId = String(variant.variation_id || '').trim()
+    const merchantSku = String(variant.sku || '').trim()
+    const cartKey = `${color || 'Default'}__${size}`
+    const allowedByBootstrap = !sellableKeys?.size || sellableKeys.has(cartKey)
+    const available = Boolean(providerVariationId && Number.isFinite(price) && allowedByBootstrap)
     return {
       id: providerVariationId || `${product.id}-variant-${index + 1}`,
       providerVariationId,
-      sku: String(variant.sku || '').trim(),
+      merchantSku,
       size,
       color,
-      price: Number.isFinite(numericPrice) ? numericPrice : null,
-      availability: providerVariationId && Number.isFinite(numericPrice) ? 'available' : 'unavailable',
-      cartKey: `${color || 'Default'}__${size}`,
+      price: Number.isFinite(price) ? price : null,
+      availability: available ? 'available' : 'unavailable',
+      cartKey,
     }
   })
 }
@@ -76,7 +81,7 @@ function v1Variants(product) {
     return {
       id: String(variant.id || ''),
       providerVariationId: '',
-      sku: '',
+      merchantSku: '',
       size: optionLabels.get('size')?.get(sizeId) || sizeId || 'One Size',
       color: optionLabels.get('color')?.get(colorId) || colorId || '',
       price: Number.isFinite(amount) ? amount / 100 : null,
@@ -86,93 +91,84 @@ function v1Variants(product) {
   })
 }
 
-function normalizeBackendProduct(product, mode, catalogVersion) {
-  const variants = mode === 'v1' ? v1Variants(product) : legacyVariants(product)
+function visibleLegacyProduct(product) {
+  const visibility = String(product.visibility ?? 'visible').trim().toLowerCase()
+  if (visibility === 'hidden' || visibility === 'draft' || visibility === 'false' || product.visibility === false) return false
+  const id = String(product.id || '').toLowerCase()
+  const name = String(product.name || '').toLowerCase()
+  if (['cash', 'phone-bill', 'rent', 'rent-wk', 'museface'].includes(id)) return false
+  if (/^rent/i.test(id) || /^rent/i.test(name) || /phone.*bill/i.test(name) || /museface/i.test(name)) return false
+  return true
+}
+
+function shortNameFor(product) {
+  const override = productPresentation[product.id]
+  if (override?.shortName) return override.shortName
+  return String(product.name || product.title || product.id)
+    .replace(/^AeroVista\s*[—–-]?\s*/i, '')
+    .replace(/^Architect\s*[—–-]?\s*/i, '')
+    .trim()
+}
+
+function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
+  const variants = mode === 'v1' ? v1Variants(product) : legacyVariants(product, sellableKeys)
+  const sellableVariants = variants.filter(variant => variant.availability === 'available' && Number.isFinite(variant.price))
+  const prices = sellableVariants.map(variant => variant.price)
+  const sizes = [...new Set(sellableVariants.map(variant => variant.size).filter(Boolean))]
+  const presentation = productPresentation[product.id] || {}
+  const description = product.description || product.description_text || ''
+
   return {
-    raw: product,
     id: String(product.id || ''),
     name: product.title || product.name || product.id,
-    title: product.title || product.name || product.id,
-    slug: product.slug || product.id,
-    image: product.image || product.media?.[0]?.legacySrc || '',
-    tags: product.tags || product.collections || [],
-    collection: product.collection || product.collections?.[0] || '',
-    description: product.description || product.description_text || '',
-    visibility: product.visibility || 'visible',
-    availability: product.availability || (variants.some(v => v.availability === 'available') ? 'available' : 'unavailable'),
-    variants,
-    catalogVersion,
+    shortName: shortNameFor(product),
+    type: presentation.type || typeForProduct(product),
+    price: prices.length ? Math.min(...prices) : null,
+    collection: laneForProduct(product),
+    sourceCollection: product.collection || '',
+    category: product.category || '',
+    image: catalogImageUrl(product.image || product.media?.[0]?.legacySrc || ''),
+    accent: presentation.accent || '#00AEEF',
+    description,
+    colors: [...new Set(sellableVariants.map(variant => variant.color).filter(Boolean))],
+    sizes: sizes.length ? sizes : ['One Size'],
+    display: presentation.display || { objectPosition: '50% 50%' },
+    commerceStatus: sellableVariants.length ? 'connected' : 'unavailable',
+    commerce: {
+      mode,
+      productId: String(product.id || ''),
+      squareItemId: String(product.square_item_id || ''),
+      catalogVersion,
+      variants,
+    },
   }
 }
 
-function chooseMatch(presentation, candidates) {
-  const boundId = PRODUCT_BINDINGS[presentation.id]
-  if (boundId) {
-    const bound = candidates.find(candidate => candidate.id === boundId)
-    return bound ? { candidate: bound, score: 110, source: 'binding' } : null
-  }
-
-  // New presentation entries may bind automatically only on exact identity
-  // signals. No fuzzy/token matching is allowed for checkout identity.
-  const ranked = candidates
-    .map(candidate => ({ candidate, score: exactMatchScore(presentation, candidate), source: 'exact' }))
-    .filter(result => result.score > 0)
-    .sort((a, b) => b.score - a.score)
-  if (!ranked.length) return null
-  if (ranked[1] && ranked[0].score === ranked[1].score) return null
-  return ranked[0]
-}
-
-export function hydratePresentationProducts(presentationProducts, catalog) {
+export function buildCatalogProducts(catalog, bootstrap = null) {
   const mode = catalog.mode === 'v1' || catalog.schemaVersion ? 'v1' : 'legacy'
   const catalogVersion = catalog.catalogVersion || catalog.meta?.exportedAt || catalog.meta?.version || ''
-  const backendProducts = (catalog.products || [])
-    .map(product => normalizeBackendProduct(product, mode, catalogVersion))
-    .filter(product => product.visibility !== 'hidden' && product.visibility !== 'archived')
+  const sellableKeys = mode === 'legacy' && Array.isArray(bootstrap?.sellableCartKeys)
+    ? new Set(bootstrap.sellableCartKeys)
+    : null
 
-  const used = new Set()
-  const matches = []
-  const unmatched = []
+  const rawProducts = Array.isArray(catalog.products) ? catalog.products : []
+  const visible = mode === 'legacy' ? rawProducts.filter(visibleLegacyProduct) : rawProducts
+  const products = visible
+    .map(product => normalizeProduct(product, mode, catalogVersion, sellableKeys))
+    .filter(product => product.id)
 
-  for (const presentation of presentationProducts) {
-    const available = backendProducts.filter(product => !used.has(product.id))
-    const selected = chooseMatch(presentation, available)
-    if (!selected) {
-      presentation.commerce = null
-      presentation.commerceStatus = 'presentation-only'
-      unmatched.push(presentation.id)
-      continue
-    }
-
-    const backend = selected.candidate
-    used.add(backend.id)
-    const sellableVariants = backend.variants.filter(variant => variant.availability === 'available' && Number.isFinite(variant.price))
-    const prices = sellableVariants.map(variant => variant.price)
-    const sizes = [...new Set(sellableVariants.map(variant => variant.size).filter(Boolean))]
-
-    presentation.price = prices.length ? Math.min(...prices) : null
-    if (sizes.length) presentation.sizes = sizes
-    if (backend.description) presentation.description = backend.description
-    presentation.commerceStatus = sellableVariants.length ? 'connected' : 'unavailable'
-    presentation.commerce = {
-      mode,
-      productId: backend.id,
-      catalogVersion,
-      matchScore: selected.score,
-      matchSource: selected.source,
-      backendTitle: backend.title,
-      variants: backend.variants,
-    }
-    matches.push({ presentationId: presentation.id, productId: backend.id, score: selected.score, source: selected.source })
-  }
+  const byId = new Map(products.map(product => [product.id, product]))
+  const showroomProducts = showroomProductIds.map(id => byId.get(id)).filter(Boolean)
+  const missingShowroomIds = showroomProductIds.filter(id => !byId.has(id))
 
   return {
     mode,
-    matched: matches.length,
-    total: presentationProducts.length,
-    unmatched,
-    matches,
     catalogVersion,
+    products,
+    showroomProducts,
+    visibleCatalogCount: products.length,
+    showroomCount: showroomProducts.length,
+    missingShowroomIds,
   }
 }
 
@@ -182,4 +178,4 @@ export function selectCommerceVariant(product, size) {
   return available.find(variant => variant.size === size) || (available.length === 1 ? available[0] : null)
 }
 
-export { PRODUCT_BINDINGS }
+export { laneForProduct }

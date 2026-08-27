@@ -4,17 +4,17 @@ const MODE = String(import.meta.env.VITE_COMMERCE_MODE || 'legacy').trim().toLow
 const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const browserOrigin = () => (typeof window === 'undefined' ? '' : window.location.origin)
 const browserHost = () => (typeof window === 'undefined' ? '' : window.location.hostname)
+const isCanonicalStoreHost = () => ['gear.aerovista.us', 'apparel.aerovista.us'].includes(browserHost())
 
 const configuredApiBase = cleanBase(import.meta.env.VITE_COMMERCE_API_BASE)
-const API_BASE = configuredApiBase || (browserHost() === 'gear.aerovista.us' ? browserOrigin() : 'https://gear.aerovista.us')
+const API_BASE = configuredApiBase || (isCanonicalStoreHost() ? browserOrigin() : 'https://gear.aerovista.us')
 const V1_BASE = cleanBase(import.meta.env.VITE_COMMERCE_V1_BASE) || API_BASE
 
 const unique = (values) => [...new Set(values.filter(Boolean))]
 const legacyCatalogCandidates = () => unique([
   String(import.meta.env.VITE_COMMERCE_CATALOG_URL || '').trim(),
-  browserHost() === 'gear.aerovista.us' ? `${browserOrigin()}/square_products_latest.json` : '',
+  isCanonicalStoreHost() ? `${browserOrigin()}/square_products_latest.json` : '',
   'https://gear.aerovista.us/square_products_latest.json',
-  // Preview/dev fallback. The published Gear catalog is sourced from this repository.
   'https://raw.githubusercontent.com/aerovista-us/store/main/store/square_products_latest.json',
 ])
 
@@ -44,9 +44,7 @@ async function loadLegacyCatalog() {
   for (const url of legacyCatalogCandidates()) {
     try {
       const catalog = await fetchJson(url, { cache: 'no-store' })
-      if (Array.isArray(catalog?.products)) {
-        return { mode: 'legacy', sourceUrl: url, ...catalog }
-      }
+      if (Array.isArray(catalog?.products)) return { mode: 'legacy', sourceUrl: url, ...catalog }
     } catch (error) {
       lastError = error
     }
@@ -83,10 +81,14 @@ function cartKeyForVariant(variant) {
 
 async function beginLegacyCheckout(bag) {
   const cart = bag.map((item) => ({
+    productId: item.product.commerce?.productId || item.product.id,
     sku: cartKeyForVariant(item.variant),
     variationId: item.variant.providerVariationId || item.variant.variationId || '',
     qty: item.quantity || 1,
   }))
+  const invalid = cart.find(line => !line.productId || !line.variationId || !line.sku)
+  if (invalid) throw new Error('One or more bag items are missing a verified catalog variation.')
+
   const result = await fetchJson(`${API_BASE}/api/square/checkout`, {
     method: 'POST',
     body: JSON.stringify({ cart, currency: 'USD' }),
@@ -113,7 +115,8 @@ async function beginV1Checkout(bag) {
     method: 'POST',
     body: JSON.stringify(quotePayload),
   })
-  const checkoutOrigin = cleanBase(import.meta.env.VITE_COMMERCE_CHECKOUT_ORIGIN) || 'https://gear.aerovista.us'
+  const defaultCheckoutOrigin = browserHost() === 'apparel.aerovista.us' ? browserOrigin() : 'https://gear.aerovista.us'
+  const checkoutOrigin = cleanBase(import.meta.env.VITE_COMMERCE_CHECKOUT_ORIGIN) || defaultCheckoutOrigin
   const result = await fetchJson(`${V1_BASE}/v1/checkout/session`, {
     method: 'POST',
     headers: { 'Idempotency-Key': randomKey('checkout') },
