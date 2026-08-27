@@ -19,6 +19,14 @@ const legacyCatalogCandidates = () => unique([
   'https://raw.githubusercontent.com/aerovista-us/store/main/store/square_products_latest.json',
 ])
 
+function readableApiError(payload, response) {
+  if (typeof payload?.message === 'string' && payload.message.trim()) return payload.message
+  if (typeof payload?.error === 'string' && payload.error.trim()) return payload.error
+  if (typeof payload?.error?.message === 'string' && payload.error.message.trim()) return payload.error.message
+  if (typeof payload?.detail === 'string' && payload.detail.trim()) return payload.detail
+  return `${response.status} ${response.statusText}`.trim()
+}
+
 async function fetchJson(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -31,8 +39,7 @@ async function fetchJson(url, options = {}) {
   let payload = null
   try { payload = await response.json() } catch { payload = null }
   if (!response.ok) {
-    const message = payload?.message || payload?.error || `${response.status} ${response.statusText}`
-    const error = new Error(message)
+    const error = new Error(readableApiError(payload, response))
     error.status = response.status
     error.payload = payload
     throw error
@@ -85,7 +92,7 @@ function cartKeyForVariant(variant) {
 
 async function beginLegacyCheckout(bag) {
   if (isVercelPreviewHost()) {
-    throw new Error('Checkout is intentionally disabled on the Vercel preview. Live checkout will be tested on apparel.aerovista.us through the same-origin AeroVista commerce route.')
+    throw new Error('Checkout is intentionally disabled on the Vercel preview. Live checkout is available through apparel.aerovista.us.')
   }
 
   const cart = bag.map((item) => ({
