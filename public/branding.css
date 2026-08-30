@@ -14,7 +14,12 @@
   width:clamp(220px,22vw,360px);
   height:clamp(58px,6vw,92px);
   display:block;
-  font-size:0;
+  /* The base stylesheet's later `font` shorthand must not revive the
+     fallback title on top of the photographic logo. */
+  font-size:0!important;
+  line-height:0!important;
+  color:transparent;
+  overflow:hidden;
   background:url('./img/aa_logo.png') center/contain no-repeat;
   filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));
 }
