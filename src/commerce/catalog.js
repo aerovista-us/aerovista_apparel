@@ -2,6 +2,7 @@ import { productPresentation, showroomProductIds } from '../data/merchandising'
 
 const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const IMAGE_BASE = cleanBase(import.meta.env.VITE_CATALOG_IMAGE_BASE) || 'https://gear.aerovista.us/img'
+const APP_BASE = String(import.meta.env.BASE_URL || './').replace(/\/?$/, '/')
 
 const titleCase = (value) => String(value || '')
   .split(/\s+/)
@@ -18,6 +19,14 @@ const encodePath = (value) => String(value || '')
 function catalogImageUrl(value) {
   const raw = String(value || '').trim()
   if (/^https?:\/\//i.test(raw)) return raw
+
+  // Canonical galleries are committed with this prototype. Rebase the current
+  // Gear catalog paths onto public/products while keeping GitHub Pages' subpath.
+  const canonicalMatch = raw.match(/^\/?(?:store\/)?products\/(.+)$/i)
+  if (canonicalMatch) return `${APP_BASE}products/${encodePath(canonicalMatch[1])}`
+
+  // Other root-relative assets still belong to the current Gear host.
+  if (raw.startsWith('/')) return `https://gear.aerovista.us${raw}`
   const path = encodePath(raw)
   return path ? `${IMAGE_BASE}/${path}` : ''
 }
@@ -118,6 +127,11 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
   const sizes = [...new Set(sellableVariants.map(variant => variant.size).filter(Boolean))]
   const presentation = productPresentation[product.id] || {}
   const description = product.description || product.description_text || ''
+  const primaryImage = catalogImageUrl(product.image || product.media?.[0]?.legacySrc || '')
+  const imageCandidates = mode === 'v1'
+    ? (product.media || []).map((media) => media.src || media.legacySrc || '')
+    : (product.images || [])
+  const images = [...new Set([primaryImage, ...imageCandidates.map(catalogImageUrl)].filter(Boolean))]
 
   return {
     id: String(product.id || ''),
@@ -128,7 +142,9 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
     collection: laneForProduct(product),
     sourceCollection: product.collection || '',
     category: product.category || '',
-    image: catalogImageUrl(product.image || product.media?.[0]?.legacySrc || ''),
+    image: images[0] || primaryImage,
+    images,
+    imageManifest: catalogImageUrl(product.image_manifest || ''),
     accent: presentation.accent || '#00AEEF',
     description,
     colors: [...new Set(sellableVariants.map(variant => variant.color).filter(Boolean))],

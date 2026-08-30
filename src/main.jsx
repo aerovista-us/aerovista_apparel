@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, DoorOpen, Minus, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Sparkles, X
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
 import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import './styles.css'
+import './product-gallery.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -75,16 +76,16 @@ function GarmentArt({ type, accent = '#00AEEF' }) {
   )
 }
 
-function ProductImage({ product, large = false, stage = false }) {
+function ProductImage({ product, image = product?.image, alt = product?.name, large = false, stage = false }) {
   const [failed, setFailed] = useState(false)
-  useEffect(() => setFailed(false), [product?.image])
+  useEffect(() => setFailed(false), [image])
   const style = product?.display?.objectPosition ? { objectPosition: product.display.objectPosition } : undefined
   return (
     <div className={`product-image ${large ? 'large' : ''} ${stage ? 'stage' : ''}`}>
-      {product?.image && !failed
+      {image && !failed
         ? <img
-            src={product.image}
-            alt={product.name}
+            src={image}
+            alt={alt}
             style={style}
             loading={large ? 'eager' : 'lazy'}
             decoding="async"
@@ -144,17 +145,47 @@ function Fixture({ fixture, productMap, collection, onOpen }) {
 
 function ProductDrawer({ product, onClose, onAdd }) {
   const [size, setSize] = useState(product?.sizes?.[0] ?? '')
-  useEffect(() => setSize(product?.sizes?.[0] ?? ''), [product])
+  const [galleryIndex, setGalleryIndex] = useState(0)
+  useEffect(() => {
+    setSize(product?.sizes?.[0] ?? '')
+    setGalleryIndex(0)
+  }, [product])
   if (!product) return null
+  const gallery = product.images?.length ? product.images : [product.image].filter(Boolean)
+  const activeImage = gallery[galleryIndex] || product.image
   const variant = selectCommerceVariant(product, size)
   const canAdd = Boolean(variant && product.commerceStatus === 'connected')
   const optionLabel = product.sizes.length > 1 ? 'Size' : 'Format'
+  const moveGallery = (direction) => setGalleryIndex((current) => (current + direction + gallery.length) % gallery.length)
   return (
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label={product.name}>
       <button className="drawer-scrim" onClick={onClose} aria-label="Close product"/>
       <aside className="drawer">
         <button className="icon-btn drawer-close" onClick={onClose} aria-label="Close product details"><X size={20}/></button>
-        <ProductImage product={product} large/>
+        <div className="product-gallery">
+          <ProductImage
+            product={product}
+            image={activeImage}
+            alt={`${product.name}, view ${galleryIndex + 1} of ${gallery.length}`}
+            large
+          />
+          {gallery.length > 1 && <>
+            <button className="gallery-arrow gallery-arrow-prev" onClick={() => moveGallery(-1)} aria-label="Previous product image"><ChevronLeft size={20}/></button>
+            <button className="gallery-arrow gallery-arrow-next" onClick={() => moveGallery(1)} aria-label="Next product image"><ChevronRight size={20}/></button>
+            <span className="gallery-count" aria-live="polite">{galleryIndex + 1} / {gallery.length}</span>
+          </>}
+        </div>
+        {gallery.length > 1 && <div className="gallery-thumbs" role="list" aria-label={`${product.name} gallery`}>
+          {gallery.map((image, index) => <button
+            key={image}
+            type="button"
+            role="listitem"
+            className={index === galleryIndex ? 'active' : ''}
+            onClick={() => setGalleryIndex(index)}
+            aria-label={`Show product image ${index + 1} of ${gallery.length}`}
+            aria-pressed={index === galleryIndex}
+          ><img src={image} alt="" loading="lazy" decoding="async"/></button>)}
+        </div>}
         <div className="drawer-content">
           <span className="eyebrow">{product.collection}</span>
           <h2>{product.name}</h2>
