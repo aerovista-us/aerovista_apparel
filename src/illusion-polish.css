@@ -1,0 +1,145 @@
+/* Physical-retail polish: keep interface chrome subordinate to the room. */
+
+/* Treat the entrance copy as a small sidewalk placard instead of a hero banner
+   laid across the display window. */
+.outside-copy{
+  left:4%;
+  bottom:6.5%;
+  width:min(270px,25vw);
+  padding:13px 15px 14px;
+  border:1px solid rgba(188,196,202,.16);
+  border-left:2px solid rgba(0,174,239,.48);
+  background:linear-gradient(105deg,rgba(7,9,12,.88),rgba(7,9,12,.58));
+  box-shadow:0 14px 34px rgba(0,0,0,.42);
+  backdrop-filter:blur(9px);
+}
+.outside-copy h1{
+  margin:6px 0 5px;
+  font-size:clamp(19px,1.8vw,27px);
+  line-height:1;
+  letter-spacing:-.025em;
+}
+.outside-copy p{margin:0;font-size:9px;line-height:1.55}
+
+/* Rails, shelves and table edges need enough material presence to support the
+   merchandise rather than reading as decorative guide lines. */
+.fixture-wall-rack .fixture-structure{opacity:.48}
+.fixture-wall-rack .rail{
+  height:3px;
+  background:linear-gradient(180deg,#c2c6c9,#626a70 55%,#272d32);
+  box-shadow:0 2px 2px rgba(255,255,255,.08),0 7px 12px rgba(0,0,0,.72);
+}
+.fixture-wall-rack .rack-leg{width:2px;opacity:.72}
+.fixture-hat-shelf .fixture-structure{opacity:.82}
+.fixture-hat-shelf:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:49%;
+  height:8%;
+  background:linear-gradient(180deg,#626a70,#262c31 42%,#0b0e11);
+  clip-path:polygon(1% 0,99% 0,96% 100%,4% 100%);
+  box-shadow:0 12px 18px rgba(0,0,0,.65);
+}
+.fixture-hat-shelf .shelf.a{top:49%;height:3px}
+.fixture-hat-shelf .shelf.b{display:none}
+.fixture-hat-shelf .merch-cap:after{
+  content:"";
+  position:absolute;
+  left:10%;
+  right:10%;
+  bottom:1%;
+  height:9%;
+  border-radius:50%;
+  background:rgba(0,0,0,.62);
+  filter:blur(3px);
+  transform:translateY(45%);
+  z-index:-1;
+}
+.fixture-table-stack .fixture-structure{opacity:.78}
+.fixture-table-stack:before{
+  content:"";
+  position:absolute;
+  left:25%;
+  right:25%;
+  top:31%;
+  height:15%;
+  border:1px solid rgba(145,158,167,.24);
+  background:radial-gradient(ellipse at 50% 50%,rgba(92,108,118,.18),rgba(12,16,19,.5) 72%);
+  box-shadow:inset 0 1px rgba(255,255,255,.06),0 8px 14px rgba(0,0,0,.42);
+  transform:perspective(120px) rotateX(58deg);
+}
+.fixture-table-stack .table-top{
+  top:46%;
+  height:8px;
+  background:linear-gradient(180deg,#777e83,#363c41 42%,#12161a);
+  box-shadow:0 12px 18px rgba(0,0,0,.64),inset 0 1px rgba(255,255,255,.12);
+}
+.fixture-table-stack .table-base{top:50%;background:linear-gradient(90deg,rgba(10,13,16,.7),rgba(35,40,44,.72),rgba(10,13,16,.7))}
+.fixture-table-stack .merch-deck:after{
+  content:"";
+  position:absolute;
+  left:12%;
+  right:12%;
+  bottom:-2%;
+  height:7%;
+  border-radius:50%;
+  background:rgba(0,0,0,.72);
+  filter:blur(2px);
+}
+.fixture-table-stack .merch-deck .product-image.stage img{
+  padding:3px;
+  mix-blend-mode:screen;
+  filter:brightness(2.6) contrast(.88) drop-shadow(0 7px 7px rgba(0,0,0,.72));
+}
+.fixture-table-stack .merch-deck .product-image.stage{
+  overflow:hidden;
+  border:1px solid rgba(180,189,196,.48);
+  border-radius:2px;
+  background:linear-gradient(145deg,#434b51,#171c20 62%,#090c0f);
+  box-shadow:inset 0 1px rgba(255,255,255,.12),0 7px 13px rgba(0,0,0,.68);
+}
+@media (min-width:901px){
+  .fixture-table-stack .merch-deck{
+    width:5cqw!important;
+    height:12.5cqh!important;
+  }
+}
+
+/* Collection controls now change the bay lighting. Inventory remains in its
+   physical location instead of vanishing from the rails. */
+.merch-item{transition:opacity .36s ease,filter .36s ease,transform .22s ease}
+.merch-item.is-muted{opacity:.32;filter:grayscale(.68) brightness(.58) drop-shadow(0 7px 9px rgba(0,0,0,.5))}
+.merch-item.is-muted:hover,.merch-item.is-muted:focus-visible{opacity:.78;filter:grayscale(.2) brightness(.78) drop-shadow(0 11px 14px rgba(0,0,0,.7))}
+.merch-pin{display:none}
+
+/* The room count is useful while data is loading, but once the catalog is
+   ready it should not float over the floor like a game HUD. */
+.interior[data-catalog-status="connected"] .floor-status{opacity:0;pointer-events:none}
+.floor-status{transition:opacity .3s ease}
+.view-nav{
+  border-radius:3px;
+  border-color:rgba(185,191,196,.18);
+  background:linear-gradient(180deg,rgba(25,29,33,.86),rgba(8,10,13,.88));
+  box-shadow:0 12px 26px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.04);
+}
+
+/* Keep the drawer's current commerce clarity, but present the complete object
+   like a showroom inspection surface. */
+.product-gallery .product-image.large img{padding:18px 34px;object-fit:contain}
+
+@media (max-width:900px){
+  .outside-copy,.outside-foot{display:none}
+  .door-hit{left:34%;width:32%;top:29%;padding-bottom:7%}
+  .mobile-store-intro h2{font-size:clamp(23px,7vw,30px);line-height:1.08}
+  .scene-label{max-width:none;padding:9px 11px}
+  .scene-label h1{display:none}
+  .mobile-hanging-piece,.mobile-shelf-piece{transition:opacity .32s ease,filter .32s ease}
+  .mobile-hanging-piece.is-muted,.mobile-shelf-piece.is-muted{opacity:.28;filter:grayscale(.7) brightness(.55)}
+  .mobile-hanging-piece.is-muted:focus-visible,.mobile-shelf-piece.is-muted:focus-visible{opacity:.78;filter:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .merch-item,.floor-status,.mobile-hanging-piece,.mobile-shelf-piece{transition:none!important}
+}

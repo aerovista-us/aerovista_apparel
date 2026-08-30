@@ -9,7 +9,7 @@ export const productPresentation = Object.freeze({
   'architect-field-issue-tee-black': { shortName: 'Field Issue Tee', accent: '#D5D7DA' },
   'aerovista-core-tee': { shortName: 'Core Tee', accent: '#00AEEF' },
   'shadow-wear-tactical-bomber-jacket-summit-edition': { shortName: 'Summit Bomber', accent: '#777E86' },
-  'aerovista-apex-pattern-bomber-jacket': { shortName: 'Apex Pattern Bomber', accent: '#777E86' },
+  'aerovista-apex-pattern-bomber-jacket': { shortName: 'Apex Pattern Bomber', accent: '#777E86', display: { stageImageSuffix: '/10-front-02.webp', objectPosition: '50% 50%' } },
   'shadow-pants': { shortName: 'Shadow Pants', accent: '#777E86', type: 'bottom' },
   'men-s-ghost-shorts': { shortName: 'Ghost Shorts', accent: '#777E86', type: 'bottom' },
 
@@ -25,7 +25,7 @@ export const productPresentation = Object.freeze({
   // Headwear.
   'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark': { shortName: 'Apex Hat', accent: '#C0C0C0' },
   'aerovista-apex-camo-flexfit-hat': { shortName: 'Apex Camo Hat', accent: '#8A9187' },
-  'glitch-orbit-logo-black': { shortName: 'Glitch Orbit Cap', accent: '#AEB4BA' },
+  'glitch-orbit-logo-black': { shortName: 'Glitch Orbit Cap', accent: '#AEB4BA', image: '/products/glitch-orbit-cap-black.png' },
   'aerovista-apex-mesh-trucker-cap': { shortName: 'Apex Mesh Cap', accent: '#D0D2D4' },
   'docklife-drip-osprey-rope-cap': { shortName: 'Docklife Osprey Cap', accent: '#8FBDB7' },
 

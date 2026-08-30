@@ -56,7 +56,7 @@ export const fixtures = [
     label: 'Objects & Editions',
     position: { x: 39.2, y: 64.1, w: 21.6, h: 22.2 },
     slots: [
-      { productId: 'aerovista-apex-relic-playing-cards', x: 50, y: 29, scale: 1.18, tilt: -2 },
+      { productId: 'aerovista-apex-relic-playing-cards', x: 50, y: 18, scale: 1.05, tilt: -2 },
     ],
   },
 ]

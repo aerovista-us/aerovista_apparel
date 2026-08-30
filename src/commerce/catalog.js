@@ -127,11 +127,12 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
   const sizes = [...new Set(sellableVariants.map(variant => variant.size).filter(Boolean))]
   const presentation = productPresentation[product.id] || {}
   const description = product.description || product.description_text || ''
-  const primaryImage = catalogImageUrl(product.image || product.media?.[0]?.legacySrc || '')
+  const sourcePrimaryImage = catalogImageUrl(product.image || product.media?.[0]?.legacySrc || '')
+  const primaryImage = presentation.image ? catalogImageUrl(presentation.image) : sourcePrimaryImage
   const imageCandidates = mode === 'v1'
     ? (product.media || []).map((media) => media.src || media.legacySrc || '')
     : (product.images || [])
-  const images = [...new Set([primaryImage, ...imageCandidates.map(catalogImageUrl)].filter(Boolean))]
+  const images = [...new Set([primaryImage, sourcePrimaryImage, ...imageCandidates.map(catalogImageUrl)].filter(Boolean))]
 
   return {
     id: String(product.id || ''),

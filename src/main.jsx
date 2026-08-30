@@ -9,6 +9,7 @@ import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import './styles.css'
 import './product-gallery.css'
+import './illusion-polish.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -78,13 +79,17 @@ function GarmentArt({ type, accent = '#00AEEF' }) {
 
 function ProductImage({ product, image = product?.image, alt = product?.name, large = false, stage = false }) {
   const [failed, setFailed] = useState(false)
-  useEffect(() => setFailed(false), [image])
+  const stageImage = stage && product?.display?.stageImageSuffix
+    ? product.images?.find(candidate => candidate.endsWith(product.display.stageImageSuffix))
+    : ''
+  const resolvedImage = stageImage || image
+  useEffect(() => setFailed(false), [resolvedImage])
   const style = product?.display?.objectPosition ? { objectPosition: product.display.objectPosition } : undefined
   return (
     <div className={`product-image ${large ? 'large' : ''} ${stage ? 'stage' : ''}`}>
-      {image && !failed
+      {resolvedImage && !failed
         ? <img
-            src={image}
+            src={resolvedImage}
             alt={alt}
             style={style}
             loading={large ? 'eager' : 'lazy'}
@@ -98,7 +103,7 @@ function ProductImage({ product, image = product?.image, alt = product?.name, la
   )
 }
 
-function MerchItem({ product, slot, onOpen }) {
+function MerchItem({ product, slot, onOpen, highlighted = true }) {
   const style = {
     left: `${slot.x}%`, top: `${slot.y}%`,
     '--item-scale': slot.scale ?? 1,
@@ -107,7 +112,7 @@ function MerchItem({ product, slot, onOpen }) {
   }
   return (
     <button
-      className={`merch-item merch-${product.type}`}
+      className={`merch-item merch-${product.type}${highlighted ? '' : ' is-muted'}`}
       data-product={product.id}
       style={style}
       onClick={() => onOpen(product)}
@@ -138,9 +143,15 @@ function FixtureShell({ fixture, children }) {
 function Fixture({ fixture, productMap, collection, onOpen }) {
   const items = fixture.slots
     .map(slot => ({ slot, product: productMap.get(slot.productId) }))
-    .filter(({ product }) => product && (collection === 'All' || product.collection === collection))
+    .filter(({ product }) => product)
   if (!items.length) return null
-  return <FixtureShell fixture={fixture}>{items.map(({ product, slot }, index) => <MerchItem key={`${fixture.id}-${product.id}-${index}`} product={product} slot={slot} onOpen={onOpen}/>)}</FixtureShell>
+  return <FixtureShell fixture={fixture}>{items.map(({ product, slot }, index) => <MerchItem
+    key={`${fixture.id}-${product.id}-${index}`}
+    product={product}
+    slot={slot}
+    onOpen={onOpen}
+    highlighted={collection === 'All' || product.collection === collection}
+  />)}</FixtureShell>
 }
 
 function ProductDrawer({ product, onClose, onAdd }) {
@@ -267,33 +278,33 @@ function Exterior({ entering, onEnter, onWarm }) {
       disabled={entering}
       aria-label="Enter AeroVista Store"
     ><span><DoorOpen size={20}/> {entering ? 'Opening…' : 'Enter store'}</span></button>
-    <div className="outside-copy"><span className="eyebrow">AEROVISTA APPAREL</span><h1>Walk in.<br/>Look around.</h1><p>Real AeroVista pieces presented as a place to explore — not a product grid.</p></div>
+    <div className="outside-copy"><span className="eyebrow">FLAGSHIP SHOWROOM</span><h1>Walk in.</h1><p>Apparel, objects and editions are on display inside.</p></div>
     <div className="outside-foot"><span>SEVEN DIVISIONS · ONE VISION</span><span>Enter through the front door</span></div>
   </section>
 }
 
-function MobileHangingPiece({ product, onOpen }) {
-  return <button className="mobile-hanging-piece" data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><span className="hanger-hook" aria-hidden="true"/><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
+function MobileHangingPiece({ product, onOpen, highlighted = true }) {
+  return <button className={`mobile-hanging-piece${highlighted ? '' : ' is-muted'}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><span className="hanger-hook" aria-hidden="true"/><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
 }
-function MobileShelfPiece({ product, onOpen }) {
-  return <button className="mobile-shelf-piece" data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
+function MobileShelfPiece({ product, onOpen, highlighted = true }) {
+  return <button className={`mobile-shelf-piece${highlighted ? '' : ' is-muted'}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
 }
 
 function MobileStore({ products, productMap, collection, onCollection, onProduct, catalogState }) {
-  const zones = retailZones.map(zone => ({ ...zone, items: zone.productIds.map(id => productMap.get(id)).filter(product => product && (collection === 'All' || product.collection === collection)) })).filter(zone => zone.items.length)
+  const zones = retailZones.map(zone => ({ ...zone, items: zone.productIds.map(id => productMap.get(id)).filter(Boolean) })).filter(zone => zone.items.length)
   const introCopy = catalogState.status === 'loading'
     ? 'Preparing current sizes and availability while you enter.'
     : catalogState.status === 'offline'
       ? 'The room is open, but live availability is temporarily offline.'
-      : 'Browse by department, then select any piece for current sizes and availability.'
+      : 'Swipe along each fixture, then select a piece for current sizes and availability.'
   return <section className="mobile-store">
-    <div className="mobile-store-intro"><span className="eyebrow">INSIDE AEROVISTA</span><h2>Shop the walls</h2><p>{introCopy}</p></div>
+    <div className="mobile-store-intro"><span className="eyebrow">INSIDE AEROVISTA</span><h2>Continue through the showroom</h2><p>{introCopy}</p></div>
     <CollectionNav products={products} collection={collection} onCollection={onCollection} mobile/>
     {zones.map(zone => <section key={zone.id} className={`retail-zone retail-zone-${zone.kind}`}>
-      <header className="retail-zone-header"><div><span>{zone.label}</span><p>{zone.note}</p></div><small>{zone.items.length} pieces</small></header>
-      {zone.kind === 'wall' && <div className="mobile-wall"><div className="mobile-rail" aria-hidden="true"/><div className="mobile-hanging-row">{zone.items.map(product => <MobileHangingPiece key={product.id} product={product} onOpen={onProduct}/>)}</div></div>}
-      {zone.kind === 'shelf' && <div className="mobile-shelf"><div className="mobile-shelf-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct}/>)}</div><div className="shelf-edge" aria-hidden="true"/></div>}
-      {zone.kind === 'table' && <div className="mobile-display-table"><div className="mobile-object-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct}/>)}</div><div className="display-table-edge" aria-hidden="true"/></div>}
+      <header className="retail-zone-header"><div><span>{zone.label}</span><p>{zone.note}</p></div><small>{collection === 'All' ? zone.items.length : zone.items.filter(product => product.collection === collection).length} {collection === 'All' ? 'pieces' : 'lit'}</small></header>
+      {zone.kind === 'wall' && <div className="mobile-wall"><div className="mobile-rail" aria-hidden="true"/><div className="mobile-hanging-row">{zone.items.map(product => <MobileHangingPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div></div>}
+      {zone.kind === 'shelf' && <div className="mobile-shelf"><div className="mobile-shelf-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div><div className="shelf-edge" aria-hidden="true"/></div>}
+      {zone.kind === 'table' && <div className="mobile-display-table"><div className="mobile-object-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div><div className="display-table-edge" aria-hidden="true"/></div>}
     </section>)}
   </section>
 }
@@ -313,7 +324,9 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag }
     ? 'Preparing the floor…'
     : catalogState.status === 'offline'
       ? 'Live catalog unavailable'
-      : `${visibleProducts.length} ${visibleProducts.length === 1 ? 'piece' : 'pieces'} on the floor`
+      : collection === 'All'
+        ? `${visibleProducts.length} ${visibleProducts.length === 1 ? 'piece' : 'pieces'} in the room`
+        : `${visibleProducts.length} highlighted · ${products.length} pieces remain in the room`
 
   return <section className="interior" data-catalog-status={catalogState.status}>
     <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
