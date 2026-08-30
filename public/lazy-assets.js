@@ -1,12 +1,15 @@
 (() => {
   const root = document.documentElement
-  const sources = [
+  const windowSources = [
     '/store/window-sets/window-set-left.png',
     '/store/window-sets/window-set-right.png',
   ]
+  const interiorSources = [
+    '/store/window-sets/inside-left.png',
+    '/store/window-sets/inside-right.png',
+  ]
 
-  const loadWindowSets = async () => {
-    await Promise.all(sources.map((src) => new Promise((resolve) => {
+  const loadSources = (sources) => Promise.all(sources.map((src) => new Promise((resolve) => {
       const image = new Image()
       image.decoding = 'async'
       try { image.fetchPriority = 'low' } catch {}
@@ -14,7 +17,15 @@
       image.onerror = resolve
       image.src = src
     })))
+
+  const loadWindowSets = async () => {
+    await loadSources(windowSources)
     root.classList.add('window-sets-ready')
+
+    // The interior portraits are not needed for first paint. Load them only
+    // after the facade photography is ready, preserving the fast entrance.
+    await loadSources(interiorSources)
+    root.classList.add('interior-displays-ready')
   }
 
   const schedule = () => {

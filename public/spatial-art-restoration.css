@@ -1,0 +1,104 @@
+/* Restore the authored storefront vitrines and back-wall portrait displays.
+   A later retail-polish rewrite retained the image files and lazy loader but
+   accidentally removed the pseudo-elements that placed them in the scene. */
+
+/* Register the facade as the same 1672x941 cover plane used by its artwork so
+   the photographic window sets stay inside the glass while cropping/zooming. */
+.exterior .exterior-image{
+  inset:auto!important;
+  left:50%!important;
+  top:50%!important;
+  width:max(100vw,177.6833vh)!important;
+  height:auto!important;
+  aspect-ratio:1672 / 941;
+  background-size:100% 100%!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  transform:translate(-50%,-50%) scale(1.018)!important;
+  overflow:visible;
+}
+.exterior:has(.door-hit:hover) .exterior-image,
+.exterior:has(.door-hit:focus-visible) .exterior-image{
+  transform:translate(-50%,-50%) scale(1.045) translateY(-.5%)!important;
+}
+.exterior.entering .exterior-image{
+  transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important;
+}
+
+.exterior .exterior-image:before,
+.exterior .exterior-image:after{
+  content:"";
+  position:absolute;
+  top:34.113%;
+  width:22.967%;
+  height:39.639%;
+  pointer-events:none;
+  z-index:1;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:cover;
+  border:1px solid rgba(182,174,162,.13);
+  box-shadow:inset 0 0 62px rgba(0,0,0,.30),0 12px 30px rgba(0,0,0,.20);
+  filter:brightness(.80) saturate(.88) contrast(1.04);
+  opacity:.18;
+  transition:opacity .45s ease,filter .45s ease;
+}
+.exterior .exterior-image:before{left:15.55%}
+.exterior .exterior-image:after{left:61.483%}
+html.window-sets-ready .exterior .exterior-image:before{
+  background-image:url('./store/window-sets/window-set-left.png')!important;
+  opacity:.96!important;
+}
+html.window-sets-ready .exterior .exterior-image:after{
+  background-image:url('./store/window-sets/window-set-right.png')!important;
+  opacity:.96!important;
+}
+
+/* Studio and Archive portraits live on the registered interior plane so every
+   camera move, browser zoom and room resize affects models and architecture as
+   one physical scene. */
+.interior-image:before,
+.interior-image:after{
+  content:"";
+  position:absolute;
+  top:22.95%;
+  width:10.65%;
+  height:33.80%;
+  pointer-events:none;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  background-size:auto 96%;
+  clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);
+  filter:brightness(.68) saturate(.78) contrast(1.08);
+  opacity:0;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.28);
+  transition:opacity .4s ease;
+}
+.interior-image:before{left:35.17%}
+.interior-image:after{left:54.19%}
+html.interior-displays-ready .interior-image:before{
+  background-image:url('./store/window-sets/inside-left.png');
+  opacity:.88;
+}
+html.interior-displays-ready .interior-image:after{
+  background-image:url('./store/window-sets/inside-right.png');
+  opacity:.88;
+}
+
+@media (max-width:760px){
+  .exterior .exterior-image{transform:translate(-50%,-50%) scale(1.04)!important}
+  .exterior:has(.door-hit:hover) .exterior-image,
+  .exterior:has(.door-hit:focus-visible) .exterior-image{
+    transform:translate(-50%,-50%) scale(1.07)!important;
+  }
+  .exterior.entering .exterior-image{
+    transform:translate(-50%,-50%) scale(3.1) translateY(3%)!important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .exterior .exterior-image:before,
+  .exterior .exterior-image:after,
+  .interior-image:before,
+  .interior-image:after{transition:none!important}
+}
