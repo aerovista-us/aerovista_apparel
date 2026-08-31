@@ -5,17 +5,18 @@ const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const browserOrigin = () => (typeof window === 'undefined' ? '' : window.location.origin)
 const browserHost = () => (typeof window === 'undefined' ? '' : window.location.hostname)
 const isCanonicalStoreHost = () => ['gear.aerovista.us', 'apparel.aerovista.us'].includes(browserHost())
+const hasFirstPartyCommerceApi = () => browserHost() === 'gear.aerovista.us'
 const isVercelPreviewHost = () => browserHost().endsWith('.vercel.app') && !isCanonicalStoreHost()
 const isLocalPreviewHost = () => ['localhost', '127.0.0.1'].includes(browserHost())
 
 const configuredApiBase = cleanBase(import.meta.env.VITE_COMMERCE_API_BASE)
-const API_BASE = configuredApiBase || (isCanonicalStoreHost() ? browserOrigin() : 'https://gear.aerovista.us')
+const API_BASE = configuredApiBase || (hasFirstPartyCommerceApi() ? browserOrigin() : 'https://gear.aerovista.us')
 const V1_BASE = cleanBase(import.meta.env.VITE_COMMERCE_V1_BASE) || API_BASE
 
 const unique = (values) => [...new Set(values.filter(Boolean))]
 const legacyCatalogCandidates = () => unique([
   String(import.meta.env.VITE_COMMERCE_CATALOG_URL || '').trim(),
-  isCanonicalStoreHost() ? `${browserOrigin()}/square_products_latest.json` : '',
+  hasFirstPartyCommerceApi() ? `${browserOrigin()}/square_products_latest.json` : '',
   'https://gear.aerovista.us/square_products_latest.json',
   'https://raw.githubusercontent.com/aerovista-us/store/main/store/square_products_latest.json',
 ])
@@ -75,6 +76,10 @@ export async function loadCommerceCatalog() {
 
 export async function loadCommerceBootstrap() {
   if (MODE === 'v1') return { mode: 'v1', currency: 'USD' }
+  // The prototype domain serves the room, not the legacy Gear API. Without an
+  // explicit API override, use the public catalog and avoid probing protected
+  // same-origin paths that do not exist on the prototype deployment.
+  if (!configuredApiBase && !hasFirstPartyCommerceApi()) return null
   // Temporary Vercel hosts are intentionally not trusted by the production API.
   // Skip the protected bootstrap there instead of generating a known CORS error.
   if (isVercelPreviewHost() || isLocalPreviewHost()) return null
