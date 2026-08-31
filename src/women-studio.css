@@ -8,8 +8,8 @@
 .studio-header .wordmark{justify-self:start}.studio-header .bag-button{justify-self:end}
 .studio-location{font-size:8px;letter-spacing:.25em;color:#938b96}
 .women-studio-scene{position:relative;height:calc(100vh - 60px);min-height:670px;overflow:hidden;isolation:isolate}
-.women-studio-image{position:absolute;z-index:0;inset:0;background:url('/store/womens-studio-v1.webp') center center/cover no-repeat}
-.women-studio-shade{position:absolute;z-index:1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 18%,rgba(193,165,204,.1),transparent 35%),radial-gradient(ellipse at 50% 82%,rgba(190,151,134,.07),transparent 34%),radial-gradient(circle at 50% 46%,transparent 27%,rgba(15,7,17,.12) 66%,rgba(0,0,0,.46) 112%),linear-gradient(0deg,rgba(7,3,8,.34),transparent 30%)}
+.women-studio-image{position:absolute;z-index:0;inset:0;background:url('/store/womens-studio-v1.webp') center center/cover no-repeat;filter:brightness(1.15) contrast(.95) saturate(.96)}
+.women-studio-shade{position:absolute;z-index:1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 18%,rgba(207,181,215,.12),transparent 38%),radial-gradient(ellipse at 50% 82%,rgba(207,173,154,.09),transparent 38%),radial-gradient(circle at 50% 46%,transparent 30%,rgba(15,7,17,.07) 69%,rgba(0,0,0,.29) 114%),linear-gradient(0deg,rgba(7,3,8,.2),transparent 33%)}
 .studio-scene-label{position:absolute;z-index:12;left:3.2%;top:4%;width:310px;text-shadow:0 2px 18px #000}
 .studio-scene-label h1{margin:7px 0 8px;font:600 clamp(23px,2.2vw,35px)/1 Orbitron;letter-spacing:-.03em}
 .studio-scene-label p{margin:0;max-width:285px;color:#c1b9c2;font-size:9px;line-height:1.6}
@@ -62,7 +62,7 @@
 @media(max-width:760px){
   .studio-header{position:sticky;top:0;height:58px;padding:0 12px}.studio-location{display:none}
   .women-studio-scene{height:43svh;min-height:330px;max-height:470px}
-  .women-studio-image{background-position:center center;filter:brightness(.78)}
+  .women-studio-image{background-position:center center;filter:brightness(1.05) contrast(.97) saturate(.96)}
   .studio-scene-label{left:5%;top:6%;width:230px}.studio-scene-label h1{font-size:22px}.studio-scene-label p{display:none}
   .studio-walk-back{right:4%;top:5%;padding:8px 10px}
   .studio-fixture-layer{display:none}.studio-floor-status{bottom:5%;font-size:6px}
