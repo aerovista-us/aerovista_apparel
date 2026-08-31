@@ -8,10 +8,11 @@ The current build uses a lightweight 2.5D spatial illusion: authored exterior/in
 
 1. Arrive outside the AeroVista storefront.
 2. Click the front door and cross the threshold through a push-in transition.
-3. Enter a dark premium boutique with a visible central aisle, wall bays, deeper rooms and object displays.
-4. Approach merchandise directly in the room. Focus shifts bring the selected area forward and quiet the surrounding space.
-5. Select a piece to open product details, sizes and bag controls.
-6. On mobile, move vertically through the same flagship as a guided walk: apparel walls, headwear and objects remain distinct physical areas rather than collapsing into a generic grid.
+3. Arrive in the Entry Gallery, a high-end orientation room with mannequins and a physical directory.
+4. Enter the open Men's Gallery from its doorway or directory listing. Women's Studio and Collections Hall remain visibly marked as opening soon.
+5. Approach merchandise directly in the room. Focus shifts bring the selected area forward and quiet the surrounding space.
+6. Select a piece to open product details, sizes and bag controls.
+7. On mobile, use the same room directory, then move vertically through the selected gallery as a guided walk.
 
 ## Retail rules
 
@@ -103,6 +104,7 @@ npm run build
 ## Primary assets
 
 - `public/store/exterior.svg` — cinematic storefront threshold
+- `public/store/entry-gallery-v1.webp` — generated architectural environment for the Entry Gallery
 - `public/store/interior.svg` — boutique architecture and depth shell
 - `public/asset-overrides.css` — spatial illusion / focus layer
 - `public/products/` — production merchandise imagery

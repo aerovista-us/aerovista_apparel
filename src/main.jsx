@@ -10,6 +10,7 @@ import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatal
 import './styles.css'
 import './product-gallery.css'
 import './illusion-polish.css'
+import './entry-gallery.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -28,7 +29,7 @@ function commerceNote(product) {
 
 const spaceViews = [
   { id: 'left', label: 'Tees & Bombers', note: 'Turn toward tees on the upper rail, with bombers and Shadow Wear bottoms below.' },
-  { id: 'room', label: 'Main Floor', note: 'Take in the full room, feature wall and central editions table.' },
+  { id: 'room', label: "Men's Gallery · Main Floor", note: 'Take in the full room, feature wall and central editions table.' },
   { id: 'right', label: 'Hoodie Wall', note: 'Turn toward the dedicated hoodie wall for AeroVista, Architect and Shadow Wear layers.' },
 ]
 
@@ -283,12 +284,59 @@ function CollectionNav({ products, collection, onCollection, mobile = false }) {
 
 function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollection }) {
   return <header className="store-header">
-    <button className="wordmark" onClick={onExit} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
+    <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
     <CollectionNav products={products} collection={collection} onCollection={onCollection}/>
     <div className="header-actions">
       <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
     </div>
   </header>
+}
+
+const galleryDestinations = [
+  { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A dedicated edit is being prepared.', status: 'OPENING SOON' },
+  { id: 'mens', direction: 'RIGHT', name: "Men's Gallery", note: 'Apparel, headwear and current editions.', status: 'OPEN', live: true },
+  { id: 'collections', direction: 'AHEAD', name: 'Collections Hall', note: 'Seven divisions presented line by line.', status: 'OPENING SOON' },
+  { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Sticker and card table preview.', status: 'ON VIEW' },
+]
+
+function Foyer({ onOutside, onOpenMens, bagCount, onBag }) {
+  return <section className="foyer space-arrive">
+    <header className="foyer-header">
+      <button className="wordmark" onClick={onOutside} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
+      <span className="foyer-location">ENTRY GALLERY</span>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
+    </header>
+    <div className="foyer-stage">
+      <div className="foyer-image" aria-hidden="true"/>
+      <div className="foyer-atmosphere" aria-hidden="true"/>
+      <div className="foyer-intro">
+        <span className="eyebrow">AEROVISTA FLAGSHIP</span>
+        <h1>Welcome in.</h1>
+        <p>Choose a gallery or look over what is opening next.</p>
+      </div>
+      <section className="directory-board" aria-labelledby="directory-title">
+        <div className="directory-mark"><img src={`${import.meta.env.BASE_URL}img/aa_logo.png`} alt="AeroVista Apparel"/></div>
+        <div className="directory-heading"><span id="directory-title">STORE DIRECTORY</span><small>COEUR D'ALENE · IDAHO</small></div>
+        <div className="directory-list">
+          {galleryDestinations.map(destination => destination.live
+            ? <button key={destination.id} className="directory-row is-live" onClick={onOpenMens}>
+                <span className="directory-direction">{destination.direction}</span>
+                <span><b>{destination.name}</b><small>{destination.note}</small></span>
+                <em>{destination.status}<ChevronRight size={13}/></em>
+              </button>
+            : <div key={destination.id} className="directory-row" aria-label={`${destination.name}, ${destination.status}`}>
+                <span className="directory-direction">{destination.direction}</span>
+                <span><b>{destination.name}</b><small>{destination.note}</small></span>
+                <em>{destination.status}</em>
+              </div>)}
+        </div>
+      </section>
+      <button className="gallery-threshold threshold-womens" disabled aria-label="Women's Studio, opening soon"><span>WOMEN'S STUDIO</span><small>OPENING SOON</small></button>
+      <button className="gallery-threshold threshold-mens" onClick={onOpenMens} aria-label="Enter Men's Gallery"><span>MEN'S GALLERY</span><small>ENTER <ChevronRight size={12}/></small></button>
+      <button className="foyer-outside" onClick={onOutside}><ChevronLeft size={14}/> Outside</button>
+      <div className="foyer-floor-note"><Sparkles size={13}/><span>MEN'S GALLERY IS NOW OPEN</span></div>
+    </div>
+  </section>
 }
 
 function Exterior({ entering, onEnter, onWarm }) {
@@ -323,7 +371,7 @@ function MobileStore({ products, productMap, collection, onCollection, onProduct
       ? 'The room is open, but live availability is temporarily offline.'
       : 'Swipe along each fixture, then select a piece for current sizes and availability.'
   return <section className="mobile-store">
-    <div className="mobile-store-intro"><span className="eyebrow">INSIDE AEROVISTA</span><h2>Continue through the showroom</h2><p>{introCopy}</p></div>
+    <div className="mobile-store-intro"><span className="eyebrow">MEN'S GALLERY</span><h2>Continue through the showroom</h2><p>{introCopy}</p></div>
     <CollectionNav products={products} collection={collection} onCollection={onCollection} mobile/>
     {zones.map(zone => <section key={zone.id} className={`retail-zone retail-zone-${zone.kind}`}>
       <header className="retail-zone-header"><div><span>{zone.label}</span><p>{zone.note}</p></div><small>{collection === 'All' ? zone.items.length : zone.items.filter(product => product.collection === collection).length} {collection === 'All' ? 'pieces' : 'lit'}</small></header>
@@ -353,12 +401,12 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag }
         ? `${visibleProducts.length} ${visibleProducts.length === 1 ? 'piece' : 'pieces'} in the room`
         : `${visibleProducts.length} highlighted · ${products.length} pieces remain in the room`
 
-  return <section className="interior" data-catalog-status={catalogState.status}>
+  return <section className="interior space-arrive" data-catalog-status={catalogState.status}>
     <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
     <div className={`interior-scene view-${view}`}>
       <div className="interior-image"/><div className="room-shade"/>
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
-      <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Outside</button>
+      <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Entry Gallery</button>
       {!compact && <div className="fixture-layer">{fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} collection={collection} onOpen={onProduct}/>)}</div>}
       <ViewNav view={view} onView={setView}/>
       <div className="center-prompt floor-status" data-status={catalogState.status} role="status" aria-live="polite"><Sparkles size={14}/><span>{floorMessage}</span></div>
@@ -368,7 +416,7 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag }
 }
 
 function App() {
-  const [inside, setInside] = useState(false)
+  const [space, setSpace] = useState('outside')
   const [entering, setEntering] = useState(false)
   const [selected, setSelected] = useState(null)
   const [bagOpen, setBagOpen] = useState(false)
@@ -423,9 +471,11 @@ function App() {
     if (entering) return
     warmCommerce()
     setEntering(true)
-    window.setTimeout(() => { setInside(true); setEntering(false) }, 980)
+    window.setTimeout(() => { setSpace('foyer'); setEntering(false) }, 980)
   }
-  function leave() { setSelected(null); setBagOpen(false); setInside(false) }
+  function goOutside() { setSelected(null); setBagOpen(false); setSpace('outside') }
+  function openMensGallery() { warmCommerce(); setSpace('mens') }
+  function returnToFoyer() { setSelected(null); setBagOpen(false); setSpace('foyer') }
   function add(product, size, variant) {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
     setSelected(null); setCheckoutError(''); setBagOpen(true)
@@ -442,9 +492,9 @@ function App() {
   }
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
-    {!inside
-      ? <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>
-      : <Interior products={showroomProducts} catalogState={catalogState} onExit={leave} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>} 
+    {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
+    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={openMensGallery} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
+    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
   </main>

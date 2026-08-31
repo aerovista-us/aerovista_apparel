@@ -72,3 +72,18 @@ These notes preserve the implementation details and decisions that are most like
 3. Consider a third, higher headwear row only after its room perspective and mobile equivalent are designed together.
 4. Expand the sticker table into direct canvas-style sorting with accessible touch, pointer and keyboard controls.
 5. Continue adding rooms or rotating walls as inventory grows instead of shrinking merchandise into a dense catalog grid.
+
+## Entry Gallery addition — 2026-08-31
+
+- A new `feature/entry-gallery` branch adds the orientation room between the storefront and the merchandise showroom.
+- The space sequence is now `Outside → Entry Gallery → Men's Gallery`. Leaving the Men's Gallery returns to the Entry Gallery; leaving the Entry Gallery returns outside.
+- The former general showroom is now identified as the Men's Gallery. Its catalog, fixtures, product drawers, bag and checkout behavior are unchanged.
+- The physical directory names four destinations:
+  - Men's Gallery — open and interactive
+  - Women's Studio — opening soon
+  - Collections Hall — opening soon
+  - Objects & Editions — on view inside the current gallery
+- The right-hand architectural threshold and the Men's Gallery directory row both open the current showroom. Unfinished rooms are visible but deliberately non-interactive.
+- `public/store/entry-gallery-v1.webp` is a new project-owned raster environment generated from the existing showroom's visual language. It contains the architecture, lighting and mannequins only; directory copy and room statuses remain accessible HTML.
+- `src/entry-gallery.css` calibrates the interface to the new scene and provides a compact mobile directory treatment.
+- Future room work should extend the `space` state rather than adding more booleans. Dedicated URL/history routing becomes worthwhile when a second merchandise room opens.
