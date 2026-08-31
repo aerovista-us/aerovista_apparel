@@ -98,3 +98,5 @@ These notes preserve the implementation details and decisions that are most like
 - The central editorial frame uses the approved local swimsuit model image, while every sellable display bay remains a real product button with accessible product details.
 - Desktop visitors approach merchandise in the room; mobile visitors receive a compact architectural view followed by a touch-sized two-column opening edit.
 - Screenshot calibration replaced the near-bay dress and swimsuit hero images with transparent product-focused exports. This removes the swimsuit's rectangular black backdrop and keeps all six pieces visually seated inside their illuminated niches.
+- The Nocturne refinement replaces the central rectangular swimsuit poster with two transparent catalog model layers, allowing the illuminated back-wall frame to remain visible around the figures.
+- Vespera Moonscript and Night Ranger Bear now anchor the Studio's darker apparel story in place of the generic Shadow pants and Shadow Pattern hoodie displays. A restrained violet-and-champagne light treatment warms the existing architectural shell without changing it.

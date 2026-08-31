@@ -343,11 +343,11 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, bagCount, onBag }) {
 
 const womenStudioDisplays = [
   { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-03.webp' },
-  { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'left-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp' },
-  { id: 'shadow-pants', slot: 'left-far', image: 'products/shadow-pants/01-hero.webp' },
+  { id: 'vespra-moonscript-hoodie', slot: 'left-mid', image: 'products/vespra-moonscript-hoodie/10-front-06.webp' },
+  { id: 'night-ranger-bear-pullover-hoodie', slot: 'left-far', image: 'products/night-ranger-bear-pullover-hoodie/01-hero.webp' },
   { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-02.webp' },
-  { id: 'shadow-wear-tactical-bomber-jacket-summit-edition', slot: 'right-mid', image: 'products/shadow-wear-tactical-bomber-jacket-summit-edition/01-hero.webp' },
-  { id: 'aerovista-shadow-pattern-hoodie', slot: 'right-far' },
+  { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'right-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp' },
+  { id: 'shadow-wear-tactical-bomber-jacket-summit-edition', slot: 'right-far', image: 'products/shadow-wear-tactical-bomber-jacket-summit-edition/01-hero.webp' },
 ]
 
 function WomenStudioPiece({ display, product, onOpen }) {
@@ -371,21 +371,27 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
   return <section className="women-studio space-arrive" data-catalog-status={catalogState.status}>
     <header className="studio-header">
       <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
-      <span className="studio-location">WOMEN'S STUDIO · OPENING EDIT</span>
+      <span className="studio-location">WOMEN'S STUDIO · NOCTURNE EDIT</span>
       <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
     </header>
     <div className="women-studio-scene">
       <div className="women-studio-image" aria-hidden="true"/><div className="women-studio-shade" aria-hidden="true"/>
-      <div className="studio-scene-label"><span className="eyebrow">WOMEN'S STUDIO</span><h1>The opening edit.</h1><p>Women-specific silhouettes and selected AeroVista layers, presented in a quieter gallery setting.</p></div>
+      <div className="studio-scene-label"><span className="eyebrow">WOMEN'S STUDIO</span><h1>The nocturne edit.</h1><p>Fluid silhouettes, moonlit graphics and selected AeroVista layers in a quieter gallery setting.</p></div>
       <button className="walk-back studio-walk-back" onClick={onExit}><ChevronLeft size={16}/> Entry Gallery</button>
       <div className="studio-fixture-layer">
         {womenStudioDisplays.map(display => <WomenStudioPiece key={display.id} display={display} product={productMap.get(display.id)} onOpen={onProduct}/>)}
-        {featureProduct && <button className="studio-editorial" onClick={() => onProduct(featureProduct)} aria-label={`View ${featureProduct.name}`} aria-haspopup="dialog"><img src={`${import.meta.env.BASE_URL}products/aerovista-apex-pattern-print-swimsuit-one-piece/swimsuit.png`} alt="Two models wearing the AeroVista Apex Pattern one-piece swimsuit"/><span>APEX PATTERN · SWIM</span></button>}
+        {featureProduct && <button className="studio-editorial" onClick={() => onProduct(featureProduct)} aria-label={`View ${featureProduct.name}`} aria-haspopup="dialog">
+          <span className="studio-editorial-models" aria-hidden="true">
+            <img src={`${import.meta.env.BASE_URL}products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-03.webp`} alt=""/>
+            <img src={`${import.meta.env.BASE_URL}products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-04.webp`} alt=""/>
+          </span>
+          <span className="studio-editorial-caption">APEX PATTERN · SWIM</span>
+        </button>}
       </div>
       <div className="studio-floor-status" role="status" aria-live="polite"><Sparkles size={13}/><span>{roomMessage}</span></div>
     </div>
     <section className="women-mobile-assortment" aria-label="Women's Studio opening edit">
-      <div className="women-mobile-intro"><span className="eyebrow">OPENING EDIT</span><h2>Women’s Studio</h2><p>Explore the first women-specific silhouettes alongside selected unisex AeroVista layers.</p></div>
+      <div className="women-mobile-intro"><span className="eyebrow">NOCTURNE EDIT</span><h2>Women’s Studio</h2><p>Explore fluid silhouettes, moonlit graphics and selected unisex AeroVista layers.</p></div>
       <div className="women-mobile-grid">{products.map(product => <button key={product.id} onClick={() => onProduct(product)} aria-label={`View ${product.name}`}><ProductImage product={product} stage/><span><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>)}</div>
     </section>
   </section>

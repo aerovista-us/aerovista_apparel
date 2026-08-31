@@ -102,12 +102,36 @@ export const productPresentation = Object.freeze({
       ],
     },
   },
+  'vespra-moonscript-hoodie': {
+    shortName: 'Vespera Moonscript', accent: '#C7B0CF', type: 'hoodie', collection: 'Studio',
+    fallback: {
+      name: 'Vespera Moonscript Hoodie',
+      images: [
+        '/products/vespra-moonscript-hoodie/01-hero.webp',
+        '/products/vespra-moonscript-hoodie/10-front-06.webp',
+        '/products/vespra-moonscript-hoodie/20-back-08.webp',
+      ],
+    },
+  },
+  'night-ranger-bear-pullover-hoodie': {
+    shortName: 'Night Ranger Bear', accent: '#8BB5C2', type: 'hoodie', collection: 'Studio',
+    fallback: {
+      name: 'Night Ranger Bear Pullover Hoodie',
+      images: [
+        '/products/night-ranger-bear-pullover-hoodie/01-hero.webp',
+        '/products/night-ranger-bear-pullover-hoodie/10-front-03.webp',
+        '/products/night-ranger-bear-pullover-hoodie/20-back-01.webp',
+      ],
+    },
+  },
 })
 
 const womenExclusiveProductIds = new Set([
   'aerovista-apex-pattern-print-swimsuit-one-piece',
   'aerovista-apex-pattern-skater-dress',
   'aerovista-wave-mark-full-zip-hoodie-white',
+  'vespra-moonscript-hoodie',
+  'night-ranger-bear-pullover-hoodie',
 ])
 
 export const showroomProductIds = Object.freeze(Object.keys(productPresentation).filter(id => !womenExclusiveProductIds.has(id)))
@@ -117,8 +141,8 @@ export const womenStudioProductIds = Object.freeze([
   'aerovista-apex-pattern-print-swimsuit-one-piece',
   'aerovista-wave-mark-full-zip-hoodie-white',
   'shadow-wear-tactical-bomber-jacket-summit-edition',
-  'shadow-pants',
-  'aerovista-shadow-pattern-hoodie',
+  'vespra-moonscript-hoodie',
+  'night-ranger-bear-pullover-hoodie',
 ])
 
 // Editorial images that have been approved locally but are not yet present in
