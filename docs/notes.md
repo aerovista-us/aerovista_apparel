@@ -87,3 +87,13 @@ These notes preserve the implementation details and decisions that are most like
 - `public/store/entry-gallery-v1.webp` is a new project-owned raster environment generated from the existing showroom's visual language. It contains the architecture, lighting and mannequins only; directory copy and room statuses remain accessible HTML.
 - `src/entry-gallery.css` calibrates the interface to the new scene and provides a compact mobile directory treatment.
 - Future room work should extend the `space` state rather than adding more booleans. Dedicated URL/history routing becomes worthwhile when a second merchandise room opens.
+
+## Women's Studio addition — 2026-08-31
+
+- The foyer's left doorway and directory listing now open a complete Women's Studio; both Women's and Men's rooms return to the shared Entry Gallery.
+- The opening assortment contains six catalog-backed products: the Apex Pattern Skater Dress, Apex Pattern one-piece swimsuit, white Wave Mark zip hoodie, women-modeled Summit bomber, Shadow pants and Shadow Pattern hoodie.
+- Women-specific items remain out of the Men's Gallery. `womenStudioProductIds` defines the separate room assortment while shared unisex product records continue to use the same commerce identity.
+- `buildCatalogProducts()` now returns `womenStudioProducts` alongside `showroomProducts`, preserving live variation, price, availability, bag and checkout behavior in both rooms.
+- `public/store/womens-studio-v1.webp` is the studio's generated architectural shell. The six empty display bays, central editorial frame and room perspective are registered to the same `1672 × 941` scene plane used throughout the store.
+- The central editorial frame uses the approved local swimsuit model image, while every sellable display bay remains a real product button with accessible product details.
+- Desktop visitors approach merchandise in the room; mobile visitors receive a compact architectural view followed by a touch-sized two-column opening edit.

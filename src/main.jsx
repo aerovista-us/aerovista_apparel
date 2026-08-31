@@ -11,6 +11,7 @@ import './styles.css'
 import './product-gallery.css'
 import './illusion-polish.css'
 import './entry-gallery.css'
+import './women-studio.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -293,13 +294,14 @@ function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollecti
 }
 
 const galleryDestinations = [
-  { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A dedicated edit is being prepared.', status: 'OPENING SOON' },
+  { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A curated edit of women-specific and unisex pieces.', status: 'OPEN', live: true },
   { id: 'mens', direction: 'RIGHT', name: "Men's Gallery", note: 'Apparel, headwear and current editions.', status: 'OPEN', live: true },
   { id: 'collections', direction: 'AHEAD', name: 'Collections Hall', note: 'Seven divisions presented line by line.', status: 'OPENING SOON' },
   { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Sticker and card table preview.', status: 'ON VIEW' },
 ]
 
-function Foyer({ onOutside, onOpenMens, bagCount, onBag }) {
+function Foyer({ onOutside, onOpenMens, onOpenWomens, bagCount, onBag }) {
+  const openDestination = id => id === 'womens' ? onOpenWomens() : onOpenMens()
   return <section className="foyer space-arrive">
     <header className="foyer-header">
       <button className="wordmark" onClick={onOutside} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
@@ -319,7 +321,7 @@ function Foyer({ onOutside, onOpenMens, bagCount, onBag }) {
         <div className="directory-heading"><span id="directory-title">STORE DIRECTORY</span><small>COEUR D'ALENE · IDAHO</small></div>
         <div className="directory-list">
           {galleryDestinations.map(destination => destination.live
-            ? <button key={destination.id} className="directory-row is-live" onClick={onOpenMens}>
+            ? <button key={destination.id} className="directory-row is-live" onClick={() => openDestination(destination.id)}>
                 <span className="directory-direction">{destination.direction}</span>
                 <span><b>{destination.name}</b><small>{destination.note}</small></span>
                 <em>{destination.status}<ChevronRight size={13}/></em>
@@ -331,11 +333,61 @@ function Foyer({ onOutside, onOpenMens, bagCount, onBag }) {
               </div>)}
         </div>
       </section>
-      <button className="gallery-threshold threshold-womens" disabled aria-label="Women's Studio, opening soon"><span>WOMEN'S STUDIO</span><small>OPENING SOON</small></button>
+      <button className="gallery-threshold threshold-womens" onClick={onOpenWomens} aria-label="Enter Women's Studio"><span>WOMEN'S STUDIO</span><small>ENTER <ChevronLeft size={12}/></small></button>
       <button className="gallery-threshold threshold-mens" onClick={onOpenMens} aria-label="Enter Men's Gallery"><span>MEN'S GALLERY</span><small>ENTER <ChevronRight size={12}/></small></button>
       <button className="foyer-outside" onClick={onOutside}><ChevronLeft size={14}/> Outside</button>
-      <div className="foyer-floor-note"><Sparkles size={13}/><span>MEN'S GALLERY IS NOW OPEN</span></div>
+      <div className="foyer-floor-note"><Sparkles size={13}/><span>WOMEN'S + MEN'S GALLERIES NOW OPEN</span></div>
     </div>
+  </section>
+}
+
+const womenStudioDisplays = [
+  { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-01.webp' },
+  { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'left-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp' },
+  { id: 'shadow-pants', slot: 'left-far', image: 'products/shadow-pants/01-hero.webp' },
+  { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/01-hero.webp' },
+  { id: 'shadow-wear-tactical-bomber-jacket-summit-edition', slot: 'right-mid', image: 'products/shadow-wear-tactical-bomber-jacket-summit-edition/01-hero.webp' },
+  { id: 'aerovista-shadow-pattern-hoodie', slot: 'right-far' },
+]
+
+function WomenStudioPiece({ display, product, onOpen }) {
+  if (!product) return null
+  const image = display.image ? `${import.meta.env.BASE_URL}${display.image}` : product.image
+  return <button className={`studio-piece studio-${display.slot}`} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog">
+    <ProductImage product={product} image={image} stage/>
+    <span className="studio-product-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
+  </button>
+}
+
+function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBag }) {
+  const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
+  const featureProduct = productMap.get('aerovista-apex-pattern-print-swimsuit-one-piece')
+  const roomMessage = catalogState.status === 'loading'
+    ? 'Preparing the studio edit…'
+    : catalogState.status === 'offline'
+      ? 'Live catalog temporarily unavailable'
+      : `${products.length} pieces in the opening edit`
+
+  return <section className="women-studio space-arrive" data-catalog-status={catalogState.status}>
+    <header className="studio-header">
+      <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
+      <span className="studio-location">WOMEN'S STUDIO · OPENING EDIT</span>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
+    </header>
+    <div className="women-studio-scene">
+      <div className="women-studio-image" aria-hidden="true"/><div className="women-studio-shade" aria-hidden="true"/>
+      <div className="studio-scene-label"><span className="eyebrow">WOMEN'S STUDIO</span><h1>The opening edit.</h1><p>Women-specific silhouettes and selected AeroVista layers, presented in a quieter gallery setting.</p></div>
+      <button className="walk-back studio-walk-back" onClick={onExit}><ChevronLeft size={16}/> Entry Gallery</button>
+      <div className="studio-fixture-layer">
+        {womenStudioDisplays.map(display => <WomenStudioPiece key={display.id} display={display} product={productMap.get(display.id)} onOpen={onProduct}/>)}
+        {featureProduct && <button className="studio-editorial" onClick={() => onProduct(featureProduct)} aria-label={`View ${featureProduct.name}`} aria-haspopup="dialog"><img src={`${import.meta.env.BASE_URL}products/aerovista-apex-pattern-print-swimsuit-one-piece/swimsuit.png`} alt="Two models wearing the AeroVista Apex Pattern one-piece swimsuit"/><span>APEX PATTERN · SWIM</span></button>}
+      </div>
+      <div className="studio-floor-status" role="status" aria-live="polite"><Sparkles size={13}/><span>{roomMessage}</span></div>
+    </div>
+    <section className="women-mobile-assortment" aria-label="Women's Studio opening edit">
+      <div className="women-mobile-intro"><span className="eyebrow">OPENING EDIT</span><h2>Women’s Studio</h2><p>Explore the first women-specific silhouettes alongside selected unisex AeroVista layers.</p></div>
+      <div className="women-mobile-grid">{products.map(product => <button key={product.id} onClick={() => onProduct(product)} aria-label={`View ${product.name}`}><ProductImage product={product} stage/><span><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>)}</div>
+    </section>
   </section>
 }
 
@@ -422,6 +474,7 @@ function App() {
   const [bagOpen, setBagOpen] = useState(false)
   const [bag, setBag] = useState([])
   const [showroomProducts, setShowroomProducts] = useState([])
+  const [womenStudioProducts, setWomenStudioProducts] = useState([])
   const [catalogState, setCatalogState] = useState({ status: 'idle', visibleCatalogCount: 0, showroomCount: 0 })
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
@@ -436,11 +489,13 @@ function App() {
         const bootstrap = bootstrapResult.status === 'fulfilled' ? bootstrapResult.value : null
         const report = buildCatalogProducts(catalogResult.value, bootstrap)
         setShowroomProducts(report.showroomProducts)
+        setWomenStudioProducts(report.womenStudioProducts)
         const nextState = { status: 'ready', ...report, bootstrapReady: Boolean(bootstrap) }
         setCatalogState(nextState)
         return nextState
       }
       setShowroomProducts([])
+      setWomenStudioProducts([])
       const nextState = { status: 'offline', visibleCatalogCount: 0, showroomCount: 0, error: catalogResult.reason?.message || 'Catalog unavailable' }
       setCatalogState(nextState)
       commercePromiseRef.current = null
@@ -475,6 +530,7 @@ function App() {
   }
   function goOutside() { setSelected(null); setBagOpen(false); setSpace('outside') }
   function openMensGallery() { warmCommerce(); setSpace('mens') }
+  function openWomensStudio() { warmCommerce(); setSpace('womens') }
   function returnToFoyer() { setSelected(null); setBagOpen(false); setSpace('foyer') }
   function add(product, size, variant) {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
@@ -493,8 +549,9 @@ function App() {
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
-    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={openMensGallery} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
+    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={openMensGallery} onOpenWomens={openWomensStudio} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
     {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
+    {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
   </main>

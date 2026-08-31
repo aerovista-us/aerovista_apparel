@@ -66,9 +66,60 @@ export const productPresentation = Object.freeze({
     },
   },
   'can-cooler': { shortName: 'Pattern Can Cooler', accent: '#AEB4BA', type: 'cooler', collection: 'Accessories', display: { stageImageSuffix: '/10-front-01.webp', objectPosition: '50% 50%' } },
+
+  // Women's Studio exclusives. Shared unisex layers continue to use the
+  // presentation records above, but are curated into this room separately.
+  'aerovista-apex-pattern-print-swimsuit-one-piece': {
+    shortName: 'Apex Pattern One-Piece', accent: '#B8A9C8', type: 'swim', collection: 'Studio',
+    fallback: {
+      name: 'AeroVista Apex Pattern Print Swimsuit — One-Piece',
+      images: [
+        '/products/aerovista-apex-pattern-print-swimsuit-one-piece/01-hero.webp',
+        '/products/aerovista-apex-pattern-print-swimsuit-one-piece/swimsuit.png',
+        '/products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-01.webp',
+      ],
+    },
+  },
+  'aerovista-apex-pattern-skater-dress': {
+    shortName: 'Apex Pattern Dress', accent: '#B8A9C8', type: 'dress', collection: 'Studio',
+    fallback: {
+      name: 'AeroVista Apex Pattern Skater Dress',
+      images: [
+        '/products/aerovista-apex-pattern-skater-dress/01-hero.webp',
+        '/products/aerovista-apex-pattern-skater-dress/10-front-01.webp',
+        '/products/aerovista-apex-pattern-skater-dress/20-back-01.webp',
+      ],
+    },
+  },
+  'aerovista-wave-mark-full-zip-hoodie-white': {
+    shortName: 'Wave Mark Zip Hoodie', accent: '#D8DADD', type: 'hoodie', collection: 'Studio',
+    fallback: {
+      name: 'AeroVista Wave Mark Full-Zip Hoodie — White',
+      images: [
+        '/products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp',
+        '/products/aerovista-wave-mark-full-zip-hoodie-white/10-front-01.webp',
+        '/products/aerovista-wave-mark-full-zip-hoodie-white/20-back-01.webp',
+      ],
+    },
+  },
 })
 
-export const showroomProductIds = Object.freeze(Object.keys(productPresentation))
+const womenExclusiveProductIds = new Set([
+  'aerovista-apex-pattern-print-swimsuit-one-piece',
+  'aerovista-apex-pattern-skater-dress',
+  'aerovista-wave-mark-full-zip-hoodie-white',
+])
+
+export const showroomProductIds = Object.freeze(Object.keys(productPresentation).filter(id => !womenExclusiveProductIds.has(id)))
+
+export const womenStudioProductIds = Object.freeze([
+  'aerovista-apex-pattern-skater-dress',
+  'aerovista-apex-pattern-print-swimsuit-one-piece',
+  'aerovista-wave-mark-full-zip-hoodie-white',
+  'shadow-wear-tactical-bomber-jacket-summit-edition',
+  'shadow-pants',
+  'aerovista-shadow-pattern-hoodie',
+])
 
 // Editorial images that have been approved locally but are not yet present in
 // the legacy Gear catalog export. Keeping this separate from productPresentation

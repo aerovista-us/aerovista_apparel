@@ -59,10 +59,10 @@ button.directory-row{cursor:pointer}
 .gallery-threshold small{display:flex;align-items:center;gap:3px;margin-top:5px;font-size:clamp(5px,.43vw,7px);letter-spacing:.15em;color:#70808b}
 .gallery-threshold:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(3,5,8,.55),transparent 45%);opacity:.62}
 .gallery-threshold>*{position:relative}
-.threshold-womens{left:15.5%;width:20.5%;cursor:default}
+.threshold-womens{left:15.5%;width:20.5%}
 .threshold-mens{right:15%;width:20.5%}
-.threshold-mens:hover,.threshold-mens:focus-visible{border-color:rgba(0,174,239,.35);background:rgba(0,174,239,.045);outline:0}
-.threshold-mens:hover small,.threshold-mens:focus-visible small{color:#65d2f8}
+.threshold-mens:hover,.threshold-mens:focus-visible,.threshold-womens:hover,.threshold-womens:focus-visible{border-color:rgba(0,174,239,.35);background:rgba(0,174,239,.045);outline:0}
+.threshold-mens:hover small,.threshold-mens:focus-visible small,.threshold-womens:hover small,.threshold-womens:focus-visible small{color:#65d2f8}
 .foyer-outside{
   position:absolute;z-index:12;right:2.5%;top:3%;display:flex;align-items:center;gap:6px;
   border:1px solid rgba(255,255,255,.15);background:rgba(7,9,12,.68);padding:9px 12px;

@@ -1,4 +1,4 @@
-import { productGalleryAdditions, productPresentation, showroomProductIds } from '../data/merchandising'
+import { productGalleryAdditions, productPresentation, showroomProductIds, womenStudioProductIds } from '../data/merchandising'
 
 const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const IMAGE_BASE = cleanBase(import.meta.env.VITE_CATALOG_IMAGE_BASE) || 'https://gear.aerovista.us/img'
@@ -205,6 +205,7 @@ export function buildCatalogProducts(catalog, bootstrap = null) {
 
   const byId = new Map(products.map(product => [product.id, product]))
   const showroomProducts = showroomProductIds.map(id => byId.get(id) || presentationFallback(id)).filter(Boolean)
+  const womenStudioProducts = womenStudioProductIds.map(id => byId.get(id) || presentationFallback(id)).filter(Boolean)
   const missingShowroomIds = showroomProductIds.filter(id => !byId.has(id))
 
   return {
@@ -212,6 +213,7 @@ export function buildCatalogProducts(catalog, bootstrap = null) {
     catalogVersion,
     products,
     showroomProducts,
+    womenStudioProducts,
     visibleCatalogCount: products.length,
     showroomCount: showroomProducts.length,
     missingShowroomIds,
