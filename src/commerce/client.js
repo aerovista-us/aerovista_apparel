@@ -6,6 +6,7 @@ const browserOrigin = () => (typeof window === 'undefined' ? '' : window.locatio
 const browserHost = () => (typeof window === 'undefined' ? '' : window.location.hostname)
 const isCanonicalStoreHost = () => ['gear.aerovista.us', 'apparel.aerovista.us'].includes(browserHost())
 const isVercelPreviewHost = () => browserHost().endsWith('.vercel.app') && !isCanonicalStoreHost()
+const isLocalPreviewHost = () => ['localhost', '127.0.0.1'].includes(browserHost())
 
 const configuredApiBase = cleanBase(import.meta.env.VITE_COMMERCE_API_BASE)
 const API_BASE = configuredApiBase || (isCanonicalStoreHost() ? browserOrigin() : 'https://gear.aerovista.us')
@@ -76,7 +77,7 @@ export async function loadCommerceBootstrap() {
   if (MODE === 'v1') return { mode: 'v1', currency: 'USD' }
   // Temporary Vercel hosts are intentionally not trusted by the production API.
   // Skip the protected bootstrap there instead of generating a known CORS error.
-  if (isVercelPreviewHost()) return null
+  if (isVercelPreviewHost() || isLocalPreviewHost()) return null
   return fetchJson(`${API_BASE}/api/square/bootstrap`, { cache: 'no-store' })
 }
 

@@ -19,7 +19,7 @@ The store follows physical merchandising logic:
 
 - tees, hoodies, sweatshirts, long sleeves and jackets hang on wall rails
 - hats live on dedicated shelves
-- cards, prints, accessories and collectibles belong on display surfaces or in cases
+- cards, stickers, accessories and collectibles belong on interactive display surfaces or in cases
 - hero pieces may receive an isolated display treatment
 - inventory is curated into the room rather than forcing every SKU onto one screen
 
@@ -27,7 +27,8 @@ The store follows physical merchandising logic:
 
 The implementation keeps three concerns separate:
 
-- `src/data/products.js` — product identity and commerce data
+- `src/commerce/catalog.js` — live product identity, availability and checkout-safe normalization
+- `src/data/merchandising.js` — showroom selection and presentation-only metadata
 - `src/data/fixtures.js` — physical placement in the desktop room
 - `public/products/` — real product photography / artwork
 - `public/store/` — replaceable environment art
@@ -66,6 +67,7 @@ Mobile is treated as **another camera into the same store**, not a fallback cata
 - apparel stays hung and full-length
 - headwear keeps its shelf treatment
 - collectible objects retain their own display area
+- the objects table scrolls horizontally so cards, stickers and small editions remain touch-sized
 - collection controls act as wayfinding
 
 ## Spatial direction

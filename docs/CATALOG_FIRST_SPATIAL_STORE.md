@@ -35,39 +35,9 @@ It does not own price, sizes, Square IDs, SKU identity, or checkout identity.
 
 ## First-room assortment
 
-The first flagship room is intentionally curated to 20 catalog-backed products from the current 2026-08-25 export. All 20 are marked `visible` and contain Square variation IDs.
+The flagship room currently presents 25 canonical products: eight tees/outerwear pieces, seven hoodies, five hats and five Objects & Editions pieces. `src/data/merchandising.js` is the authoritative room list; `src/data/fixtures.js` assigns each selected ID to a physical location.
 
-### Apex / Shadow wall
-
-- `aerovista-apex-vintage-tee`
-- `aerovista-apex-signal-sweatshirt`
-- `aerovista-apex-glitch-tee-black`
-- `aerovista-shadow-pattern-hoodie`
-- `aerovista-shadow-pattern-long-sleeve-tee`
-- `shadow-wear-ghost-ridge`
-- `aerovista-apex-pattern-bomber-jacket`
-
-### Architect / Studio wall
-
-- `architect-field-issue-tee-black`
-- `architect-field-issue-tee-ash`
-- `architect-built-different-hoodie-black`
-- `drafted-a-premium-sweatshirt`
-- `aerovista-core-hoodie`
-- `aerovista-division-hoodie`
-- `aerovista-the-blue-witness-urban-hoodie-black`
-
-### Headwear
-
-- `aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark`
-- `aerovista-apex-camo-flexfit-hat`
-- `glitch-orbit-logo-black`
-- `aerovista-apex-mesh-trucker-cap`
-- `docklife-drip-osprey-rope-cap`
-
-### Objects & Editions
-
-- `aerovista-apex-relic-playing-cards`
+The Objects & Editions table contains the Apex Relic deck, Pattern can cooler, Apex Draft sticker, BillyGoat sticker and Holographic Goat sticker. Its sticker positions can be shuffled without moving their underlying product identity.
 
 ## Interaction identity flow
 
@@ -102,6 +72,8 @@ This matters because some AeroVista products have size-dependent prices.
 If the catalog is unavailable, merchandise is not reconstructed from stale hardcoded product records.
 
 If a selected catalog product has no currently usable variation, it is unavailable for bag/checkout.
+
+If a room product is temporarily absent from the deployed legacy export but its canonical gallery is already committed, the room may show an explicitly presentation-only fallback. That fallback contains no Square item, variation, price or checkout identity and therefore remains unavailable until the live catalog reconnects it.
 
 If a checkout line is missing its canonical product ID, cart key, or Square variation ID, checkout is blocked before the request is sent.
 

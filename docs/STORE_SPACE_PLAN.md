@@ -35,7 +35,14 @@ Core AeroVista and division-created pieces. This wall can rotate more frequently
 A dedicated shelf presentation. This should remain visually clean and easy to scan.
 
 ### Objects & Editions
-Collectible and non-apparel releases. The Apex Relic playing-card deck is the first anchor item.
+Collectible and non-apparel releases. The center table combines the Apex Relic deck and can cooler with a loose sticker spread. A physical shuffle control lets visitors sort through alternate sticker arrangements while every piece remains selectable.
+
+## Expansion backlog
+
+1. Add a dedicated Women's room when the catalog has enough products to merchandise it as a complete physical space.
+2. Give each major line a wall before creating a separate room for every line; this keeps the flagship legible while inventory grows.
+3. Add a third, higher headwear row only after its wall perspective and reachable mobile equivalent are designed together.
+4. Evolve the sticker table from shuffled arrangements to direct drag/sort interaction after pointer, touch and keyboard behavior can be equally supported.
 
 ## Mobile design
 

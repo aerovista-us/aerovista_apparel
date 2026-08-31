@@ -45,6 +45,7 @@ function laneForProduct(product) {
 
 function typeForProduct(product) {
   const hay = `${product.name || ''} ${product.category || ''}`.toLowerCase()
+  if (/sticker|decal/.test(hay)) return 'sticker'
   if (/playing cards|card deck|\bdeck\b/.test(hay)) return 'deck'
   if (/\bhat\b|\bcap\b|trucker|snapback|flexfit/.test(hay)) return 'cap'
   if (/\bpants?\b|\bshorts?\b|\bbottoms?\b/.test(hay)) return 'bottom'
@@ -140,7 +141,7 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
     shortName: shortNameFor(product),
     type: presentation.type || typeForProduct(product),
     price: prices.length ? Math.min(...prices) : null,
-    collection: laneForProduct(product),
+    collection: presentation.collection || laneForProduct(product),
     sourceCollection: product.collection || '',
     category: product.category || '',
     image: images[0] || primaryImage,
@@ -162,6 +163,32 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
   }
 }
 
+function presentationFallback(id) {
+  const presentation = productPresentation[id]
+  if (!presentation?.fallback) return null
+  const images = [...new Set((presentation.fallback.images || []).map(catalogImageUrl).filter(Boolean))]
+  return {
+    id,
+    name: presentation.fallback.name || presentation.shortName || id,
+    shortName: presentation.shortName || presentation.fallback.name || id,
+    type: presentation.type || 'object',
+    price: null,
+    collection: presentation.collection || 'Other',
+    sourceCollection: '',
+    category: presentation.type || 'object',
+    image: images[0] || '',
+    images,
+    imageManifest: '',
+    accent: presentation.accent || '#00AEEF',
+    description: 'Shown from the local product gallery while live catalog availability is being synchronized.',
+    colors: [],
+    sizes: ['One Size'],
+    display: presentation.display || { objectPosition: '50% 50%' },
+    commerceStatus: 'unavailable',
+    commerce: { mode: 'presentation', productId: '', squareItemId: '', catalogVersion: '', variants: [] },
+  }
+}
+
 export function buildCatalogProducts(catalog, bootstrap = null) {
   const mode = catalog.mode === 'v1' || catalog.schemaVersion ? 'v1' : 'legacy'
   const catalogVersion = catalog.catalogVersion || catalog.meta?.exportedAt || catalog.meta?.version || ''
@@ -176,7 +203,7 @@ export function buildCatalogProducts(catalog, bootstrap = null) {
     .filter(product => product.id)
 
   const byId = new Map(products.map(product => [product.id, product]))
-  const showroomProducts = showroomProductIds.map(id => byId.get(id)).filter(Boolean)
+  const showroomProducts = showroomProductIds.map(id => byId.get(id) || presentationFallback(id)).filter(Boolean)
   const missingShowroomIds = showroomProductIds.filter(id => !byId.has(id))
 
   return {

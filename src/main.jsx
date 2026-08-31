@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
@@ -145,6 +145,7 @@ function Fixture({ fixture, productMap, collection, onOpen }) {
     .map(slot => ({ slot, product: productMap.get(slot.productId) }))
     .filter(({ product }) => product)
   if (!items.length) return null
+  if (fixture.type === 'table-stack') return <EditionTable fixture={fixture} items={items} collection={collection} onOpen={onOpen}/>
   return <FixtureShell fixture={fixture}>{items.map(({ product, slot }, index) => <MerchItem
     key={`${fixture.id}-${product.id}-${index}`}
     product={product}
@@ -152,6 +153,30 @@ function Fixture({ fixture, productMap, collection, onOpen }) {
     onOpen={onOpen}
     highlighted={collection === 'All' || product.collection === collection}
   />)}</FixtureShell>
+}
+
+function EditionTable({ fixture, items, collection, onOpen }) {
+  const [spread, setSpread] = useState(0)
+  return <FixtureShell fixture={fixture}>
+    <span className="edition-table-label" aria-hidden="true">OBJECTS · EDITIONS</span>
+    {items.map(({ product, slot }, index) => {
+      const positions = slot.spreads?.length ? slot.spreads : [slot]
+      const position = { ...slot, ...positions[spread % positions.length] }
+      return <MerchItem
+        key={`${fixture.id}-${product.id}-${index}`}
+        product={product}
+        slot={position}
+        onOpen={onOpen}
+        highlighted={collection === 'All' || product.collection === collection}
+      />
+    })}
+    <button
+      type="button"
+      className="edition-shuffle"
+      onClick={() => setSpread(current => current + 1)}
+      aria-label="Shuffle the sticker display"
+    ><Shuffle size={11}/><span>Shuffle stickers</span></button>
+  </FixtureShell>
 }
 
 function ProductDrawer({ product, onClose, onAdd }) {
@@ -267,8 +292,7 @@ function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollecti
 
 function Exterior({ entering, onEnter, onWarm }) {
   return <section className={`exterior ${entering ? 'entering' : ''}`}>
-    <div className="exterior-image"/><div className="vignette"/>
-    <div className="brand-plaque"><span>THE AEROVISTA STORE</span><small>COEUR D'ALENE · AEROVISTA APPAREL</small></div>
+    <div className="exterior-image"><span className="exterior-sign-logo" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}img/aa_logo.png`} alt=""/></span></div><div className="vignette"/>
     <button
       className="door-hit"
       onClick={onEnter}

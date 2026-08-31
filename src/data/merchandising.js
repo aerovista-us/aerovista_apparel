@@ -31,6 +31,41 @@ export const productPresentation = Object.freeze({
 
   // Objects.
   'aerovista-apex-relic-playing-cards': { shortName: 'Apex Relic Deck', accent: '#00AEEF' },
+  'aerovista-apex-mark-draft-series-s01-sticker': {
+    shortName: 'Apex Draft Sticker', accent: '#C0C4C8', type: 'sticker', collection: 'Architect',
+    fallback: {
+      name: 'AeroVista Apex Mark — Draft Series S01 Sticker',
+      images: [
+        '/products/aerovista-apex-mark-draft-series-s01-sticker/01-hero.webp',
+        '/products/aerovista-apex-mark-draft-series-s01-sticker/60-alternate-01.webp',
+        '/products/aerovista-apex-mark-draft-series-s01-sticker/60-alternate-02.webp',
+      ],
+    },
+  },
+  'billygoat-sticker': {
+    shortName: 'BillyGoat Sticker', accent: '#92B85A', type: 'sticker', collection: 'Accessories',
+    fallback: {
+      name: 'BillyGoat Sticker',
+      images: [
+        '/products/billygoat-sticker/01-hero.webp',
+        '/products/billygoat-sticker/60-alternate-01.webp',
+        '/products/billygoat-sticker/60-alternate-02.webp',
+      ],
+    },
+  },
+  'holographic-stickers': {
+    shortName: 'Holographic Goat', accent: '#9DE8D2', type: 'sticker', collection: 'Accessories',
+    fallback: {
+      name: 'Holographic stickers',
+      images: [
+        '/products/holographic-stickers/01-hero.webp',
+        '/products/holographic-stickers/10-front-01.webp',
+        '/products/holographic-stickers/10-front-02.webp',
+        '/products/holographic-stickers/10-front-03.webp',
+      ],
+    },
+  },
+  'can-cooler': { shortName: 'Pattern Can Cooler', accent: '#AEB4BA', type: 'cooler', collection: 'Accessories', display: { stageImageSuffix: '/10-front-01.webp', objectPosition: '50% 50%' } },
 })
 
 export const showroomProductIds = Object.freeze(Object.keys(productPresentation))
@@ -85,6 +120,12 @@ export const retailZones = Object.freeze([
     label: 'Objects & Editions',
     note: 'Collectibles and limited objects stay on the display surface.',
     kind: 'table',
-    productIds: ['aerovista-apex-relic-playing-cards'],
+    productIds: [
+      'aerovista-apex-relic-playing-cards',
+      'aerovista-apex-mark-draft-series-s01-sticker',
+      'billygoat-sticker',
+      'holographic-stickers',
+      'can-cooler',
+    ],
   },
 ])
