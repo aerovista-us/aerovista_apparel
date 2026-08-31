@@ -21,6 +21,8 @@ These notes preserve the implementation details and decisions that are most like
 - `src/data/fixtures.js` is the desktop spatial placement plan.
 - The latest store export used during this work was `F:\aerovista-store\store\square_products_latest.json`.
 - The deployed Gear catalog did not yet contain three sticker products that were present in the latest local store export. Explicit presentation-only fallbacks were added for those products so their committed galleries can appear in the showroom. These fallbacks deliberately contain no Square identity, variation or checkout capability and remain unavailable until the live catalog reconnects them.
+- Manually approved editorial photographs that are not yet in the Gear export are registered in `productGalleryAdditions` within `src/data/merchandising.js`. This keeps gallery additions separate from the current-room assortment.
+- When duplicate image files are deleted, remove their entries from the corresponding `manifest.json`; otherwise the manifest will advertise broken gallery assets. The deployment audit checks that every manifest entry resolves to a file.
 
 ## Current showroom
 
@@ -69,4 +71,3 @@ These notes preserve the implementation details and decisions that are most like
 3. Consider a third, higher headwear row only after its room perspective and mobile equivalent are designed together.
 4. Expand the sticker table into direct canvas-style sorting with accessible touch, pointer and keyboard controls.
 5. Continue adding rooms or rotating walls as inventory grows instead of shrinking merchandise into a dense catalog grid.
-

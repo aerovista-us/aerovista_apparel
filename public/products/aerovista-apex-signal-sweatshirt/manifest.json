@@ -10,7 +10,7 @@
       "source": "legacy-catalog-image",
       "original": "AeroVista Apex Signal Sweatshirt.png",
       "sourceSha256": "0d45d4aa4692e034887ae12d279e7a55be4c3563a6f9bff95341c944fc11799c",
-      "outputSha256": "b6cbe0580aa5a99e39cbbf6225e0e9edbcca4590e35d3c4b0ba7649f42765b6d"
+      "outputSha256": "8e55fef8bba31a9d24ca873020dbd3f525971485f42bb48b9c94e13613dfd326"
     },
     {
       "file": "10-front-01.webp",
@@ -43,14 +43,6 @@
       "original": "unisex-premium-sweatshirt-black-front-6a90b052dad90.png",
       "sourceSha256": "2ded85be260c3e24193d330d8b5423ea79a4e13f230d3cf66492d60b403ac533",
       "outputSha256": "7ade6f12b435664146dfe0457920e4c94ffce813b2af90cdf6fe15ba75207220"
-    },
-    {
-      "file": "10-front-05.webp",
-      "view": "front",
-      "source": "archive (21).zip",
-      "original": "unisex-premium-sweatshirt-black-front-6a90b052dc223.png",
-      "sourceSha256": "43556fc60742b81cfda0fef355d2a81e38efb47c49a1d94cce069e1df62abf85",
-      "outputSha256": "8e55fef8bba31a9d24ca873020dbd3f525971485f42bb48b9c94e13613dfd326"
     },
     {
       "file": "10-front-06.webp",

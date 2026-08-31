@@ -70,6 +70,21 @@ export const productPresentation = Object.freeze({
 
 export const showroomProductIds = Object.freeze(Object.keys(productPresentation))
 
+// Editorial images that have been approved locally but are not yet present in
+// the legacy Gear catalog export. Keeping this separate from productPresentation
+// prevents future-room products from being added to the current showroom merely
+// because their gallery received a new photograph.
+export const productGalleryAdditions = Object.freeze({
+  'shadow-wear-tactical-bomber-jacket-summit-edition': [
+    '/products/shadow-wear-tactical-bomber-jacket-summit-edition/bomber-summit.png',
+    '/products/shadow-wear-tactical-bomber-jacket-summit-edition/bomber-summit-f.png',
+    '/products/shadow-wear-tactical-bomber-jacket-summit-edition/bomber-summit-m.png',
+  ],
+  'aerovista-apex-pattern-print-swimsuit-one-piece': [
+    '/products/aerovista-apex-pattern-print-swimsuit-one-piece/swimsuit.png',
+  ],
+})
+
 export const retailZones = Object.freeze([
   {
     id: 'tees-outerwear-wall',

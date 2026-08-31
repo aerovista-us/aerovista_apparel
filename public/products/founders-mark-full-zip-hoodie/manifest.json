@@ -85,28 +85,12 @@
       "outputSha256": "dc46b9869a5bf9755ea0b570a91b11dcd1ac1d5a8984a3c6473d99d9159a767c"
     },
     {
-      "file": "20-back-04.webp",
-      "view": "back",
-      "source": "archive (49).zip",
-      "original": "unisex-premium-full-zip-hoodie-black-back-6a9382b04e527.png",
-      "sourceSha256": "95ec91664e8fbeb5eeacbf5bac84fa304a615ea4885486d824cff236b4db74d9",
-      "outputSha256": "f6eb843203faac74ef745b68188a4a8670d9e8f7baa48cfe3fd9c093f0f72802"
-    },
-    {
       "file": "30-left-01.webp",
       "view": "left",
       "source": "archive (51).zip",
       "original": "unisex-premium-full-zip-hoodie-black-left-6a938285a09d4.png",
       "sourceSha256": "5eb199a24a24e9adbc5baba3d28e5ddc88c7e5d9e31bbeb69f1a924382cee82b",
       "outputSha256": "da4c371ffc9b012921350bd12268f83a58dfdc13a0d01aa7ee1770f5f2628bb8"
-    },
-    {
-      "file": "30-left-02.webp",
-      "view": "left",
-      "source": "archive (49).zip",
-      "original": "unisex-premium-full-zip-hoodie-black-left-6a9382b04e8bc.png",
-      "sourceSha256": "73f18ab748bfe48c653758e3c433cbe89707f5faf7325d8475f6f1201220c8ab",
-      "outputSha256": "4048e7e882b170927aa626a18e6a2331d14c1eaf0baefd8c21fb910d434f51d2"
     },
     {
       "file": "35-left-front-01.webp",
@@ -123,14 +107,6 @@
       "original": "unisex-premium-full-zip-hoodie-black-right-6a938285a0a23.png",
       "sourceSha256": "f636cb7d45076c8104a44fa37f6649e92456f435a90bc392c0dbaba1f6376a23",
       "outputSha256": "d7376fa59b4120a6899e0c5eb96bd193f3f1b5362097623cfb6c8da6141507e0"
-    },
-    {
-      "file": "40-right-02.webp",
-      "view": "right",
-      "source": "archive (49).zip",
-      "original": "unisex-premium-full-zip-hoodie-black-right-6a9382b04ec23.png",
-      "sourceSha256": "64a4979ecb8664b90a86ea87888bbc9f67c653958b82f5ca465e6c6710baf7ef",
-      "outputSha256": "5d309efc67d566f59e6af10eb340ea02ca7c6254ff1fd97358ab8ed4f004b028"
     },
     {
       "file": "45-right-front-01.webp",

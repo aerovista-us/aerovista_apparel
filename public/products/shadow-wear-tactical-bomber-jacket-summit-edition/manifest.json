@@ -139,6 +139,27 @@
       "original": "all-over-print-unisex-bomber-jacket-white-product-details-6a909d97d9917.png",
       "sourceSha256": "c8817dbda052de3b980e9eb19018371d3af117e4ab950284df776794dc128dc0",
       "outputSha256": "1d5362394ad05b1f7fc56b08ec836495617d6b04bbdf1577e7457e26ce076854"
+    },
+    {
+      "file": "bomber-summit.png",
+      "view": "editorial",
+      "source": "manual-session-import",
+      "original": "bomber-summit.png",
+      "outputSha256": "86b9a408e6188b8bd8b7b29c01042fb4b1da7dcfce4b09074040e9111a99e136"
+    },
+    {
+      "file": "bomber-summit-f.png",
+      "view": "editorial",
+      "source": "manual-session-import",
+      "original": "bomber-summit-f.png",
+      "outputSha256": "f688732e3d33b32ff97b0d86cf6a752d69c2ba15517c73fb4149cb280af389af"
+    },
+    {
+      "file": "bomber-summit-m.png",
+      "view": "editorial",
+      "source": "manual-session-import",
+      "original": "bomber-summit-m.png",
+      "outputSha256": "6eab32054533ff1aff720a7a1e36cf4f3e042c08a51794d133fd672029806536"
     }
   ],
   "sourceArchives": [

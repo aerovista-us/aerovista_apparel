@@ -123,6 +123,13 @@
       "original": "all-over-print-one-piece-swimsuit-white-right-back-6a90e50e2f697.png",
       "sourceSha256": "47038e5543c8bd6869abb8928f95731bcf2dc1a5bc1e432004667c6015ae7d90",
       "outputSha256": "31d58bd9d5a3fd88d486e04dff8edea5eacad9d6889c9ff0d82d6a8587666b0c"
+    },
+    {
+      "file": "swimsuit.png",
+      "view": "editorial",
+      "source": "manual-session-import",
+      "original": "swimsuit.png",
+      "outputSha256": "be93cd0e3079b7ba4441ef6ce1cc03a94844566aab59fdfa0641835166050554"
     }
   ],
   "sourceArchives": [

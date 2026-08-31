@@ -1,4 +1,4 @@
-import { productPresentation, showroomProductIds } from '../data/merchandising'
+import { productGalleryAdditions, productPresentation, showroomProductIds } from '../data/merchandising'
 
 const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const IMAGE_BASE = cleanBase(import.meta.env.VITE_CATALOG_IMAGE_BASE) || 'https://gear.aerovista.us/img'
@@ -133,7 +133,8 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
   const imageCandidates = mode === 'v1'
     ? (product.media || []).map((media) => media.src || media.legacySrc || '')
     : (product.images || [])
-  const images = [...new Set([primaryImage, sourcePrimaryImage, ...imageCandidates.map(catalogImageUrl)].filter(Boolean))]
+  const editorialImages = (productGalleryAdditions[product.id] || []).map(catalogImageUrl)
+  const images = [...new Set([primaryImage, ...editorialImages, sourcePrimaryImage, ...imageCandidates.map(catalogImageUrl)].filter(Boolean))]
 
   return {
     id: String(product.id || ''),

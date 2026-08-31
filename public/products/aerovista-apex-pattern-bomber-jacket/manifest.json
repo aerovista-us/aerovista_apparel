@@ -10,7 +10,7 @@
       "source": "legacy-catalog-image",
       "original": "AeroVista Apex Pattern Bomber Jacket.png",
       "sourceSha256": "bf9b570668ad9027d552cd9b0b4b87eb0e36ed961f0a20a67da8cbdd7c03f0e0",
-      "outputSha256": "cfbc6524f5dc54c645661db7d88687f4ef3ae221f6a28a92c1d1ff30e212fad6"
+      "outputSha256": "aa041294e954468b8fbe1462eda926845230d14a11724f692c553ba124268df8"
     },
     {
       "file": "10-front-01.webp",
@@ -59,14 +59,6 @@
       "original": "all-over-print-unisex-bomber-jacket-white-front-6a934d7a9d4d0.png",
       "sourceSha256": "1937fe6c2c9af6b7d01972891a9c70179e4c14bde3a18728c6ebaad580a62dad",
       "outputSha256": "769230008b1a1d5e6409749e30082eded05b3794a42697bb92ae3a26adf19314"
-    },
-    {
-      "file": "10-front-07.webp",
-      "view": "front",
-      "source": "archive (44).zip",
-      "original": "all-over-print-unisex-bomber-jacket-white-front-6a934d7a9d81e.png",
-      "sourceSha256": "b79a812e05448f873aad997c83dc19b9ef9ac7fd6979a55aea75a21cdc1b9500",
-      "outputSha256": "aa041294e954468b8fbe1462eda926845230d14a11724f692c553ba124268df8"
     },
     {
       "file": "20-back-01.webp",
