@@ -22,18 +22,12 @@
 .studio-piece .product-image.stage{width:100%;height:100%}
 .studio-piece .product-image.stage img{object-fit:contain;filter:drop-shadow(0 9px 7px rgba(0,0,0,.68))}
 .studio-piece:hover,.studio-piece:focus-visible{z-index:9;transform:translateY(-2.5%);filter:drop-shadow(0 16px 13px rgba(0,0,0,.82)) drop-shadow(0 0 11px rgba(190,165,204,.22));outline:1px solid rgba(203,180,213,.42);outline-offset:4px}
-.studio-left-near{left:7.3%;top:24.5%;width:11.1%;height:44%}
-.studio-left-mid{left:21.5%;top:30%;width:6.7%;height:33%}
-.studio-left-far{left:29.5%;top:34%;width:4.8%;height:25%}
-.studio-right-near{right:7.3%;top:24.5%;width:11.1%;height:44%}
-.studio-right-mid{right:21.5%;top:30%;width:6.7%;height:33%}
-.studio-right-far{right:29.5%;top:34%;width:4.8%;height:25%}
-.studio-piece[data-product="aerovista-apex-pattern-skater-dress"]{top:23%;height:46%}
-.studio-piece[data-product="aerovista-apex-pattern-print-swimsuit-one-piece"]{top:28%;height:37%}
-.studio-piece[data-product="aerovista-wave-mark-full-zip-hoodie-white"]{top:31%;height:30%}
-.studio-piece[data-product="vespra-moonscript-hoodie"]{top:30%;height:32%}
-.studio-piece[data-product="night-ranger-bear-pullover-hoodie"]{top:35%;height:23%}
-.studio-piece[data-product="shadow-wear-tactical-bomber-jacket-summit-edition"]{top:35%;height:23%}
+.studio-left-near{left:7.9%;top:27%;width:9.9%;height:39%}
+.studio-left-mid{left:21.7%;top:31.5%;width:6.4%;height:31%}
+.studio-left-far{left:29.5%;top:35%;width:4.8%;height:25%}
+.studio-right-near{right:7.9%;top:27%;width:9.9%;height:39%}
+.studio-right-mid{right:21.7%;top:31.5%;width:6.4%;height:31%}
+.studio-right-far{right:29.5%;top:35%;width:4.8%;height:25%}
 .studio-product-tag{
   position:absolute;left:50%;top:100%;min-width:145px;margin-top:6px;padding:7px 8px;
   display:flex;justify-content:space-between;gap:12px;transform:translate(-50%,4px);
@@ -47,9 +41,9 @@
   padding:0;border:1px solid rgba(218,193,224,.16);background:linear-gradient(180deg,rgba(224,204,218,.045),rgba(47,31,47,.12));overflow:hidden;cursor:pointer;
   box-shadow:inset 0 0 34px rgba(208,174,214,.06),0 10px 24px rgba(0,0,0,.38);transition:filter .22s,border-color .22s
 }
-.studio-editorial-models{position:absolute;inset:4% -7% 8%;display:flex;align-items:flex-end;justify-content:center}
-.studio-editorial-models img{display:block;width:58%;height:100%;object-fit:contain;filter:saturate(.82) contrast(1.03) brightness(.91) drop-shadow(0 10px 8px rgba(0,0,0,.62))}
-.studio-editorial-models img+img{margin-left:-15%}
+.studio-editorial-models{position:absolute;inset:-2% -10% 0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.studio-editorial-models img{display:block;width:61%;height:108%;object-fit:contain;object-position:center bottom;filter:saturate(.82) contrast(1.03) brightness(.91) drop-shadow(0 10px 8px rgba(0,0,0,.62))}
+.studio-editorial-models img+img{margin-left:-17%}
 .studio-editorial-caption{position:absolute;left:0;right:0;bottom:0;padding:6px;background:linear-gradient(90deg,rgba(10,6,11,.8),rgba(28,18,29,.7),rgba(10,6,11,.8));font-size:5px;letter-spacing:.14em;color:#e0d3df;opacity:.88}
 .studio-editorial:hover,.studio-editorial:focus-visible{border-color:rgba(204,179,214,.52);filter:brightness(1.08);outline:0}
 .studio-floor-status{

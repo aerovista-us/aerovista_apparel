@@ -343,7 +343,7 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, bagCount, onBag }) {
 
 const womenStudioDisplays = [
   { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-03.webp' },
-  { id: 'vespra-moonscript-hoodie', slot: 'left-mid', image: 'products/vespra-moonscript-hoodie/10-front-06.webp' },
+  { id: 'vespra-moonscript-hoodie', slot: 'left-mid', image: 'products/vespra-moonscript-hoodie/01-hero.webp' },
   { id: 'night-ranger-bear-pullover-hoodie', slot: 'left-far', image: 'products/night-ranger-bear-pullover-hoodie/01-hero.webp' },
   { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-02.webp' },
   { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'right-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp' },
