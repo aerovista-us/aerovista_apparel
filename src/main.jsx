@@ -108,6 +108,7 @@ function MerchItem({ product, slot, onOpen, highlighted = true }) {
     left: `${slot.x}%`, top: `${slot.y}%`,
     '--item-scale': slot.scale ?? 1,
     '--item-tilt': `${slot.tilt ?? 0}deg`,
+    '--stage-scale': product.display?.stageScale ?? 1,
     '--accent': product.accent,
   }
   return (

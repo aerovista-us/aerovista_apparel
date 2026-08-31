@@ -4,20 +4,20 @@
 
 export const productPresentation = Object.freeze({
   // Left wall: tees, bombers and bottoms.
-  'aerovista-apex-vintage-tee': { shortName: 'Apex Vintage Tee', accent: '#00AEEF' },
-  'aerovista-apex-glitch-tee-black': { shortName: 'Apex Glitch Tee', accent: '#00AEEF' },
-  'architect-field-issue-tee-black': { shortName: 'Field Issue Tee', accent: '#D5D7DA' },
-  'aerovista-core-tee': { shortName: 'Core Tee', accent: '#00AEEF' },
-  'shadow-wear-tactical-bomber-jacket-summit-edition': { shortName: 'Summit Bomber', accent: '#777E86' },
-  'aerovista-apex-pattern-bomber-jacket': { shortName: 'Apex Pattern Bomber', accent: '#777E86', display: { stageImageSuffix: '/10-front-02.webp', objectPosition: '50% 50%' } },
+  'aerovista-apex-vintage-tee': { shortName: 'Apex Vintage Tee', accent: '#00AEEF', display: { stageScale: 1.43 } },
+  'aerovista-apex-glitch-tee-black': { shortName: 'Apex Glitch Tee', accent: '#00AEEF', display: { stageScale: 1 } },
+  'architect-field-issue-tee-black': { shortName: 'Field Issue Tee', accent: '#D5D7DA', display: { stageScale: 1.34 } },
+  'aerovista-core-tee': { shortName: 'Core Tee', accent: '#00AEEF', display: { stageScale: 1.42 } },
+  'shadow-wear-tactical-bomber-jacket-summit-edition': { shortName: 'Summit Bomber', accent: '#777E86', display: { stageScale: 1.36 } },
+  'aerovista-apex-pattern-bomber-jacket': { shortName: 'Apex Pattern Bomber', accent: '#777E86', display: { stageImageSuffix: '/10-front-02.webp', objectPosition: '50% 50%', stageScale: 1.38 } },
   'shadow-pants': { shortName: 'Shadow Pants', accent: '#777E86', type: 'bottom' },
   'men-s-ghost-shorts': { shortName: 'Ghost Shorts', accent: '#777E86', type: 'bottom' },
 
   // Right wall: hoodies.
-  'aerovista-shadow-pattern-hoodie': { shortName: 'Shadow Pattern Hoodie', accent: '#777E86' },
-  'architect-built-different-hoodie-black': { shortName: 'Built Different Hoodie', accent: '#D0D2D4' },
-  'aerovista-core-hoodie': { shortName: 'Core Hoodie', accent: '#00AEEF' },
-  'aerovista-division-hoodie': { shortName: 'Division Hoodie', accent: '#00AEEF' },
+  'aerovista-shadow-pattern-hoodie': { shortName: 'Shadow Pattern Hoodie', accent: '#777E86', display: { stageScale: 1.38 } },
+  'architect-built-different-hoodie-black': { shortName: 'Built Different Hoodie', accent: '#D0D2D4', display: { stageScale: 1.4 } },
+  'aerovista-core-hoodie': { shortName: 'Core Hoodie', accent: '#00AEEF', display: { stageScale: 1.4 } },
+  'aerovista-division-hoodie': { shortName: 'Division Hoodie', accent: '#00AEEF', display: { stageScale: 1.4 } },
   'aerovista-apex-draft-full-zip-hoodie-black': { shortName: 'Apex Draft Zip Hoodie', accent: '#AEB4BA' },
   'aerovista-apex-draft-pullover-hoodie-black': { shortName: 'Apex Draft Hoodie', accent: '#AEB4BA' },
   'aerovista-the-blue-witness-urban-hoodie-black': { shortName: 'Blue Witness Hoodie', accent: '#00AEEF' },

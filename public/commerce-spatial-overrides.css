@@ -146,15 +146,15 @@
     --merch-art-lift:-.20cqh;
   }
   .fixture-wall-rack .merch-item:nth-of-type(-n+4) .merch-object{
-    --merch-art-scale:1.12;
+    --merch-art-scale:1.07;
     --merch-art-lift:-.62cqh;
   }
   .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
-    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(7deg) skewY(1deg) scale(var(--merch-art-scale))!important;
+    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(7deg) skewY(1deg) scale(calc(var(--merch-art-scale) * var(--stage-scale,1)))!important;
     transform-origin:right center;
   }
   .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-object{
-    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(-7deg) skewY(-1deg) scale(var(--merch-art-scale))!important;
+    transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(-7deg) skewY(-1deg) scale(calc(var(--merch-art-scale) * var(--stage-scale,1)))!important;
     transform-origin:left center;
   }
 

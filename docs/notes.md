@@ -47,6 +47,7 @@ These notes preserve the implementation details and decisions that are most like
 - The upper sign occupies the wall band at approximately `left: 14.23%`, `top: 17.11%`, `width: 71.53%`, `height: 12.97%`.
 - Merchandise, architecture and camera transforms must continue to share the same scene plane. Viewport-fixed product placement breaks the physical-location illusion during resizing and camera moves.
 - Dark product photography benefits from restrained brightness/contact-shadow adjustments, but items should retain believable differences in physical size.
+- Equal fixture dimensions do not guarantee equal visible garment size: square exports with internal padding render much smaller than tightly cropped portrait exports. Desktop wall products use a presentation-only `stageScale` to normalize the optical garment bounds while leaving product-detail images untouched.
 
 ## Commerce host routing
 
