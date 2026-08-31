@@ -22,12 +22,18 @@
 .studio-piece .product-image.stage{width:100%;height:100%}
 .studio-piece .product-image.stage img{object-fit:contain;filter:drop-shadow(0 9px 7px rgba(0,0,0,.68))}
 .studio-piece:hover,.studio-piece:focus-visible{z-index:9;transform:translateY(-2.5%);filter:drop-shadow(0 16px 13px rgba(0,0,0,.82)) drop-shadow(0 0 11px rgba(190,165,204,.22));outline:1px solid rgba(203,180,213,.42);outline-offset:4px}
-.studio-left-near{left:7%;top:20%;width:11.6%;height:51%}
-.studio-left-mid{left:21.2%;top:27%;width:7.2%;height:38%}
-.studio-left-far{left:29.3%;top:31.5%;width:5.2%;height:29%}
-.studio-right-near{right:7%;top:20%;width:11.6%;height:51%}
-.studio-right-mid{right:21.2%;top:27%;width:7.2%;height:38%}
-.studio-right-far{right:29.3%;top:31.5%;width:5.2%;height:29%}
+.studio-left-near{left:7.3%;top:24.5%;width:11.1%;height:44%}
+.studio-left-mid{left:21.5%;top:30%;width:6.7%;height:33%}
+.studio-left-far{left:29.5%;top:34%;width:4.8%;height:25%}
+.studio-right-near{right:7.3%;top:24.5%;width:11.1%;height:44%}
+.studio-right-mid{right:21.5%;top:30%;width:6.7%;height:33%}
+.studio-right-far{right:29.5%;top:34%;width:4.8%;height:25%}
+.studio-piece[data-product="aerovista-apex-pattern-skater-dress"]{top:23%;height:46%}
+.studio-piece[data-product="aerovista-apex-pattern-print-swimsuit-one-piece"]{top:28%;height:37%}
+.studio-piece[data-product="aerovista-wave-mark-full-zip-hoodie-white"]{top:31%;height:30%}
+.studio-piece[data-product="shadow-pants"]{top:35%;height:23%}
+.studio-piece[data-product="shadow-wear-tactical-bomber-jacket-summit-edition"]{top:32%;height:28%}
+.studio-piece[data-product="aerovista-shadow-pattern-hoodie"]{top:35%;height:22%}
 .studio-product-tag{
   position:absolute;left:50%;top:100%;min-width:145px;margin-top:6px;padding:7px 8px;
   display:flex;justify-content:space-between;gap:12px;transform:translate(-50%,4px);

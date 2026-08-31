@@ -342,10 +342,10 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, bagCount, onBag }) {
 }
 
 const womenStudioDisplays = [
-  { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-01.webp' },
+  { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-03.webp' },
   { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'left-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp' },
   { id: 'shadow-pants', slot: 'left-far', image: 'products/shadow-pants/01-hero.webp' },
-  { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/01-hero.webp' },
+  { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-02.webp' },
   { id: 'shadow-wear-tactical-bomber-jacket-summit-edition', slot: 'right-mid', image: 'products/shadow-wear-tactical-bomber-jacket-summit-edition/01-hero.webp' },
   { id: 'aerovista-shadow-pattern-hoodie', slot: 'right-far' },
 ]
@@ -353,7 +353,7 @@ const womenStudioDisplays = [
 function WomenStudioPiece({ display, product, onOpen }) {
   if (!product) return null
   const image = display.image ? `${import.meta.env.BASE_URL}${display.image}` : product.image
-  return <button className={`studio-piece studio-${display.slot}`} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog">
+  return <button className={`studio-piece studio-${display.slot}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog">
     <ProductImage product={product} image={image} stage/>
     <span className="studio-product-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
   </button>

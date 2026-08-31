@@ -97,3 +97,4 @@ These notes preserve the implementation details and decisions that are most like
 - `public/store/womens-studio-v1.webp` is the studio's generated architectural shell. The six empty display bays, central editorial frame and room perspective are registered to the same `1672 × 941` scene plane used throughout the store.
 - The central editorial frame uses the approved local swimsuit model image, while every sellable display bay remains a real product button with accessible product details.
 - Desktop visitors approach merchandise in the room; mobile visitors receive a compact architectural view followed by a touch-sized two-column opening edit.
+- Screenshot calibration replaced the near-bay dress and swimsuit hero images with transparent product-focused exports. This removes the swimsuit's rectangular black backdrop and keeps all six pieces visually seated inside their illuminated niches.
