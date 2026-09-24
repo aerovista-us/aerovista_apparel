@@ -1,0 +1,13 @@
+# Vite deploys runtime assets from `public/`. Keep original product/source art
+# in Git without uploading those large masters into every Vercel build context.
+.github/
+docs/
+README.md
+AeroVista Products/
+
+# Root-level image masters and working mockups are not runtime assets.
+/*.png
+/*.jpg
+/*.jpeg
+/*.JPG
+/*.JPEG
