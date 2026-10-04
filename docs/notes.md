@@ -1,6 +1,6 @@
 # Checkpoint status — 2026-10-04
 
-Flagship UX/catalog audit: implemented locally. Local responsive QA passed on desktop, about 820px, and about 390px. The October 4 Gear catalog projection is ready. Production Gear catalog and the production flagship deploy are still pending. Cindy migration has not started. Apparel identity proof and Commerce v1 order reconciliation are the next platform phase, after Gear JSON is live and the flagship is accepted in production.
+Flagship UX/catalog audit: implemented locally on `feature/entry-gallery` and not yet pushed. Local responsive QA passed on desktop, about 820px, and about 390px. The October 4 Gear catalog is published at `https://gear.aerovista.us/square_products_latest.json` (`926d1cf`). Place Line variation ids, sizes, and prices resolve there. A Gear checkout smoke test created Square payment links without sending a browser price. Ridgeline Tee, size S, opened at $32.99. Shadow Pants, size M, opened at $46.00 while the new catalog says $52.00, so the live API price map has not caught up with the October 4 export. The production flagship deploy stays held until those prices agree. Cindy migration has not started. Apparel identity proof and Commerce v1 order reconciliation remain the next platform phase.
 
 # Published revision — 2026-10-04
 
