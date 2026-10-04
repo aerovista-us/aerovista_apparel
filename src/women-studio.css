@@ -22,12 +22,12 @@
 .studio-piece .product-image.stage{width:100%;height:100%}
 .studio-piece .product-image.stage img{object-fit:contain;filter:drop-shadow(0 9px 7px rgba(0,0,0,.68))}
 .studio-piece:hover,.studio-piece:focus-visible{z-index:9;transform:translateY(-2.5%);filter:drop-shadow(0 16px 13px rgba(0,0,0,.82)) drop-shadow(0 0 11px rgba(190,165,204,.22));outline:1px solid rgba(203,180,213,.42);outline-offset:4px}
-.studio-left-near{left:7.9%;top:27%;width:9.9%;height:39%}
-.studio-left-mid{left:21.7%;top:31.5%;width:6.4%;height:31%}
-.studio-left-far{left:29.5%;top:35%;width:4.8%;height:25%}
-.studio-right-near{right:7.9%;top:27%;width:9.9%;height:39%}
-.studio-right-mid{right:21.7%;top:31.5%;width:6.4%;height:31%}
-.studio-right-far{right:29.5%;top:35%;width:4.8%;height:25%}
+.studio-left-near{left:6.2%;top:22%;width:13.5%;height:48%}
+.studio-left-mid{left:19.8%;top:26%;width:9.2%;height:40%}
+.studio-left-far{left:28.2%;top:29%;width:7.6%;height:34%}
+.studio-right-near{right:6.2%;top:22%;width:13.5%;height:48%}
+.studio-right-mid{right:19.8%;top:26%;width:9.2%;height:40%}
+.studio-right-far{right:28.2%;top:29%;width:7.6%;height:34%}
 .studio-product-tag{
   position:absolute;left:50%;top:100%;min-width:145px;margin-top:6px;padding:7px 8px;
   display:flex;justify-content:space-between;gap:12px;transform:translate(-50%,4px);
@@ -72,7 +72,7 @@
   .women-mobile-grid>button{position:relative;min-height:245px;padding:14px 10px 46px;border:0;background:#0e0c10;cursor:pointer}
   .women-mobile-grid .product-image.stage{width:100%;height:190px}.women-mobile-grid .product-image.stage img{object-fit:contain;filter:drop-shadow(0 9px 8px rgba(0,0,0,.68))}
   .women-mobile-grid>button>span{position:absolute;left:11px;right:11px;bottom:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:7px;text-align:left}
-  .women-mobile-grid b{max-width:72%;font-size:8px;line-height:1.3}.women-mobile-grid em{font-size:7px;font-style:normal;color:#9b929f;white-space:nowrap}
+  .women-mobile-grid b{max-width:72%;font-size:12px;line-height:1.3}.women-mobile-grid em{font-size:12px;font-style:normal;color:#c5ced6;white-space:nowrap}
 }
 
 @media(max-width:430px){.women-mobile-grid>button{min-height:218px}.women-mobile-grid .product-image.stage{height:165px}}

@@ -1,3 +1,5 @@
+import { checkoutPayload } from './promotions'
+
 const STORE_ID = 'aerovista-apparel'
 const MODE = String(import.meta.env.VITE_COMMERCE_MODE || 'legacy').trim().toLowerCase()
 
@@ -103,11 +105,16 @@ async function beginLegacyCheckout(bag) {
     throw new Error('Checkout is intentionally disabled on the Vercel preview. Live checkout is available through apparel.aerovista.us.')
   }
 
-  const cart = bag.map((item) => ({
+  const cart = checkoutPayload(bag.map((item) => ({
     productId: item.product.commerce?.productId || item.product.id,
+    variantId: item.variant.providerVariationId || item.variant.variationId || '',
+    quantity: item.quantity || 1,
     sku: cartKeyForVariant(item.variant),
-    variationId: item.variant.providerVariationId || item.variant.variationId || '',
-    qty: item.quantity || 1,
+  }))).map((line, index) => ({
+    productId: line.productId,
+    sku: bag[index] ? cartKeyForVariant(bag[index].variant) : '',
+    variationId: line.variantId,
+    qty: line.quantity,
   }))
   const invalid = cart.find(line => !line.productId || !line.variationId || !line.sku)
   if (invalid) throw new Error('One or more bag items are missing a verified catalog variation.')

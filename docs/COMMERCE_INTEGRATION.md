@@ -1,5 +1,9 @@
 # AeroVista Apparel — Commerce Integration
 
+Governing contract: [APPAREL_INTEGRATION_CONTRACT_V1.md](APPAREL_INTEGRATION_CONTRACT_V1.md). This note describes the current legacy Gear path. It does not claim Apparel has passed Identity integration or shared Commerce v1.
+
+The October 4 Square export is projected by `F:\aerovista-store\scripts\project-october-catalog.py` into the Gear JSON. Apparel keeps reading that JSON. Checkout still sends product, SKU, variation, and quantity. It does not send a browser price, discount, or paid flag. See [CINDY_REGRESSION.md](CINDY_REGRESSION.md) for the downstream test that has not started.
+
 ## Goal
 
 The new spatial storefront is a presentation layer for the existing AeroVista commerce system. It must never invent a product identity, price, size, SKU, or Square variation.

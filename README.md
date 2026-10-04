@@ -1,5 +1,9 @@
 # AeroVista Apparel — Guided Spatial Storefront
 
+The flagship store is the platform. Downstream storefronts conform to [docs/APPAREL_INTEGRATION_CONTRACT_V1.md](docs/APPAREL_INTEGRATION_CONTRACT_V1.md).
+
+
+
 A React/Vite storefront prototype that treats ecommerce as a **place to enter and explore**, not a product grid wearing a 3D skin.
 
 The current build uses a lightweight 2.5D spatial illusion: authored exterior/interior environments, real product photography, physical retail placement, perspective, focus shifts, gallery lighting and responsive mobile store zones. The commerce interface remains normal React/HTML so product details, sizes, bag behavior and future checkout stay fast and accessible.
@@ -9,7 +13,7 @@ The current build uses a lightweight 2.5D spatial illusion: authored exterior/in
 1. Arrive outside the AeroVista storefront.
 2. Click the front door and cross the threshold through a push-in transition.
 3. Arrive in the Entry Gallery, a high-end orientation room with mannequins and a physical directory.
-4. Enter either the Women's Studio or Men's Gallery from its physical doorway or directory listing. Collections Hall remains visibly marked as opening soon.
+4. Enter Women's Studio, Men's Gallery, the Place Line, or Objects & Editions from the directory. Shopping state is kept in the page address (`space`, `product`, `view`) so refresh and sharing reopen the same room. A checkout return is not payment proof.
 5. Approach merchandise directly in the room. Focus shifts bring the selected area forward and quiet the surrounding space.
 6. Select a piece to open product details, sizes and bag controls.
 7. On mobile, use the same room directory, then move vertically through the selected gallery as a guided walk.

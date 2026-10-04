@@ -7,6 +7,8 @@ import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
 import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
+import { identityStanding } from './commerce/identity'
+import { fulfillmentNote } from './commerce/fulfillment'
 import './styles.css'
 import './product-gallery.css'
 import './illusion-polish.css'
@@ -17,13 +19,15 @@ const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD
 
 function priceLabel(product, variant = null) {
   if (variant && Number.isFinite(variant.price)) return money.format(variant.price)
+  if (product?.commerceStatus === 'presentation') return 'Preview'
   if (product?.commerceStatus === 'unavailable') return 'Unavailable'
   if (product?.commerceStatus === 'offline') return 'Catalog offline'
-  return Number.isFinite(product?.price) ? money.format(product.price) : 'Unavailable'
+  return Number.isFinite(product?.price) ? money.format(product.price) : 'Preview'
 }
 
 function commerceNote(product) {
   if (product?.commerceStatus === 'connected') return 'Live price and availability verified from the AeroVista catalog.'
+  if (product?.commerceStatus === 'presentation') return 'Preview from the local gallery. Checkout stays closed until a Square variation is on the live catalog.'
   if (product?.commerceStatus === 'unavailable') return 'This piece is currently unavailable for checkout.'
   return 'Live availability is temporarily unavailable.'
 }
@@ -32,7 +36,15 @@ const spaceViews = [
   { id: 'left', label: 'Tees & Bombers', note: 'Turn toward tees on the upper rail, with bombers and Shadow Wear bottoms below.' },
   { id: 'room', label: "Men's Gallery · Main Floor", note: 'Take in the full room, feature wall and central editions table.' },
   { id: 'right', label: 'Hoodie Wall', note: 'Turn toward the dedicated hoodie wall for AeroVista, Architect and Shadow Wear layers.' },
+  { id: 'objects', label: 'Objects & Editions', note: 'The center table holds cards, the cooler, and the sticker editions.' },
+  { id: 'place', label: 'Place Line', note: 'Ridgeline, After Dark, Blue Divide, Source Code, MoonLine, Powderline, and Behind the Scenes.' },
+  { id: 'more', label: 'Further Edit', note: 'Photographed pieces that are visible in Square and waiting on a quieter wall.' },
 ]
+
+function fixtureVisible(fixture, view) {
+  const views = fixture.views || ['room']
+  return views.includes(view)
+}
 
 function useCompactStore() {
   const query = '(max-width: 900px)'
@@ -230,7 +242,7 @@ function ProductDrawer({ product, onClose, onAdd }) {
           <h2>{product.name}</h2>
           <div className="product-meta-row">
             <p className="price">{priceLabel(product, variant)}</p>
-            <span className={`availability-line ${canAdd ? 'available' : 'unavailable'}`}><i aria-hidden="true"/>{canAdd ? 'Available' : 'Unavailable'}</span>
+            <span className={`availability-line ${canAdd ? 'available' : 'unavailable'}`}><i aria-hidden="true"/>{canAdd ? 'Available' : product.commerceStatus === 'presentation' ? 'Preview' : 'Unavailable'}</span>
           </div>
           <p className="product-description">{product.description}</p>
           <div className="selector">
@@ -238,7 +250,7 @@ function ProductDrawer({ product, onClose, onAdd }) {
             <div className="chips">{product.sizes.map(s => <button key={s} onClick={() => setSize(s)} className={size === s ? 'active' : ''} aria-pressed={size === s}>{s}</button>)}</div>
           </div>
           <button className="primary wide" disabled={!canAdd} onClick={() => onAdd(product, size, variant)}>
-            {canAdd ? <>Add to bag <ShoppingBag size={17}/></> : 'Currently unavailable'}
+            {canAdd ? <>Add to bag <ShoppingBag size={17}/></> : product.commerceStatus === 'presentation' ? 'Preview' : 'Currently unavailable'}
           </button>
           <small>{commerceNote(product)}</small>
         </div>
@@ -269,7 +281,8 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
           <button className={`primary wide ${checkoutBusy ? 'is-busy' : ''}`} disabled={!bag.length || hasUnready || checkoutBusy} onClick={onCheckout} aria-live="polite">
             {checkoutBusy ? 'Opening secure checkout…' : <>Checkout <ArrowRight size={17}/></>}
           </button>
-          <small>Secure checkout through AeroVista Commerce.</small>
+          <small>Square confirms the amount. Creating checkout does not mark an order paid or redeem a promotion.</small>
+          <small>{identityStanding.required ? 'Account access needs AeroVista identity. This store has not verified that path yet.' : ''}</small>
         </div>
       </aside>
     </div>
@@ -288,7 +301,7 @@ function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollecti
     <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
     <CollectionNav products={products} collection={collection} onCollection={onCollection}/>
     <div className="header-actions">
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
     </div>
   </header>
 }
@@ -296,17 +309,22 @@ function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollecti
 const galleryDestinations = [
   { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A curated edit of women-specific and unisex pieces.', status: 'OPEN', live: true },
   { id: 'mens', direction: 'RIGHT', name: "Men's Gallery", note: 'Apparel, headwear and current editions.', status: 'OPEN', live: true },
-  { id: 'collections', direction: 'AHEAD', name: 'Collections Hall', note: 'Seven divisions presented line by line.', status: 'OPENING SOON' },
-  { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Sticker and card table preview.', status: 'ON VIEW' },
+  { id: 'place', direction: 'AHEAD', name: 'Place Line', note: 'Ridgeline, After Dark, Blue Divide, Source Code, MoonLine, Powderline, and Behind the Scenes.', status: 'OPEN', live: true },
+  { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and sticker editions on the center table.', status: 'ON VIEW', live: true },
 ]
 
-function Foyer({ onOutside, onOpenMens, onOpenWomens, bagCount, onBag }) {
-  const openDestination = id => id === 'womens' ? onOpenWomens() : onOpenMens()
+function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag }) {
+  const openDestination = id => {
+    if (id === 'womens') return onOpenWomens()
+    if (id === 'place') return onOpenPlace()
+    if (id === 'objects') return onOpenObjects()
+    return onOpenMens()
+  }
   return <section className="foyer space-arrive">
     <header className="foyer-header">
       <button className="wordmark" onClick={onOutside} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="foyer-location">ENTRY GALLERY</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
     </header>
     <div className="foyer-stage">
       <div className="foyer-image" aria-hidden="true"/>
@@ -372,7 +390,7 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
     <header className="studio-header">
       <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="studio-location">WOMEN'S STUDIO · NOCTURNE EDIT</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/><span>{bagCount}</span></button>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
     </header>
     <div className="women-studio-scene">
       <div className="women-studio-image" aria-hidden="true"/><div className="women-studio-shade" aria-hidden="true"/>
@@ -444,9 +462,8 @@ function ViewNav({ view, onView }) {
   return <nav className="view-nav" aria-label="Look around the store">{spaceViews.map(space => <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}><i aria-hidden="true"/><span>{space.label}</span></button>)}</nav>
 }
 
-function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag }) {
+function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView }) {
   const [collection, setCollection] = useState('All')
-  const [view, setView] = useState('room')
   const compact = useCompactStore()
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
   const visibleProducts = useMemo(() => products.filter(product => collection === 'All' || product.collection === collection), [products, collection])
@@ -465,16 +482,26 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag }
       <div className="interior-image"/><div className="room-shade"/>
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
       <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Entry Gallery</button>
-      {!compact && <div className="fixture-layer">{fixtures.map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} collection={collection} onOpen={onProduct}/>)}</div>}
-      <ViewNav view={view} onView={setView}/>
+      {!compact && <div className="fixture-layer">{fixtures.filter(fixture => fixtureVisible(fixture, view)).map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} collection={collection} onOpen={onProduct}/>)}</div>}
+      <ViewNav view={view} onView={onView}/>
       <div className="center-prompt floor-status" data-status={catalogState.status} role="status" aria-live="polite"><Sparkles size={14}/><span>{floorMessage}</span></div>
     </div>
     {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} catalogState={catalogState}/>} 
   </section>
 }
 
+function readStoreRoute() {
+  const params = new URLSearchParams(window.location.search)
+  const space = ['foyer', 'mens', 'womens'].includes(params.get('space')) ? params.get('space') : 'outside'
+  const view = spaceViews.some(item => item.id === params.get('view')) ? params.get('view') : 'room'
+  const checkout = params.get('checkout') === 'success' || params.get('checkout') === 'cancel' ? params.get('checkout') : ''
+  return { space, view, product: params.get('product') || '', checkout }
+}
+
 function App() {
-  const [space, setSpace] = useState('outside')
+  const initialRoute = useMemo(() => (typeof window === 'undefined' ? { space: 'outside', view: 'room', product: '', checkout: '' } : readStoreRoute()), [])
+  const [space, setSpace] = useState(initialRoute.space)
+  const [mensView, setMensView] = useState(initialRoute.view)
   const [entering, setEntering] = useState(false)
   const [selected, setSelected] = useState(null)
   const [bagOpen, setBagOpen] = useState(false)
@@ -484,6 +511,9 @@ function App() {
   const [catalogState, setCatalogState] = useState({ status: 'idle', visibleCatalogCount: 0, showroomCount: 0 })
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
+  const [checkoutNotice, setCheckoutNotice] = useState(initialRoute.checkout)
+  const [pendingProduct, setPendingProduct] = useState(initialRoute.product)
+  const [routeReady, setRouteReady] = useState(false)
   const commercePromiseRef = useRef(null)
 
   function warmCommerce() {
@@ -512,6 +542,52 @@ function App() {
   }
 
   useEffect(() => {
+    if (initialRoute.space !== 'outside') warmCommerce()
+    setRouteReady(true)
+    const onPop = () => {
+      const route = readStoreRoute()
+      setSpace(route.space)
+      setMensView(route.view)
+      setCheckoutNotice(route.checkout)
+      setPendingProduct(route.product)
+      if (route.space !== 'outside') warmCommerce()
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
+  useEffect(() => {
+    if (!routeReady) return undefined
+    const params = new URLSearchParams(window.location.search)
+    if (space === 'outside') {
+      params.delete('space')
+      params.delete('view')
+      params.delete('product')
+    } else {
+      params.set('space', space)
+      if (space === 'mens') params.set('view', mensView)
+      else params.delete('view')
+      if (selected?.id) params.set('product', selected.id)
+      else if (!pendingProduct) params.delete('product')
+    }
+    const next = params.toString()
+    const current = window.location.search.replace(/^\?/, '')
+    if (next === current) return undefined
+    const url = next ? `${window.location.pathname}?${next}` : window.location.pathname
+    window.history.pushState({ space, view: mensView }, '', url)
+    return undefined
+  }, [space, mensView, selected, pendingProduct, routeReady])
+
+  useEffect(() => {
+    if (!pendingProduct) return undefined
+    const product = [...showroomProducts, ...womenStudioProducts].find(item => item.id === pendingProduct)
+    if (!product) return undefined
+    setSelected(product)
+    setPendingProduct('')
+    return undefined
+  }, [pendingProduct, showroomProducts, womenStudioProducts])
+
+  useEffect(() => {
     const modalOpen = Boolean(selected || bagOpen)
     if (!modalOpen) return undefined
     const priorOverflow = document.body.style.overflow
@@ -532,10 +608,10 @@ function App() {
     if (entering) return
     warmCommerce()
     setEntering(true)
-    window.setTimeout(() => { setSpace('foyer'); setEntering(false) }, 980)
+    window.setTimeout(() => { setSpace('foyer'); setEntering(false) }, 680)
   }
   function goOutside() { setSelected(null); setBagOpen(false); setSpace('outside') }
-  function openMensGallery() { warmCommerce(); setSpace('mens') }
+  function openMensGallery(view = 'room') { warmCommerce(); setMensView(view); setSpace('mens') }
   function openWomensStudio() { warmCommerce(); setSpace('womens') }
   function returnToFoyer() { setSelected(null); setBagOpen(false); setSpace('foyer') }
   function add(product, size, variant) {
@@ -554,9 +630,16 @@ function App() {
   }
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
+    {checkoutNotice && <div className="checkout-return" role="status">
+      <p>{checkoutNotice === 'success'
+        ? 'You came back from checkout. This return is not payment proof. An order is confirmed only after Square verifies payment.'
+        : 'Checkout was canceled. Nothing was paid, and no promotion was redeemed.'}</p>
+      <p>{fulfillmentNote}</p>
+      <button type="button" onClick={() => setCheckoutNotice('')}>Dismiss</button>
+    </div>}
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
-    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={openMensGallery} onOpenWomens={openWomensStudio} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
-    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
+    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
+    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView}/>}
     {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 

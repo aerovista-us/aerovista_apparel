@@ -34,6 +34,19 @@
   background:linear-gradient(90deg,rgba(2,3,5,.54),transparent 64%,rgba(2,3,5,.10) 100%),linear-gradient(0deg,rgba(3,4,6,.34),transparent 34%);
 }
 
+.view-objects .interior-image,
+.view-objects .fixture-layer{
+  transform:translate3d(0,-7%,0) scale(1.38);
+  transform-origin:50% 78%;
+}
+.view-place .interior-image,
+.view-place .fixture-layer,
+.view-more .interior-image,
+.view-more .fixture-layer{
+  transform:translate3d(0,1%,0) scale(1.08);
+  transform-origin:50% 42%;
+}
+
 /* Preserve the chosen camera when a customer approaches merchandise. */
 .view-room:has(.merch-item:hover) .interior-image,.view-room:has(.merch-item:focus-visible) .interior-image{
   transform:translate3d(0,0,0) scale(1.024);
@@ -51,7 +64,10 @@
   right:2.4%;
   bottom:3%;
   display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
   align-items:center;
+  max-width:min(720px,78vw);
   gap:5px;
   padding:5px;
   border:1px solid rgba(205,211,216,.12);

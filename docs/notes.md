@@ -1,3 +1,15 @@
+# Checkpoint status — 2026-10-04
+
+Flagship UX/catalog audit: implemented locally. Local responsive QA passed on desktop, about 820px, and about 390px. The October 4 Gear catalog projection is ready. Production Gear catalog and the production flagship deploy are still pending. Cindy migration has not started. Apparel identity proof and Commerce v1 order reconciliation are the next platform phase, after Gear JSON is live and the flagship is accepted in production.
+
+# Published revision — 2026-10-04
+
+Fetched `origin/main` on 2026-10-04. GitHub `main` is `b9f186aa73603783d344b6debfdbef6e50e3fdbc` (“Exclude source artwork from Vercel build context”). That commit adds `.vercelignore` and `docs/VERCEL_DEPLOYMENT_SIZE_AUDIT_2026-09-24.md` on top of storefront `a8e76f4b409b1dc11808a91102cd50462b052919` (“Improve bright-room visibility”). Production `https://apparel.aerovista.us/` is that Vercel deploy. Local `feature/entry-gallery` remains the storefront commit. Untracked `public/img/*` masters and `public/products/_inbox/` stay off the published site. `NorthLine.png` has no Square item.
+
+The October 4 Square export (`1149XBNG8C8ZE_catalog-2026-10-04-1828.xlsx`) is the item authority. It has 620 variation rows, 118 item names, and 106 visible items that are not archived. The apparel room does not read that workbook. `F:\aerovista-store\scripts\project-october-catalog.py` projects it into `store/square_products_latest.json`, keeps curated ids and galleries on a match, and uses column B Token as `variation_id`.
+
+On the floor: the original men's room (tees, bombers, bottoms, hoodie wall, headwear, objects table), the women's nocturne edit, a Place Line camera for ten local graphics, and a Further Edit camera for seven photographed Square-visible pieces. Utility, phone cases, mugs, resort canvases, the cotton skater dress, and the duplicate Wave Mark listing stay off the apparel floor. Place Line pieces render as Preview until their Square variations are what production Gear serves. Apparel production still reads the remote Gear catalog until that JSON is deployed.
+
 # Session Notes — 2026-08-30
 
 These notes preserve the implementation details and decisions that are most likely to matter in future AeroVista Apparel work.

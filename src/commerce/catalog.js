@@ -2,6 +2,21 @@ import { productGalleryAdditions, productPresentation, showroomProductIds, women
 
 const cleanBase = (value) => String(value || '').trim().replace(/\/+$/, '')
 const IMAGE_BASE = cleanBase(import.meta.env.VITE_CATALOG_IMAGE_BASE) || 'https://gear.aerovista.us/img'
+const localStageHeroes = Object.freeze({
+  'aerovista-apex-vintage-tee': 'products/aerovista-apex-vintage-tee/01-hero.webp',
+  'architect-built-different-hoodie-black': 'products/architect-built-different-hoodie-black/01-hero.webp',
+  'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark': 'products/aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark/01-hero.webp',
+  'aerovista-ridgeline-tee': 'products/aerovista-ridgeline-tee/01-hero.webp',
+  'aerovista-idaho-after-dark-tee': 'products/aerovista-idaho-after-dark-tee/01-hero.webp',
+  'aerovista-blue-divide-tee': 'products/aerovista-blue-divide-tee/01-hero.webp',
+  'aerovista-blue-divide-sticker': 'products/aerovista-blue-divide-sticker/01-hero.webp',
+  'aerovista-source-code-tee': 'products/aerovista-source-code-tee/01-hero.webp',
+  'aerovista-moonline-tee': 'products/aerovista-moonline-tee/01-hero.webp',
+  'aerovista-moonline-hat': 'products/aerovista-moonline-hat/01-hero.webp',
+  'aerovista-powderline-tee': 'products/aerovista-powderline-tee/01-hero.webp',
+  'aerovista-built-behind-the-scenes-tee': 'products/aerovista-built-behind-the-scenes-tee/01-hero.webp',
+  'aerovista-built-behind-the-scenes-hat': 'products/aerovista-built-behind-the-scenes-hat/01-hero.webp',
+})
 const APP_BASE = String(import.meta.env.BASE_URL || './').replace(/\/?$/, '/')
 
 const titleCase = (value) => String(value || '')
@@ -112,13 +127,23 @@ function visibleLegacyProduct(product) {
   return true
 }
 
+function customerName(value) {
+  const text = String(value || '').trim()
+  if (!text) return text
+  return text.split(/\s+/).map((word) => {
+    const first = word.charAt(0)
+    if (first && first === first.toLowerCase() && /[a-z]/.test(first)) return first.toUpperCase() + word.slice(1)
+    return word
+  }).join(' ')
+}
+
 function shortNameFor(product) {
   const override = productPresentation[product.id]
   if (override?.shortName) return override.shortName
-  return String(product.name || product.title || product.id)
+  return customerName(String(product.name || product.title || product.id)
     .replace(/^AeroVista\s*[—–-]?\s*/i, '')
     .replace(/^Architect\s*[—–-]?\s*/i, '')
-    .trim()
+    .trim())
 }
 
 function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
@@ -129,7 +154,8 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
   const presentation = productPresentation[product.id] || {}
   const description = product.description || product.description_text || ''
   const sourcePrimaryImage = catalogImageUrl(product.image || product.media?.[0]?.legacySrc || '')
-  const primaryImage = presentation.image ? catalogImageUrl(presentation.image) : sourcePrimaryImage
+  const localHero = localStageHeroes[product.id] ? catalogImageUrl(localStageHeroes[product.id]) : ''
+  const primaryImage = presentation.image ? catalogImageUrl(presentation.image) : (localHero || sourcePrimaryImage)
   const imageCandidates = mode === 'v1'
     ? (product.media || []).map((media) => media.src || media.legacySrc || '')
     : (product.images || [])
@@ -138,7 +164,7 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
 
   return {
     id: String(product.id || ''),
-    name: product.title || product.name || product.id,
+    name: customerName(product.title || product.name || product.id),
     shortName: shortNameFor(product),
     type: presentation.type || typeForProduct(product),
     price: prices.length ? Math.min(...prices) : null,
@@ -185,7 +211,7 @@ function presentationFallback(id) {
     colors: [],
     sizes: ['One Size'],
     display: presentation.display || { objectPosition: '50% 50%' },
-    commerceStatus: 'unavailable',
+    commerceStatus: 'presentation',
     commerce: { mode: 'presentation', productId: '', squareItemId: '', catalogVersion: '', variants: [] },
   }
 }
