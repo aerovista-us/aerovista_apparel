@@ -1,6 +1,8 @@
 # Checkpoint status — 2026-10-07
 
-The price hold is lifted. The mounted API catalog and `sku_map.generated.json` on NXCore were replaced from the October 4 Gear projection and `av-store-api` was restarted. The previous files were kept beside them as `*.bak-20261007`. The API prices Shadow Pants M (`AADW36VFWTN37URWPN6EHEXT`) at 5200 cents. The cart key `Default__M` is shared by many products and is not a price. This revision is the flagship published to `main`. Raw masters and `public/products/_inbox/` stay unpublished. Cindy has not been migrated. Apparel identity proof and Commerce v1 remain the next platform phase.
+The price hold is lifted. The mounted API catalog and `sku_map.generated.json` on NXCore were replaced from the October 4 Gear projection and `av-store-api` was restarted. The previous files were kept beside them as `*.bak-20261007`. The API prices Shadow Pants M (`AADW36VFWTN37URWPN6EHEXT`) at 5200 cents. The cart key `Default__M` is shared by many products and is not a price. This revision is published on `main` as `1a072a6` and is what `https://apparel.aerovista.us/` is serving. Raw masters and `public/products/_inbox/` stay unpublished. Cindy has not been migrated. Apparel identity proof and Commerce v1 remain the next platform phase.
+
+Production acceptance on 2026-10-07 walked the entrance, directory, Men's Gallery, Place Line, and Women's Studio, including about 820px and about 390px. Place Line shows connected prices, and Ridgeline size S can be added to the bag at $32.99. Browser checkout from `apparel.aerovista.us` to `gear.aerovista.us/api/square/checkout` failed with "Failed to fetch" because the Gear API proxy allowlist did not include the flagship origin. The allowlist change is `b3fc6dd` on the store repo. The GitHub worker deploy skipped because `CLOUDFLARE_API_TOKEN` is not set, so the live proxy has not picked up that origin yet.
 
 # Checkpoint status — 2026-10-04
 
