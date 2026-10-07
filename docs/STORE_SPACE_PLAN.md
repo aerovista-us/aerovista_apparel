@@ -39,7 +39,9 @@ Collectible and non-apparel releases. The center table combines the Apex Relic d
 
 ## Expansion backlog
 
-1. Add a dedicated Women's room when the catalog has enough products to merchandise it as a complete physical space.
+This plan is a design note, not current catalog or commerce authority. See [APPAREL_INTEGRATION_CONTRACT_V1.md](APPAREL_INTEGRATION_CONTRACT_V1.md) when the two disagree.
+
+1. Women's Studio shipped on 2026-08-31. The nocturne edit is open from the Entry Gallery. This item is no longer future work.
 2. Give each major line a wall before creating a separate room for every line; this keeps the flagship legible while inventory grows.
 3. Add a third, higher headwear row only after its wall perspective and reachable mobile equivalent are designed together.
 4. Evolve the sticker table from shuffled arrangements to direct drag/sort interaction after pointer, touch and keyboard behavior can be equally supported.

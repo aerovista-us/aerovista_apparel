@@ -2,7 +2,7 @@
 
 Governing contract: [APPAREL_INTEGRATION_CONTRACT_V1.md](APPAREL_INTEGRATION_CONTRACT_V1.md). This note describes the current legacy Gear path. It does not claim Apparel has passed Identity integration or shared Commerce v1.
 
-The October 4 Square export is projected by `F:\aerovista-store\scripts\project-october-catalog.py` into the Gear JSON. Apparel keeps reading that JSON. Checkout still sends product, SKU, variation, and quantity. It does not send a browser price, discount, or paid flag. See [CINDY_REGRESSION.md](CINDY_REGRESSION.md) for the downstream test that has not started.
+Square Catalog is the commercial authority. The October 4 workbook is a dated intake snapshot, curated by `F:\aerovista-store\scripts\project-october-catalog.py` into the public Gear projection. Apparel reads that projection from Gear. It does not parse the workbook, and it does not treat the projection as a second price authority. Checkout sends product, SKU, variation, and quantity. It does not send a browser price, discount, or paid flag. See [CINDY_REGRESSION.md](CINDY_REGRESSION.md). Cindy migration has not started.
 
 ## Goal
 
@@ -10,7 +10,7 @@ The new spatial storefront is a presentation layer for the existing AeroVista co
 
 ## Catalog-first rule
 
-The current production catalog (`square_products_latest.json`) is the merchandise source of truth, just as it is for the existing Gear storefront.
+`square_products_latest.json` is the public projection Apparel and Gear read. Square remains the catalog and retail-price authority behind it.
 
 A product can enter the spatial room only by its canonical catalog ID. `src/data/fixtures.js` and `src/data/merchandising.js` contain placement/presentation data keyed by those IDs; they contain no checkout identity.
 
@@ -26,7 +26,7 @@ The frontend defaults to `legacy` mode because Gear's `/api/square/*` contract i
 - Readiness: `GET /api/square/bootstrap`
 - Checkout: `POST /api/square/checkout`
 - Bag identity: canonical `productId` + compatibility cart key + exact Square `variationId`
-- Browser price is display-only; the backend remains authoritative.
+- Browser price is display-only. The shared Store/Commerce backend is authoritative to the browser. Square is authoritative to that backend for the base price.
 
 ### V1 mode
 
@@ -71,7 +71,9 @@ The product-level price is treated as a starting/minimum price. Once a size/form
 
 The intended public hostname is `apparel.aerovista.us`.
 
-The companion infrastructure change in `aerovista-us/store` stages a Cloudflare edge so the browser can use same-origin:
+This routing is not how Apparel runs today. The current storefront calls `https://gear.aerovista.us` for the catalog and for `/api/square/checkout`, and it skips bootstrap unless a commerce API base is configured. Gear remains the protected production commerce host while Apparel is promoted into the flagship role.
+
+The companion infrastructure change in `aerovista-us/store` stages a Cloudflare edge so the browser can later use same-origin:
 
 - `/square_products_latest.json`
 - `/api/*`
