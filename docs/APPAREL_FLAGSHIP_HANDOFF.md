@@ -460,10 +460,10 @@ Apparel is not called Identity-integrated until all rows have production evidenc
 | Protected content | payload withheld on deny | unauthenticated deny accepted; authenticated allow accepted |
 | Missing capability | 403/fail closed | open |
 | Invalid/expired identity | deny | open |
-| Handoff replay | deny | open |
-| Stale predecessor | not treated as replacement session | open |
+| Handoff replay | deny | **current-source regression accepted; live destructive replay deferred to controlled QA identity** |
+| Stale predecessor | not treated as replacement session | **current-source regression accepted; live destructive test deferred to controlled QA identity** |
 | Logout | app-held relying session revoked/terminated | open |
-| Revocation | subsequent protected request denied | open |
+| Revocation | subsequent protected request denied | **source regression accepted; live logout/revoke observation pending current browser session** |
 | Identity/Gateway outage | protected operation fails closed; public browse remains | open |
 
 ---
@@ -648,6 +648,20 @@ The storefront Account UI PR #5 remains held only by the Vercel daily deployment
 - storefront Account UI remains in Apparel PR #5 at head `789f267...`; production build passes locally;
 - Vercel rejected the refreshed PR preview because the project exceeded 100 deployments/day on the free tier, so production UI promotion is temporarily rate-limited;
 - Codex review quota is exhausted for a fresh review of PR #5, but its application code was previously reviewed clean at `cd8d287...`; the only later change was merging current handoff documentation.
+
+### 2026-10-07 — replay/stale-session regression acceptance
+
+Current ACOS `main` was checked in a clean checkout with targeted Identity/App Adapter security suites:
+
+- AVCC backend: `cross_domain_handoff.test.js`, `identity_session_mint.test.js`, and `public_profile.test.js` — **3 files / 62 tests passed**;
+- Identity Gateway: `handoff.test.js` and `broker.test.js` — **2 files / 36 tests passed**;
+- consumed handoff replay returns/propagates `code_already_consumed`;
+- revoked sessions resolve unauthenticated;
+- stale predecessor recovery succeeds only through the valid generation/replacement path;
+- reuse of an already-consumed predecessor returns `409 session_replacement_conflict`;
+- authorization network/malformed/timeout paths fail closed rather than treating ambiguity as allowed.
+
+These are current-source acceptance gates. Destructive live replay/stale-session mutation against a real customer/founder session remains intentionally deferred to a controlled QA identity.
 
 ### 2026-10-07 — live human Account handoff accepted
 
