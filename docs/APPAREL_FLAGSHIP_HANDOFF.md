@@ -50,8 +50,8 @@ The handoff is a coordination SOT, not a replacement for the owning authority.
 
 - Repo: `aerovista-us/aerovista_apparel`
 - Production host: `https://apparel.aerovista.us`
-- Current `main`: `1fae29e4e21dba36f52acd34c37d801f49f88d0e`
-- Latest accepted documentation merge: **Record flagship checkout production acceptance**
+- Current `main`: `13d0d03bdc35fe7083f30d9598d9d7138ea8c225`
+- Latest accepted documentation merge: **Add living Apparel flagship handoff**
 - Current integration contract: `docs/APPAREL_INTEGRATION_CONTRACT_V1.md`
 - Runtime/public role: flagship presentation/storefront; public browse remains available.
 
@@ -71,7 +71,7 @@ The handoff is a coordination SOT, not a replacement for the owning authority.
 ### Identity / App Adapter platform
 
 - ACOS repo: `aerovista-us/ACOS`
-- Current observed ACOS `main`: `bb5d7122e45fc744c65cb913d6d97d5e2c200d8a`
+- Current ACOS `main`: `53a12be17513759b3dc90d32de1d8b690921dae2` — Apparel App Adapter onboarding merged
 - App Adapter package: `@aerovista-us/app-adapter`
 - App Adapter source version: **0.4.0**
 - Package path: `packages/aerocore-app-adapter`
@@ -84,6 +84,10 @@ The handoff is a coordination SOT, not a replacement for the owning authority.
 - Public broker: `https://identity-api.aerovista.us`
 - Local broker port on NXCore: 3110
 - Runtime secret store: `/etc/acos-secrets/identity-gateway.env`
+- Identity Gateway runtime is live on ACOS commit `53a12be17513759b3dc90d32de1d8b690921dae2`; guarded deploy passed 9 files / 64 tests, local/public health, unauthenticated broker rejection, and AVCC connectivity.
+- Pre-Apparel Gateway rollback commit: `d1689f472229fe06524b606d217d81202f07675b`
+- New relying-app service source: `services/apparel-auth`, target `https://apparel-auth.aerovista.us`, local port 3150.
+- `apparel-auth` runtime is **not deployed yet** because `IDGW_SERVICE_SECRET_APPAREL` still requires local root provisioning.
 
 **Important:** the standalone Identity Gateway `STATUS.md` is older than the October ACOS Identity runtime ledger. Prefer newer accepted runtime/source evidence when they disagree.
 
@@ -302,18 +306,45 @@ Do not redesign or migrate Cindy unless a customer-facing issue requires it or C
 
 ### Standing
 
-The Apparel integration contract requires App Adapter, but Apparel currently has:
+Identity/App Adapter is the current active phase. The **platform source slice is accepted and merged**, while production relying-app acceptance is still open.
 
-- no `@aerovista-us/app-adapter` dependency;
-- no Account login/registration handoff implementation;
-- no server-side handoff exchange;
-- no Apparel secure app session;
-- no `identity.describe()` proof;
-- no `identity.can()` proof;
-- no protected-content server gate;
-- no Apparel logout/revoke proof.
+Completed in ACOS source:
 
-Therefore Identity/App Adapter is the current active phase.
+- canonical relying-app id `apparel` registered with Account;
+- callback origin fixed to `https://apparel-auth.aerovista.us`;
+- public launch URL remains `https://apparel.aerovista.us`;
+- Identity Gateway broker admits `apparel`;
+- dedicated `IDGW_SERVICE_SECRET_APPAREL` runtime variable is wired through Gateway Compose;
+- `services/apparel-auth` consumes `@aerovista-us/app-adapter` server-side;
+- transaction-bound login-state cookies prevent concurrent-login collisions;
+- native session remains HttpOnly + Secure + SameSite=Lax;
+- `identity.describe()` is used for authenticated identity context;
+- first protected proof route calls live capability evaluation using candidate `apparel.account.access`;
+- local logout completes before best-effort remote revoke so an Identity outage cannot trap the browser in a false logout wait.
+
+Source acceptance evidence:
+
+- Apparel handoff registration: 4/4;
+- `apparel-auth` policy: 4/4;
+- Identity Gateway full suite: 9 files / 64 tests;
+- AVCC backend full suite: 50 files / 532 tests;
+- container image build + local `/health` smoke: pass;
+- final Codex re-review on PR #99: no major issues.
+
+Production still open:
+
+- provision the same new `IDGW_SERVICE_SECRET_APPAREL` into Gateway + `apparel-auth`;
+- start `apparel-auth` on 127.0.0.1:3150;
+- publish `apparel-auth.aerovista.us` through the existing Cloudflare Tunnel;
+- prove live Account handoff, `identity.describe()`, capability deny/allow, logout/revoke, replay/stale-session behavior;
+- only after auth-bridge health is accepted, release the held storefront Account UI.
+
+Held frontend source:
+
+- Apparel PR #5, branch `feat/apparel-identity-client-20261007`;
+- clean Vite production build passes;
+- review findings for failed-logout state and missing Women's Studio Account control were corrected;
+- **do not merge/deploy before the auth bridge is live and healthy**.
 
 ### Existing platform capability to consume
 
@@ -349,24 +380,24 @@ Browser
   -> protected Apparel action/content
 ```
 
-### Proposed relying-app id
+### Canonical relying-app id
 
-Use **`apparel`** unless registry or existing naming rules require another canonical id.
+**`apparel` is accepted.**
 
-Do not treat that id as accepted until checked against the handoff-client registry and broker allowlist.
+Discovery proved the id was unused before onboarding. ACOS PR #99 registered it in the Account handoff-client authority and added it to the Identity Gateway built-in broker allowlist.
 
 ### Provisioning requirements
 
-For the chosen canonical app id:
+Current state:
 
-1. register the relying-app/client origin;
-2. add the id to Identity Gateway `HANDOFF_BROKER_SERVICES`;
-3. provision the same `IDGW_SERVICE_SECRET_<ID>` on:
-   - Identity Gateway runtime secret store;
-   - Apparel server runtime secret store;
-4. never expose that secret to Vite/browser variables;
-5. deploy Identity Gateway only through the guarded root-owned promotion path;
-6. keep Account/Identity authority centralized.
+1. relying-app/client origin — **DONE in source**;
+2. Identity Gateway broker allowlist — **DONE and live**;
+3. dedicated `IDGW_SERVICE_SECRET_APPAREL` variable — **DONE in source; runtime value pending local root provisioning**;
+4. browser secret exposure — **none; frontend is browser-safe only**;
+5. Identity Gateway guarded deployment — **DONE at `53a12be...`**;
+6. Account/Identity authority remains centralized — **preserved**;
+7. `apparel-auth` service deployment — **pending secret install**;
+8. Cloudflare ingress/DNS — **pending healthy local service**.
 
 ### Capability plan
 
@@ -500,20 +531,20 @@ Never print, commit, or place in browser code:
 
 ### Phase A — Apparel Identity/App Adapter proof
 
-1. **Canonical-id discovery**
-   - inspect handoff client registry and Identity Gateway broker allowlist;
-   - confirm whether `apparel` is unused and valid.
-2. **Consumer shape**
-   - add a minimal server boundary to Apparel;
-   - consume `@aerovista-us/app-adapter` v0.4.0;
-   - add browser login/registration entry points;
-   - add same-origin callback endpoint;
-   - store only a secure app session/cookie in the browser.
-3. **Platform registration**
-   - register relying app/origin;
-   - add broker allowlist entry;
-   - provision `IDGW_SERVICE_SECRET_APPAREL` both sides.
-4. **First live identity proof**
+1. **Canonical-id discovery — DONE**
+   - `apparel` confirmed available and registered.
+2. **Consumer shape — SOURCE ACCEPTED**
+   - dedicated server bridge `services/apparel-auth`;
+   - App Adapter v0.4.0 consumed server-side;
+   - browser UI prepared separately in held Apparel PR #5;
+   - secure native session remains server/HttpOnly only.
+3. **Platform registration — PARTIAL LIVE**
+   - relying app/origin registered;
+   - broker allowlist deployed live;
+   - dedicated shared secret source wiring complete;
+   - **runtime secret value still pending one local root installer command**;
+   - auth bridge runtime/ingress still pending.
+4. **First live identity proof — NEXT AFTER SECRET/DEPLOY**
    - Account login;
    - callback/handoff;
    - `identity.describe()`;
@@ -550,7 +581,23 @@ Regression only. No broad migration.
 
 ## 15. Immediate next decision
 
-**Proceed with Phase A1 now:** inspect the current handoff-client registry, Identity Gateway `HANDOFF_BROKER_SERVICES`, and a proven App Adapter consumer such as Workstation Portal or Rack. Choose the canonical Apparel app id and the minimum server shape before changing Apparel production.
+The one current manual boundary is secret generation/install because Remote Desktop safety refuses credential creation/mutation.
+
+On NXCore, run exactly:
+
+```bash
+sudo /srv/ACOS/recovery/install-apparel-auth-secret-20261007.sh
+```
+
+The installer generates the secret locally, never prints it, backs up `identity-gateway.env`, writes the same value to Gateway and `apparel-auth.env`, and enforces `0640 root:glyph`.
+
+After that:
+
+1. restart/redeploy Identity Gateway at `53a12be...` so the newly provisioned environment enters the container;
+2. run `/srv/ACOS/recovery/deploy-apparel-auth-20261007.sh 53a12be17513759b3dc90d32de1d8b690921dae2`;
+3. add Cloudflare Tunnel ingress/DNS for `apparel-auth.aerovista.us -> http://127.0.0.1:3150`;
+4. run machine acceptance;
+5. merge/release held Apparel PR #5 only after the bridge is healthy.
 
 ---
 
@@ -572,8 +619,20 @@ Regression only. No broad migration.
 
 - created this living handoff;
 - identified App Adapter v0.4.0 as the required existing integration seam;
-- confirmed Apparel currently has no App Adapter/identity implementation;
 - set Identity/App Adapter proof as the active phase.
+
+### 2026-10-07 — Identity/App Adapter source accepted
+
+- accepted canonical relying-app id `apparel`;
+- merged ACOS PR #99 as `53a12be17513759b3dc90d32de1d8b690921dae2`;
+- added Account handoff registration, Gateway broker admission, dedicated Apparel secret wiring, and `services/apparel-auth`;
+- corrected three review findings before merge: Gateway secret forwarding, concurrent login-state isolation, and local-logout completion before remote revoke;
+- source acceptance: Apparel handoff 4/4, auth policy 4/4, Identity Gateway 64/64, AVCC backend 532/532, image/health smoke pass;
+- guarded-deployed Identity Gateway commit `53a12be...`; local/public health and AVCC connectivity pass;
+- rollback commit recorded as `d1689f472229fe06524b606d217d81202f07675b`;
+- staged local secret installer and guarded `apparel-auth` deploy helper;
+- prepared held Apparel PR #5 for Account UI; build passes and review findings are fixed;
+- runtime auth bridge remains blocked only on local root secret provisioning.
 
 ---
 
