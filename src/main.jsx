@@ -212,6 +212,7 @@ function ProductDrawer({
   savedEnabled = false,
   saved = false,
   savedBusy = false,
+  savedAvailable = false,
   authenticated = false,
   onToggleSaved,
   onLogin,
@@ -268,12 +269,18 @@ function ProductDrawer({
           {savedEnabled && <button
             className={`save-piece-button ${saved ? 'is-saved' : ''}`}
             type="button"
-            disabled={savedBusy}
+            disabled={savedBusy || (authenticated && !savedAvailable)}
             aria-pressed={saved}
             onClick={() => authenticated ? onToggleSaved?.(product) : onLogin?.()}
           >
             <Heart size={16} fill={saved ? 'currentColor' : 'none'}/>
-            <span>{savedBusy ? 'Saving…' : saved ? 'Saved piece' : authenticated ? 'Save piece' : 'Sign in to save'}</span>
+            <span>{savedBusy
+              ? 'Saving…'
+              : saved
+                ? 'Saved piece'
+                : authenticated
+                  ? savedAvailable ? 'Save piece' : 'Saved unavailable'
+                  : 'Sign in to save'}</span>
           </button>}
           <p className="product-description">{product.description}</p>
           <div className="selector">
@@ -696,6 +703,10 @@ function App() {
     () => new Set(savedState.items.map(item => item.productId)),
     [savedState.items],
   )
+  const savedRecordByProductId = useMemo(
+    () => new Map(savedState.items.map(item => [item.productId, item])),
+    [savedState.items],
+  )
   const productById = useMemo(
     () => new Map([...showroomProducts, ...womenStudioProducts].map(product => [product.id, product])),
     [showroomProducts, womenStudioProducts],
@@ -888,7 +899,7 @@ function App() {
       beginIdentityLogin()
       return
     }
-    if (savedBusyId) return
+    if (savedBusyId || savedState.status !== 'ready') return
 
     const productId = product.id
     const isSaved = savedIds.has(productId)
@@ -897,7 +908,9 @@ function App() {
 
     try {
       if (isSaved) {
-        await removeSavedPiece(productId, identityState.csrfToken)
+        const savedRecord = savedRecordByProductId.get(productId)
+        if (!savedRecord?.id) throw new Error('Saved Pieces record is unavailable')
+        await removeSavedPiece(savedRecord.id, identityState.csrfToken)
         setSavedState(current => ({
           status: 'ready',
           items: current.items.filter(item => item.productId !== productId),
@@ -905,7 +918,10 @@ function App() {
         }))
       } else {
         const payload = await savePiece(productId, identityState.csrfToken)
-        const item = payload?.item || { productId, savedAt: new Date().toISOString() }
+        const item = payload?.item
+        if (!item?.id || item.productId !== productId) {
+          throw new Error('Saved Pieces returned an invalid record')
+        }
         setSavedState(current => ({
           status: 'ready',
           items: [item, ...current.items.filter(existing => existing.productId !== productId)],
@@ -924,11 +940,18 @@ function App() {
   }
 
   async function removeSavedById(productId) {
-    if (!accountFeatures.saved || identityState.status !== 'authenticated' || savedBusyId) return
+    if (
+      !accountFeatures.saved
+      || identityState.status !== 'authenticated'
+      || savedBusyId
+      || savedState.status !== 'ready'
+    ) return
+    const savedRecord = savedRecordByProductId.get(productId)
+    if (!savedRecord?.id) return
     setSavedBusyId(productId)
     setSavedState(current => ({ ...current, error: null }))
     try {
-      await removeSavedPiece(productId, identityState.csrfToken)
+      await removeSavedPiece(savedRecord.id, identityState.csrfToken)
       setSavedState(current => ({
         status: 'ready',
         items: current.items.filter(item => item.productId !== productId),
@@ -958,6 +981,20 @@ function App() {
       const summary = await loadAccountSummary()
       setAccountSummaryState({ status: 'ready', data: summary, error: null })
     } catch (error) {
+      if (error?.status === 401 || error?.status === 403) {
+        setIdentityState({
+          status: 'anonymous',
+          authenticated: false,
+          identity: null,
+          csrfToken: null,
+          error: null,
+        })
+        setAccountOpen(false)
+        setAccountSummaryState({ status: 'idle', data: null, error: null })
+        setSavedState({ status: 'idle', items: [], error: null })
+        setSavedBusyId('')
+        return
+      }
       setAccountSummaryState(current => ({
         status: 'error',
         data: current.data,
@@ -1055,6 +1092,7 @@ function App() {
       savedEnabled={accountFeatures.saved}
       saved={Boolean(selected?.id && savedIds.has(selected.id))}
       savedBusy={Boolean(selected?.id && savedBusyId === selected.id)}
+      savedAvailable={savedState.status === 'ready'}
       authenticated={identityState.status === 'authenticated'}
       onToggleSaved={toggleSavedPiece}
       onLogin={() => beginIdentityLogin()}
