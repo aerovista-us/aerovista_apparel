@@ -783,36 +783,15 @@ function App() {
   }, [])
 
   useEffect(() => {
-    let active = true
-
     if (!accountFeatures.saved || identityState.status !== 'authenticated') {
       if (identityState.status !== 'loading') {
         setSavedState({ status: 'idle', items: [], error: null })
       }
-      return () => { active = false }
+      return
     }
 
-    setSavedState(current => ({ ...current, status: 'loading', error: null }))
-    loadSavedPieces()
-      .then(payload => {
-        if (!active) return
-        setSavedState({
-          status: 'ready',
-          items: Array.isArray(payload?.items) ? payload.items : [],
-          error: null,
-        })
-      })
-      .catch(error => {
-        if (!active) return
-        setSavedState({
-          status: 'error',
-          items: [],
-          error: error?.message || 'Saved Pieces unavailable',
-        })
-      })
-
-    return () => { active = false }
-  }, [identityState.status])
+    void refreshSavedPieces()
+  }, [identityState.status, identityState.csrfToken])
 
   useEffect(() => {
     if (initialRoute.space !== 'outside') warmCommerce()
@@ -893,6 +872,78 @@ function App() {
     setSelected(null); setCheckoutError(''); setBagOpen(true)
   }
 
+  async function refreshSavedPieces({ revalidateOnDenied = true } = {}) {
+    if (!accountFeatures.saved) {
+      setSavedState({ status: 'idle', items: [], error: null })
+      return false
+    }
+
+    setSavedState(current => ({ ...current, status: 'loading', error: null }))
+    try {
+      const payload = await loadSavedPieces()
+      setSavedState({
+        status: 'ready',
+        items: Array.isArray(payload?.items) ? payload.items : [],
+        error: null,
+      })
+      return true
+    } catch (error) {
+      if (revalidateOnDenied && (error?.status === 401 || error?.status === 403)) {
+        await revalidateIdentityAfterAccessDenial()
+        return false
+      }
+      setSavedState({
+        status: 'error',
+        items: [],
+        error: error?.message || 'Saved Pieces unavailable',
+      })
+      return false
+    }
+  }
+
+  async function revalidateIdentityAfterAccessDenial() {
+    setAccountOpen(false)
+    setAccountSummaryState({ status: 'idle', data: null, error: null })
+    setSavedState({ status: 'idle', items: [], error: null })
+    setSavedBusyId('')
+
+    try {
+      const session = await loadIdentitySession()
+      if (!session?.authenticated) {
+        setIdentityState({
+          status: 'anonymous',
+          authenticated: false,
+          identity: null,
+          csrfToken: null,
+          error: null,
+        })
+        return false
+      }
+
+      setIdentityState({
+        status: 'authenticated',
+        authenticated: true,
+        identity: session.identity || null,
+        csrfToken: session.csrfToken || null,
+        error: null,
+      })
+
+      if (accountFeatures.saved) {
+        await refreshSavedPieces({ revalidateOnDenied: false })
+      }
+      return true
+    } catch (sessionError) {
+      setIdentityState({
+        status: 'unavailable',
+        authenticated: false,
+        identity: null,
+        csrfToken: null,
+        error: sessionError?.message || 'Account service unavailable',
+      })
+      return false
+    }
+  }
+
   async function toggleSavedPiece(product) {
     if (!accountFeatures.saved || !product?.id) return
     if (identityState.status !== 'authenticated') {
@@ -929,6 +980,10 @@ function App() {
         }))
       }
     } catch (error) {
+      if (error?.status === 401 || error?.status === 403) {
+        await revalidateIdentityAfterAccessDenial()
+        return
+      }
       setSavedState(current => ({
         ...current,
         status: 'error',
@@ -958,6 +1013,10 @@ function App() {
         error: null,
       }))
     } catch (error) {
+      if (error?.status === 401 || error?.status === 403) {
+        await revalidateIdentityAfterAccessDenial()
+        return
+      }
       setSavedState(current => ({
         ...current,
         status: 'error',
@@ -982,38 +1041,7 @@ function App() {
       setAccountSummaryState({ status: 'ready', data: summary, error: null })
     } catch (error) {
       if (error?.status === 401 || error?.status === 403) {
-        setAccountOpen(false)
-        setAccountSummaryState({ status: 'idle', data: null, error: null })
-        setSavedState({ status: 'idle', items: [], error: null })
-        setSavedBusyId('')
-        try {
-          const session = await loadIdentitySession()
-          if (session?.authenticated) {
-            setIdentityState({
-              status: 'authenticated',
-              authenticated: true,
-              identity: session.identity || null,
-              csrfToken: session.csrfToken || null,
-              error: null,
-            })
-          } else {
-            setIdentityState({
-              status: 'anonymous',
-              authenticated: false,
-              identity: null,
-              csrfToken: null,
-              error: null,
-            })
-          }
-        } catch (sessionError) {
-          setIdentityState({
-            status: 'unavailable',
-            authenticated: false,
-            identity: null,
-            csrfToken: null,
-            error: sessionError?.message || 'Account service unavailable',
-          })
-        }
+        await revalidateIdentityAfterAccessDenial()
         return
       }
       setAccountSummaryState(current => ({
