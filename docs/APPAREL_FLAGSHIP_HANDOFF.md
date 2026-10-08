@@ -459,7 +459,7 @@ Apparel is not called Identity-integrated until all rows have production evidenc
 | `identity.can()` | live `aerovista.member` decision enforced server-side | **accepted live** |
 | Protected content | payload withheld on deny | unauthenticated deny accepted; authenticated allow accepted |
 | Missing capability | 403/fail closed | open |
-| Invalid/expired identity | deny | open |
+| Invalid/expired identity | deny | **current-source regression accepted** |
 | Handoff replay | deny | **current-source regression accepted; live destructive replay deferred to controlled QA identity** |
 | Stale predecessor | not treated as replacement session | **current-source regression accepted; live destructive test deferred to controlled QA identity** |
 | Logout | app-held relying session revoked/terminated | **accepted live** |
