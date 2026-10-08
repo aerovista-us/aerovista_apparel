@@ -6,6 +6,8 @@
 **Commerce baseline:** Legacy Store/Square/webhook/fulfillment path remains production authority while Commerce v1 is normalized  
 **Goal:** Make signing in materially useful to customers without creating a second identity, profile, catalog, payment, or fulfillment authority.
 
+**Phase 0 data/API contract:** [APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md](APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md)
+
 ---
 
 ## 1. Product outcome
@@ -672,12 +674,12 @@ Sensitive administrative mutations continue to use the governed audit ledger.
 
 Use independent feature flags:
 
-    APPAREL_ACCOUNT_HUB
-    APPAREL_ACCOUNT_ORDERS
-    APPAREL_ACCOUNT_SAVED
-    APPAREL_ACCOUNT_FIT
-    APPAREL_ACCOUNT_BENEFITS
-    APPAREL_RESTOCK_ALERTS
+    VITE_APPAREL_ACCOUNT_HUB
+    VITE_APPAREL_ACCOUNT_ORDERS
+    VITE_APPAREL_ACCOUNT_SAVED
+    VITE_APPAREL_ACCOUNT_FIT
+    VITE_APPAREL_ACCOUNT_BENEFITS
+    VITE_APPAREL_RESTOCK_ALERTS
 
 Recommended rollout:
 

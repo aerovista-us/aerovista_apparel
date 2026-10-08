@@ -1,12 +1,14 @@
 # AeroVista Apparel — Commerce Integration
 
-Governing contract: [APPAREL_INTEGRATION_CONTRACT_V1.md](APPAREL_INTEGRATION_CONTRACT_V1.md). This note describes the current legacy Gear path. It does not claim Apparel has passed Identity integration or shared Commerce v1.
+Governing contract: [APPAREL_INTEGRATION_CONTRACT_V1.md](APPAREL_INTEGRATION_CONTRACT_V1.md). This note describes the current legacy Gear commerce path. Apparel Identity/App Adapter integration is now accepted live; shared Commerce v1 remains a separate future acceptance.
 
 Square Catalog is the commercial authority. The October 4 workbook is a dated intake snapshot, curated by `F:\aerovista-store\scripts\project-october-catalog.py` into the public Gear projection. Apparel reads that projection from Gear. It does not parse the workbook, and it does not treat the projection as a second price authority. Checkout sends product, SKU, variation, and quantity. It does not send a browser price, discount, or paid flag. See [CINDY_REGRESSION.md](CINDY_REGRESSION.md). Cindy migration has not started.
 
 ## Goal
 
-The new spatial storefront is a presentation layer for the existing AeroVista commerce system. It must never invent a product identity, price, size, SKU, or Square variation.
+The spatial storefront is a presentation layer for the existing AeroVista commerce system. It must never invent a product identity, price, size, SKU, or Square variation.
+
+Authenticated Apparel sessions may now contribute trusted canonical identity context to Commerce v1. That identity must be resolved server-side from the relying-app session; the browser may not choose an arbitrary identity id. Anonymous checkout remains supported.
 
 ## Catalog-first rule
 
@@ -88,3 +90,17 @@ A Vercel preview may load the catalog through Gear or the public GitHub catalog 
 ## Deployment discipline
 
 Vercel is on the Hobby tier. Accumulate integration work off `main`, validate the complete batch, and promote only meaningful checkpoints.
+
+
+## Customer account integration boundary
+
+Phase 0 customer-account contract: [APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md](APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md).
+
+For My AeroVista features:
+
+- Apparel owns Saved, Fit, and other store-specific customer preferences.
+- Commerce v1 owns normalized order history and any monetary benefit enforcement.
+- Account/Profile remains global profile authority.
+- Signed-in checkout may attach the canonical `identity_id` resolved server-side.
+- Anonymous orders remain anonymous unless a separately governed claim flow is designed.
+- My Orders ownership is by canonical `av_identity_id`, not email matching.
