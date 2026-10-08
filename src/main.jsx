@@ -717,6 +717,7 @@ function App() {
   )
   const commercePromiseRef = useRef(null)
   const logoutPromiseRef = useRef(null)
+  const identityGenerationRef = useRef(0)
 
   function warmCommerce() {
     if (catalogState.status === 'ready') return Promise.resolve(catalogState)
@@ -749,6 +750,7 @@ function App() {
     loadIdentitySession()
       .then(session => {
         if (!active) return
+        identityGenerationRef.current += 1
         if (session?.authenticated) {
           setIdentityState({
             status: 'authenticated',
@@ -763,6 +765,7 @@ function App() {
       })
       .catch(error => {
         if (!active) return
+        identityGenerationRef.current += 1
         setIdentityState({
           status: 'unavailable',
           authenticated: false,
@@ -872,15 +875,19 @@ function App() {
     setSelected(null); setCheckoutError(''); setBagOpen(true)
   }
 
-  async function refreshSavedPieces({ revalidateOnDenied = true } = {}) {
+  async function refreshSavedPieces({ revalidateOnDenied = true, generation = identityGenerationRef.current } = {}) {
     if (!accountFeatures.saved) {
-      setSavedState({ status: 'idle', items: [], error: null })
+      if (generation === identityGenerationRef.current) {
+        setSavedState({ status: 'idle', items: [], error: null })
+      }
       return false
     }
 
+    if (generation !== identityGenerationRef.current) return false
     setSavedState(current => ({ ...current, status: 'loading', error: null }))
     try {
       const payload = await loadSavedPieces()
+      if (generation !== identityGenerationRef.current) return false
       setSavedState({
         status: 'ready',
         items: Array.isArray(payload?.items) ? payload.items : [],
@@ -888,10 +895,12 @@ function App() {
       })
       return true
     } catch (error) {
+      if (generation !== identityGenerationRef.current) return false
       if (revalidateOnDenied && (error?.status === 401 || error?.status === 403)) {
         await revalidateIdentityAfterAccessDenial()
         return false
       }
+      if (generation !== identityGenerationRef.current) return false
       setSavedState({
         status: 'error',
         items: [],
@@ -902,6 +911,8 @@ function App() {
   }
 
   async function revalidateIdentityAfterAccessDenial() {
+    identityGenerationRef.current += 1
+    const generation = identityGenerationRef.current
     setAccountOpen(false)
     setAccountSummaryState({ status: 'idle', data: null, error: null })
     setSavedState({ status: 'idle', items: [], error: null })
@@ -909,6 +920,7 @@ function App() {
 
     try {
       const session = await loadIdentitySession()
+      if (generation !== identityGenerationRef.current) return false
       if (!session?.authenticated) {
         setIdentityState({
           status: 'anonymous',
@@ -929,10 +941,11 @@ function App() {
       })
 
       if (accountFeatures.saved) {
-        await refreshSavedPieces({ revalidateOnDenied: false })
+        await refreshSavedPieces({ revalidateOnDenied: false, generation })
       }
       return true
     } catch (sessionError) {
+      if (generation !== identityGenerationRef.current) return false
       setIdentityState({
         status: 'unavailable',
         authenticated: false,
@@ -952,6 +965,7 @@ function App() {
     }
     if (savedBusyId || savedState.status !== 'ready') return
 
+    const generation = identityGenerationRef.current
     const productId = product.id
     const isSaved = savedIds.has(productId)
     setSavedBusyId(productId)
@@ -962,6 +976,7 @@ function App() {
         const savedRecord = savedRecordByProductId.get(productId)
         if (!savedRecord?.id) throw new Error('Saved Pieces record is unavailable')
         await removeSavedPiece(savedRecord.id, identityState.csrfToken)
+        if (generation !== identityGenerationRef.current) return
         setSavedState(current => ({
           status: 'ready',
           items: current.items.filter(item => item.productId !== productId),
@@ -969,6 +984,7 @@ function App() {
         }))
       } else {
         const payload = await savePiece(productId, identityState.csrfToken)
+        if (generation !== identityGenerationRef.current) return
         const item = payload?.item
         if (!item?.id || item.productId !== productId) {
           throw new Error('Saved Pieces returned an invalid record')
@@ -980,6 +996,7 @@ function App() {
         }))
       }
     } catch (error) {
+      if (generation !== identityGenerationRef.current) return
       if (error?.status === 401 || error?.status === 403) {
         await revalidateIdentityAfterAccessDenial()
         return
@@ -1003,16 +1020,19 @@ function App() {
     ) return
     const savedRecord = savedRecordByProductId.get(productId)
     if (!savedRecord?.id) return
+    const generation = identityGenerationRef.current
     setSavedBusyId(productId)
     setSavedState(current => ({ ...current, error: null }))
     try {
       await removeSavedPiece(savedRecord.id, identityState.csrfToken)
+      if (generation !== identityGenerationRef.current) return
       setSavedState(current => ({
         status: 'ready',
         items: current.items.filter(item => item.productId !== productId),
         error: null,
       }))
     } catch (error) {
+      if (generation !== identityGenerationRef.current) return
       if (error?.status === 401 || error?.status === 403) {
         await revalidateIdentityAfterAccessDenial()
         return
@@ -1023,7 +1043,7 @@ function App() {
         error: error?.message || 'Saved Pieces unavailable',
       }))
     } finally {
-      setSavedBusyId('')
+      if (generation === identityGenerationRef.current) setSavedBusyId('')
     }
   }
 
@@ -1068,6 +1088,8 @@ function App() {
     if (logoutPromiseRef.current) return logoutPromiseRef.current
 
     const csrfToken = identityState.csrfToken
+    identityGenerationRef.current += 1
+    const generation = identityGenerationRef.current
     setIdentityState(current => ({ ...current, error: null }))
 
     const request = (async () => {
@@ -1090,6 +1112,9 @@ function App() {
             error: error?.message || 'Sign out failed. Your account session is still active.',
           }
         })
+        if (accountFeatures.saved && generation === identityGenerationRef.current) {
+          void refreshSavedPieces({ revalidateOnDenied: true, generation })
+        }
       } finally {
         logoutPromiseRef.current = null
       }
