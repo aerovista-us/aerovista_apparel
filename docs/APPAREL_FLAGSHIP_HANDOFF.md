@@ -87,9 +87,9 @@ The handoff is a coordination SOT, not a replacement for the owning authority.
 - Identity Gateway runtime is live on ACOS commit `53a12be17513759b3dc90d32de1d8b690921dae2`; guarded deploy passed 9 files / 64 tests, local/public health, unauthenticated broker rejection, and AVCC connectivity.
 - Pre-Apparel Gateway rollback commit: `d1689f472229fe06524b606d217d81202f07675b`
 - New relying-app service source: `services/apparel-auth`, target `https://apparel-auth.aerovista.us`, local port 3150.
-- `apparel-auth` is now running locally on **127.0.0.1:3160** from merged ACOS source `b42df9c196277ba33b1b081f18b7dfdd4840c64a`.
+- `apparel-auth` is now running locally on **127.0.0.1:3160** from merged ACOS source `20162d39a3a25c4baa54846811683807ee21fd03`.
 - `IDGW_SERVICE_SECRET_APPAREL` was provisioned on both sides and Identity Gateway was guarded-reloaded at `53a12be17513759b3dc90d32de1d8b690921dae2`.
-- Local health returns `{"ok":true,"service":"apparel-auth","version":"0.1.0"}`.
+- Local and public health both return `{"ok":true,"service":"apparel-auth","version":"0.1.0"}`.
 - Broker-auth acceptance passed through the bridge's own callback path: valid transaction state + intentionally invalid handoff code returned `404 code_not_found`, proving the Apparel HMAC was accepted before the code lookup failed closed.
 - Cloudflare ingress is live and validated for `apparel-auth.aerovista.us -> http://127.0.0.1:3160`; cloudflared restarted active.
 - **Public DNS is the remaining ingress blocker.** The intended `apparel-auth.aerovista.us` record does not yet exist in the `aerovista.us` zone.
@@ -406,11 +406,10 @@ Current state:
 
 ### Capability plan
 
-Current names in the Apparel integration contract are **proposals until Registry registration**:
+Baseline authenticated Apparel account access now uses the existing governed **`aerovista.member`** foundation grant. This avoids creating a redundant app-local capability merely to prove that a verified AeroVista account may access its basic Apparel account surface.
 
-- `apparel.account.access`
-- `apparel.order.create`
-- `apparel.order.read`
+Reserve `apparel.*` capabilities for differentiated privileges only, for example:
+
 - `apparel.order.history.read`
 - `apparel.promotion.use`
 - `apparel.member.pricing`
@@ -419,9 +418,7 @@ Current names in the Apparel integration contract are **proposals until Registry
 - `apparel.order.manage`
 - `apparel.admin`
 
-First proof should use the minimum required capability, not register the entire namespace at once.
-
-Recommended first protected capability candidate: `apparel.order.history.read` or a narrower member/account read capability, depending on Registry conventions discovered during implementation.
+Those names remain proposals until explicitly registered through the governed grant-definition path.
 
 ### Content policy rule
 
@@ -459,7 +456,7 @@ Apparel is not called Identity-integrated until all rows have production evidenc
 | Handoff exchange | one-time code exchanged server-side only | open |
 | Secure local session | HttpOnly + Secure; no raw native token in JS/localStorage | open |
 | `identity.describe()` | canonical identity descriptor returned | open |
-| `identity.can()` | live capability decision enforced server-side | open |
+| `identity.can()` | live `aerovista.member` decision enforced server-side | pending human-login proof |
 | Protected content | payload withheld on deny | open |
 | Missing capability | 403/fail closed | open |
 | Invalid/expired identity | deny | open |
@@ -589,39 +586,17 @@ Regression only. No broad migration.
 
 ## 15. Immediate next decision
 
-The remaining ingress boundary is DNS.
+Run the first real human Account handoff against the live public bridge:
 
-Cloudflare tunnel ingress is already active:
+1. open `https://apparel-auth.aerovista.us/login?return_to=https%3A%2F%2Fapparel.aerovista.us%2F`;
+2. authenticate through central Account;
+3. after returning to Apparel, open `https://apparel-auth.aerovista.us/api/session`;
+4. confirm `authenticated: true` without exposing the full identity payload;
+5. open `https://apparel-auth.aerovista.us/api/protected/account`;
+6. confirm HTTP 200 / `allowed: true`, proving live `identity.describe()` + `identity.can(aerovista.member)`;
+7. then prove logout/revoke and replay/stale-session failure behavior.
 
-```text
-apparel-auth.aerovista.us -> http://127.0.0.1:3160
-```
-
-Create this record in the **aerovista.us** Cloudflare DNS zone:
-
-```text
-Type: CNAME
-Name: apparel-auth
-Target: 5211ded8-f95c-44a6-8362-afbbf5ada0fc.cfargotunnel.com
-Proxy: Proxied
-```
-
-Then remove the accidental record created in the wrong zone if present:
-
-```text
-apparel-auth.aerovista.us.aerocoreos.com
-```
-
-After correct DNS resolves:
-
-1. prove public `/health`, exact-origin CORS, and anonymous session behavior;
-2. run interactive Account login -> callback -> `identity.describe()`;
-3. register the first explicit Apparel capability definition before any allow-case grant test;
-4. prove capability deny/allow and protected payload withholding;
-5. prove logout/revoke/replay/stale-session failure behavior;
-6. merge/release held Apparel PR #5 only after the public bridge is accepted.
-
----
+The storefront Account UI PR #5 is held until Vercel can accept another production deployment.
 
 ## 16. Running change log
 
@@ -648,16 +623,19 @@ After correct DNS resolves:
 - provisioned `IDGW_SERVICE_SECRET_APPAREL` on Gateway + Apparel bridge without exposing the value;
 - guarded-reloaded Identity Gateway `53a12be...`; local/public health, unauthenticated broker rejection, and AVCC connectivity all passed;
 - corrected an NXCore port collision: host 3150 was already serving mag-auth, so Apparel auth was moved to host **3160** while keeping container port 3150;
-- merged the non-secret port correction as ACOS PR #103 / `b42df9c196277ba33b1b081f18b7dfdd4840c64a`;
-- deployed `apparel-auth` locally on 127.0.0.1:3160;
-- local health identifies `service=apparel-auth`;
+- merged the host-port correction as ACOS PR #103;
+- merged baseline capability correction as ACOS PR #105 / `20162d39a3a25c4baa54846811683807ee21fd03`;
+- deployed `apparel-auth` from exact SHA `20162d39...`;
+- local and public health identify `service=apparel-auth`;
 - exact Apparel CORS + credentialed anonymous session passes;
 - protected route denies unauthenticated access with 401;
 - foreign-origin logout denies with 403;
 - valid login-state + fake handoff code returns `404 code_not_found`, proving HMAC broker admission;
-- activated and validated Cloudflare ingress for `apparel-auth.aerovista.us -> 127.0.0.1:3160`;
-- public DNS remains the only ingress blocker;
-- a mistaken helper invocation created `apparel-auth.aerovista.us.aerocoreos.com` in the wrong zone; remove it during DNS cleanup.
+- basic protected account access now uses existing governed `aerovista.member` rather than creating redundant `apparel.account.access`;
+- Cloudflare ingress and correct `aerovista.us` DNS are live;
+- storefront Account UI remains in Apparel PR #5 at head `789f267...`; production build passes locally;
+- Vercel rejected the refreshed PR preview because the project exceeded 100 deployments/day on the free tier, so production UI promotion is temporarily rate-limited;
+- Codex review quota is exhausted for a fresh review of PR #5, but its application code was previously reviewed clean at `cd8d287...`; the only later change was merging current handoff documentation.
 
 ### 2026-10-07 — Identity/App Adapter source accepted
 
