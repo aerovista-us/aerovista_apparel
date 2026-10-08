@@ -87,9 +87,9 @@ The handoff is a coordination SOT, not a replacement for the owning authority.
 - Identity Gateway runtime is live on ACOS commit `53a12be17513759b3dc90d32de1d8b690921dae2`; guarded deploy passed 9 files / 64 tests, local/public health, unauthenticated broker rejection, and AVCC connectivity.
 - Pre-Apparel Gateway rollback commit: `d1689f472229fe06524b606d217d81202f07675b`
 - New relying-app service source: `services/apparel-auth`, target `https://apparel-auth.aerovista.us`, local port 3150.
-- `apparel-auth` is now running locally on **127.0.0.1:3160** from merged ACOS source `b42df9c196277ba33b1b081f18b7dfdd4840c64a`.
+- `apparel-auth` is now running locally on **127.0.0.1:3160** from merged ACOS source `20162d39a3a25c4baa54846811683807ee21fd03`.
 - `IDGW_SERVICE_SECRET_APPAREL` was provisioned on both sides and Identity Gateway was guarded-reloaded at `53a12be17513759b3dc90d32de1d8b690921dae2`.
-- Local health returns `{"ok":true,"service":"apparel-auth","version":"0.1.0"}`.
+- Local and public health both return `{"ok":true,"service":"apparel-auth","version":"0.1.0"}`.
 - Broker-auth acceptance passed through the bridge's own callback path: valid transaction state + intentionally invalid handoff code returned `404 code_not_found`, proving the Apparel HMAC was accepted before the code lookup failed closed.
 - Cloudflare ingress is live and validated for `apparel-auth.aerovista.us -> http://127.0.0.1:3160`; cloudflared restarted active.
 - **Public DNS is the remaining ingress blocker.** The intended `apparel-auth.aerovista.us` record does not yet exist in the `aerovista.us` zone.
@@ -406,11 +406,10 @@ Current state:
 
 ### Capability plan
 
-Current names in the Apparel integration contract are **proposals until Registry registration**:
+Baseline authenticated Apparel account access now uses the existing governed **`aerovista.member`** foundation grant. This avoids creating a redundant app-local capability merely to prove that a verified AeroVista account may access its basic Apparel account surface.
 
-- `apparel.account.access`
-- `apparel.order.create`
-- `apparel.order.read`
+Reserve `apparel.*` capabilities for differentiated privileges only, for example:
+
 - `apparel.order.history.read`
 - `apparel.promotion.use`
 - `apparel.member.pricing`
@@ -419,9 +418,7 @@ Current names in the Apparel integration contract are **proposals until Registry
 - `apparel.order.manage`
 - `apparel.admin`
 
-First proof should use the minimum required capability, not register the entire namespace at once.
-
-Recommended first protected capability candidate: `apparel.order.history.read` or a narrower member/account read capability, depending on Registry conventions discovered during implementation.
+Those names remain proposals until explicitly registered through the governed grant-definition path.
 
 ### Content policy rule
 
@@ -453,20 +450,20 @@ Apparel is not called Identity-integrated until all rows have production evidenc
 
 | Gate | Required result | State |
 | --- | --- | --- |
-| Account login start | redirects to central Account with correct app id/state/return | open |
+| Account login start | redirects to central Account with correct app id/state/return | **accepted live** |
 | Account registration start | same handoff contract | open |
 | Callback state validation | invalid/replayed state rejected | open |
-| Handoff exchange | one-time code exchanged server-side only | open |
-| Secure local session | HttpOnly + Secure; no raw native token in JS/localStorage | open |
-| `identity.describe()` | canonical identity descriptor returned | open |
-| `identity.can()` | live capability decision enforced server-side | open |
-| Protected content | payload withheld on deny | open |
+| Handoff exchange | one-time code exchanged server-side only | **accepted live** |
+| Secure local session | HttpOnly + Secure; no raw native token in JS/localStorage | **accepted live** |
+| `identity.describe()` | canonical identity descriptor returned | **accepted live** |
+| `identity.can()` | live `aerovista.member` decision enforced server-side | **accepted live** |
+| Protected content | payload withheld on deny | unauthenticated deny accepted; authenticated allow accepted |
 | Missing capability | 403/fail closed | open |
-| Invalid/expired identity | deny | open |
-| Handoff replay | deny | open |
-| Stale predecessor | not treated as replacement session | open |
-| Logout | app-held relying session revoked/terminated | open |
-| Revocation | subsequent protected request denied | open |
+| Invalid/expired identity | deny | **current-source regression accepted** |
+| Handoff replay | deny | **current-source regression accepted; live destructive replay deferred to controlled QA identity** |
+| Stale predecessor | not treated as replacement session | **current-source regression accepted; live destructive test deferred to controlled QA identity** |
+| Logout | app-held relying session revoked/terminated | **accepted live** |
+| Revocation | subsequent protected request denied | **accepted live** |
 | Identity/Gateway outage | protected operation fails closed; public browse remains | open |
 
 ---
@@ -587,41 +584,32 @@ Regression only. No broad migration.
 
 ---
 
+## Customer account benefits roadmap
+
+Implementation plan: [APPAREL_CUSTOMER_ACCOUNT_BENEFITS_PLAN_V1.md](APPAREL_CUSTOMER_ACCOUNT_BENEFITS_PLAN_V1.md)
+
+Phase 0 data/API contract: [APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md](APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md)
+
+The approved execution order is: contract reconciliation → Account shell → My Orders → Saved/Closet → Fit → Benefits → restock/support → deterministic recommendations.
+
 ## 15. Immediate next decision
 
-The remaining ingress boundary is DNS.
+The live Identity/App Adapter acceptance is complete for the flagship baseline:
 
-Cloudflare tunnel ingress is already active:
+- Account login/handoff — accepted live;
+- secure relying-app session — accepted live;
+- `identity.describe()` — accepted live;
+- `identity.can(aerovista.member)` — accepted live;
+- anonymous protected denial — accepted live;
+- logout/local cookie termination — accepted live;
+- native AVCC session revoke — accepted live;
+- replay/stale-session/revocation failure modes — accepted in current-source regression suites.
 
-```text
-apparel-auth.aerovista.us -> http://127.0.0.1:3160
-```
+Next operational action:
 
-Create this record in the **aerovista.us** Cloudflare DNS zone:
-
-```text
-Type: CNAME
-Name: apparel-auth
-Target: 5211ded8-f95c-44a6-8362-afbbf5ada0fc.cfargotunnel.com
-Proxy: Proxied
-```
-
-Then remove the accidental record created in the wrong zone if present:
-
-```text
-apparel-auth.aerovista.us.aerocoreos.com
-```
-
-After correct DNS resolves:
-
-1. prove public `/health`, exact-origin CORS, and anonymous session behavior;
-2. run interactive Account login -> callback -> `identity.describe()`;
-3. register the first explicit Apparel capability definition before any allow-case grant test;
-4. prove capability deny/allow and protected payload withholding;
-5. prove logout/revoke/replay/stale-session failure behavior;
-6. merge/release held Apparel PR #5 only after the public bridge is accepted.
-
----
+1. release the held Apparel Account UI PR #5 once Vercel accepts another deployment;
+2. perform customer-facing visual/interaction QA on sign in, create account, authenticated Account state, and logout;
+3. then begin Commerce v1 normalization, preserving the accepted legacy checkout/webhook/fulfillment path.
 
 ## 16. Running change log
 
@@ -643,21 +631,67 @@ After correct DNS resolves:
 - identified App Adapter v0.4.0 as the required existing integration seam;
 - set Identity/App Adapter proof as the active phase.
 
+### 2026-10-07 — Live human Account handoff accepted
+
+- completed a real central Account sign-in through `apparel-auth.aerovista.us`;
+- live `/api/session` returned `authenticated: true` with the canonical identity descriptor;
+- live protected account route returned `allowed: true` using `authorization: identity.can`;
+- baseline capability is the governed `aerovista.member` grant;
+- this proves the production chain Account -> one-time handoff -> secure Apparel session -> App Adapter -> Identity Gateway -> `identity.describe()` -> `identity.can()`;
+- no new role, user database, or browser-side authorization authority was introduced;
+- remaining identity gates are logout/revoke, handoff replay, stale predecessor/replacement handling, invalid/expired session, and gateway-unavailable fail-closed behavior;
+- do not use the live founder identity as a destructive QA fixture for revoke/suspend testing.
+
 ### 2026-10-07 — Apparel auth runtime locally accepted
 
 - provisioned `IDGW_SERVICE_SECRET_APPAREL` on Gateway + Apparel bridge without exposing the value;
 - guarded-reloaded Identity Gateway `53a12be...`; local/public health, unauthenticated broker rejection, and AVCC connectivity all passed;
 - corrected an NXCore port collision: host 3150 was already serving mag-auth, so Apparel auth was moved to host **3160** while keeping container port 3150;
-- merged the non-secret port correction as ACOS PR #103 / `b42df9c196277ba33b1b081f18b7dfdd4840c64a`;
-- deployed `apparel-auth` locally on 127.0.0.1:3160;
-- local health identifies `service=apparel-auth`;
+- merged the host-port correction as ACOS PR #103;
+- merged baseline capability correction as ACOS PR #105 / `20162d39a3a25c4baa54846811683807ee21fd03`;
+- deployed `apparel-auth` from exact SHA `20162d39...`;
+- local and public health identify `service=apparel-auth`;
 - exact Apparel CORS + credentialed anonymous session passes;
 - protected route denies unauthenticated access with 401;
 - foreign-origin logout denies with 403;
 - valid login-state + fake handoff code returns `404 code_not_found`, proving HMAC broker admission;
-- activated and validated Cloudflare ingress for `apparel-auth.aerovista.us -> 127.0.0.1:3160`;
-- public DNS remains the only ingress blocker;
-- a mistaken helper invocation created `apparel-auth.aerovista.us.aerocoreos.com` in the wrong zone; remove it during DNS cleanup.
+- basic protected account access now uses existing governed `aerovista.member` rather than creating redundant `apparel.account.access`;
+- Cloudflare ingress and correct `aerovista.us` DNS are live;
+- storefront Account UI remains in Apparel PR #5 at head `789f267...`; production build passes locally;
+- Vercel rejected the refreshed PR preview because the project exceeded 100 deployments/day on the free tier, so production UI promotion is temporarily rate-limited;
+- Codex review quota is exhausted for a fresh review of PR #5, but its application code was previously reviewed clean at `cd8d287...`; the only later change was merging current handoff documentation.
+
+### 2026-10-07 — live logout/revocation accepted
+
+- browser precondition: `beforeAuthenticated: true`;
+- `POST /api/logout` from the public Apparel origin returned HTTP 200 with `ok: true`;
+- immediate follow-up `GET /api/session` returned `authenticated: false`;
+- AVCC recorded a new successful `identity.session.revoke` audit event at `2026-10-08 06:08:38 UTC` through `identity_gateway`;
+- this proves local cookie termination and native relying-app session revoke both completed successfully;
+- a prior logout attempt from the auth-bridge origin correctly returned 403 and wrote no revoke event, proving exact-origin mutation enforcement.
+
+### 2026-10-07 — replay/stale-session regression acceptance
+
+Current ACOS `main` was checked in a clean checkout with targeted Identity/App Adapter security suites:
+
+- AVCC backend: `cross_domain_handoff.test.js`, `identity_session_mint.test.js`, and `public_profile.test.js` — **3 files / 62 tests passed**;
+- Identity Gateway: `handoff.test.js` and `broker.test.js` — **2 files / 36 tests passed**;
+- consumed handoff replay returns/propagates `code_already_consumed`;
+- revoked sessions resolve unauthenticated;
+- stale predecessor recovery succeeds only through the valid generation/replacement path;
+- reuse of an already-consumed predecessor returns `409 session_replacement_conflict`;
+- authorization network/malformed/timeout paths fail closed rather than treating ambiguity as allowed.
+
+These are current-source acceptance gates. Destructive live replay/stale-session mutation against a real customer/founder session remains intentionally deferred to a controlled QA identity.
+
+### 2026-10-07 — live human Account handoff accepted
+
+- completed a real central Account sign-in through `https://apparel-auth.aerovista.us/login`;
+- returned through the public Apparel auth callback successfully;
+- `GET /api/session` in the same browser returned `authenticated: true`, proving the live relying-app session and `identity.describe()` path;
+- `GET /api/protected/account` returned `allowed: true`, proving live server-side `identity.can(aerovista.member)`;
+- anonymous protected access had already been proven to return 401 fail-closed;
+- next acceptance gates are logout/local cookie termination, native revoke observation, replay rejection, and stale/predecessor-session behavior.
 
 ### 2026-10-07 — Identity/App Adapter source accepted
 
