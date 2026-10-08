@@ -982,17 +982,38 @@ function App() {
       setAccountSummaryState({ status: 'ready', data: summary, error: null })
     } catch (error) {
       if (error?.status === 401 || error?.status === 403) {
-        setIdentityState({
-          status: 'anonymous',
-          authenticated: false,
-          identity: null,
-          csrfToken: null,
-          error: null,
-        })
         setAccountOpen(false)
         setAccountSummaryState({ status: 'idle', data: null, error: null })
         setSavedState({ status: 'idle', items: [], error: null })
         setSavedBusyId('')
+        try {
+          const session = await loadIdentitySession()
+          if (session?.authenticated) {
+            setIdentityState({
+              status: 'authenticated',
+              authenticated: true,
+              identity: session.identity || null,
+              csrfToken: session.csrfToken || null,
+              error: null,
+            })
+          } else {
+            setIdentityState({
+              status: 'anonymous',
+              authenticated: false,
+              identity: null,
+              csrfToken: null,
+              error: null,
+            })
+          }
+        } catch (sessionError) {
+          setIdentityState({
+            status: 'unavailable',
+            authenticated: false,
+            identity: null,
+            csrfToken: null,
+            error: sessionError?.message || 'Account service unavailable',
+          })
+        }
         return
       }
       setAccountSummaryState(current => ({
