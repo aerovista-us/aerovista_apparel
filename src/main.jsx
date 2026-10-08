@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X, UserRound, LogOut
+  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X, UserRound, LogOut, Heart, Package, Ruler, Gift, ExternalLink
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
@@ -9,7 +9,8 @@ import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import { identityStanding } from './commerce/identity'
 import { fulfillmentNote } from './commerce/fulfillment'
-import { beginIdentityLogin, beginIdentityRegistration, loadIdentitySession, logoutIdentity } from './identity/client'
+import { beginIdentityLogin, beginIdentityRegistration, loadAccountSummary, loadIdentitySession, logoutIdentity } from './identity/client'
+import { accountFeatures } from './config/accountFeatures'
 import './styles.css'
 import './product-gallery.css'
 import './illusion-polish.css'
@@ -283,7 +284,7 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
             {checkoutBusy ? 'Opening secure checkout…' : <>Checkout <ArrowRight size={17}/></>}
           </button>
           <small>Square confirms the amount. Creating checkout does not mark an order paid or redeem a promotion.</small>
-          <small>{identityStanding.required ? 'Account access needs AeroVista identity. This store has not verified that path yet.' : ''}</small>
+          <small>{identityStanding.required ? 'My AeroVista benefits use your verified AeroVista identity. Public shopping and checkout remain available without signing in.' : ''}</small>
         </div>
       </aside>
     </div>
@@ -298,12 +299,12 @@ function accountLabel(identity) {
     || 'Account'
 }
 
-function AccountControl({ state, onLogin, onRegister, onLogout }) {
+function AccountControl({ state, onLogin, onRegister, onLogout, onOpenAccount }) {
   if (state.status === 'authenticated') {
     return <div className="account-control is-authenticated">
-      <a className="account-button" href="https://account.aerocoreos.com/" aria-label="Open AeroVista Account">
+      <button className="account-button" type="button" onClick={onOpenAccount} aria-label="Open My AeroVista">
         <UserRound size={16}/><span>{accountLabel(state.identity)}</span>
-      </a>
+      </button>
       <button className="account-icon-button" type="button" onClick={onLogout} aria-label="Sign out of AeroVista Account" title="Sign out">
         <LogOut size={15}/>
       </button>
@@ -315,6 +316,79 @@ function AccountControl({ state, onLogin, onRegister, onLogout }) {
       <UserRound size={16}/><span>{state.status === 'loading' ? 'Account' : 'Sign in'}</span>
     </button>
     {state.status !== 'loading' && <button className="account-create-button" type="button" onClick={onRegister}>Create</button>}
+  </div>
+}
+
+const ACCOUNT_SECTION_META = Object.freeze([
+  { key: 'orders', label: 'Orders', note: 'Order status, tracking, and purchase history.', icon: Package },
+  { key: 'closet', label: 'Closet', note: 'Pieces you own, derived from verified purchases.', icon: ShoppingBag },
+  { key: 'saved', label: 'Saved', note: 'Keep pieces here and come back to them later.', icon: Heart },
+  { key: 'fit', label: 'Fit', note: 'Your usual sizes and store-specific fit preferences.', icon: Ruler },
+  { key: 'benefits', label: 'Benefits', note: 'Member access, private drops, and eligible offers.', icon: Gift },
+])
+
+function accountSectionEnabled(key) {
+  if (key === 'closet') return accountFeatures.orders || accountFeatures.saved
+  if (key === 'orders') return accountFeatures.orders
+  if (key === 'saved') return accountFeatures.saved
+  if (key === 'fit') return accountFeatures.fit
+  if (key === 'benefits') return accountFeatures.benefits
+  return false
+}
+
+function MyAeroVistaDrawer({ identityState, summaryState, onClose, onRefresh, onLogout }) {
+  const summary = summaryState.data
+  const displayName = summary?.identity?.displayName || accountLabel(identityState.identity)
+  const summaryReady = summaryState.status === 'ready'
+
+  return <div className="drawer-shell account-drawer-shell" role="dialog" aria-modal="true" aria-label="My AeroVista">
+    <button className="drawer-scrim" onClick={onClose} aria-label="Close My AeroVista"/>
+    <aside className="drawer account-drawer">
+      <button className="icon-btn drawer-close" onClick={onClose} aria-label="Close My AeroVista"><X size={20}/></button>
+      <div className="drawer-content account-drawer-content">
+        <span className="eyebrow">MY AEROVISTA</span>
+        <div className="account-drawer-heading">
+          <div>
+            <h2>{displayName || 'Your AeroVista'}</h2>
+            <p>Your store follows you without turning Apparel into a second account system.</p>
+          </div>
+          <span className="account-connected"><span/>Connected</span>
+        </div>
+
+        {summaryState.status === 'loading' && <div className="account-summary-state">Loading your account benefits…</div>}
+        {summaryState.status === 'error' && <div className="account-summary-state is-error">
+          <span>Your account is connected, but benefit details are temporarily unavailable.</span>
+          <button type="button" onClick={onRefresh}>Retry</button>
+        </div>}
+
+        <div className="account-benefit-grid">
+          {ACCOUNT_SECTION_META.map(({ key, label, note, icon: Icon }) => {
+            const enabled = accountSectionEnabled(key)
+            const available = summaryReady && summary?.features?.[key]?.available === true
+            const status = available && enabled ? 'Available' : enabled ? 'Connecting' : 'In build'
+            return <section className="account-benefit-card" key={key} data-enabled={enabled ? 'true' : 'false'}>
+              <div className="account-benefit-icon"><Icon size={18}/></div>
+              <div className="account-benefit-copy">
+                <div className="account-benefit-title"><b>{label}</b><span>{status}</span></div>
+                <p>{note}</p>
+              </div>
+              <ChevronRight size={16} aria-hidden="true"/>
+            </section>
+          })}
+        </div>
+
+        <div className="account-drawer-actions">
+          <a href="https://account.aerocoreos.com/" className="account-profile-link">
+            Profile & Account <ExternalLink size={14}/>
+          </a>
+          <button type="button" className="account-signout-link" onClick={onLogout}>
+            <LogOut size={14}/> Sign out
+          </button>
+        </div>
+
+        <small>Orders, payment, fulfillment, and member pricing stay authoritative in Commerce and Square. Apparel only shows customer-safe projections.</small>
+      </div>
+    </aside>
   </div>
 }
 
@@ -548,6 +622,8 @@ function App() {
   const [pendingProduct, setPendingProduct] = useState(initialRoute.product)
   const [routeReady, setRouteReady] = useState(false)
   const [identityState, setIdentityState] = useState({ status: 'loading', authenticated: false, identity: null, csrfToken: null, error: null })
+  const [accountOpen, setAccountOpen] = useState(false)
+  const [accountSummaryState, setAccountSummaryState] = useState({ status: 'idle', data: null, error: null })
   const commercePromiseRef = useRef(null)
   const logoutPromiseRef = useRef(null)
 
@@ -662,7 +738,7 @@ function App() {
   }, [pendingProduct, showroomProducts, womenStudioProducts])
 
   useEffect(() => {
-    const modalOpen = Boolean(selected || bagOpen)
+    const modalOpen = Boolean(selected || bagOpen || accountOpen)
     if (!modalOpen) return undefined
     const priorOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -670,13 +746,14 @@ function App() {
       if (event.key !== 'Escape') return
       setSelected(null)
       setBagOpen(false)
+      setAccountOpen(false)
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = priorOverflow
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [selected, bagOpen])
+  }, [selected, bagOpen, accountOpen])
 
   function enter() {
     if (entering) return
@@ -691,6 +768,32 @@ function App() {
   function add(product, size, variant) {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
     setSelected(null); setCheckoutError(''); setBagOpen(true)
+  }
+
+  async function refreshAccountSummary() {
+    if (identityState.status !== 'authenticated') return
+    setAccountSummaryState(current => ({ ...current, status: 'loading', error: null }))
+    try {
+      const summary = await loadAccountSummary()
+      setAccountSummaryState({ status: 'ready', data: summary, error: null })
+    } catch (error) {
+      setAccountSummaryState(current => ({
+        status: 'error',
+        data: current.data,
+        error: error?.message || 'Account summary unavailable',
+      }))
+    }
+  }
+
+  function openAccountHub() {
+    if (!accountFeatures.hub) {
+      window.location.assign('https://account.aerocoreos.com/')
+      return
+    }
+    setAccountOpen(true)
+    if (accountSummaryState.status === 'idle' || accountSummaryState.status === 'error') {
+      void refreshAccountSummary()
+    }
   }
 
   async function signOut() {
@@ -708,6 +811,8 @@ function App() {
             ? { status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null }
             : current
         ))
+        setAccountOpen(false)
+        setAccountSummaryState({ status: 'idle', data: null, error: null })
       } catch (error) {
         setIdentityState(current => {
           if (current.status !== 'authenticated' || current.csrfToken !== csrfToken) return current
@@ -730,6 +835,7 @@ function App() {
     onLogin={() => beginIdentityLogin()}
     onRegister={() => beginIdentityRegistration()}
     onLogout={signOut}
+    onOpenAccount={openAccountHub}
   />
 
   async function checkout() {
@@ -761,6 +867,13 @@ function App() {
     {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>} 
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
+    {accountOpen && identityState.status === 'authenticated' && <MyAeroVistaDrawer
+      identityState={identityState}
+      summaryState={accountSummaryState}
+      onClose={() => setAccountOpen(false)}
+      onRefresh={refreshAccountSummary}
+      onLogout={signOut}
+    />}
   </main>
 }
 
