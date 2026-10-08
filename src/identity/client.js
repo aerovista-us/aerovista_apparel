@@ -60,3 +60,22 @@ export async function logoutIdentity(csrfToken) {
 
   return payload
 }
+
+
+export async function loadAccountSummary() {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/account/summary`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    const error = new Error(payload?.error || 'Account summary unavailable')
+    error.code = payload?.code || 'account_summary_unavailable'
+    error.status = response.status
+    throw error
+  }
+
+  return payload
+}
