@@ -462,8 +462,8 @@ Apparel is not called Identity-integrated until all rows have production evidenc
 | Invalid/expired identity | deny | open |
 | Handoff replay | deny | **current-source regression accepted; live destructive replay deferred to controlled QA identity** |
 | Stale predecessor | not treated as replacement session | **current-source regression accepted; live destructive test deferred to controlled QA identity** |
-| Logout | app-held relying session revoked/terminated | open |
-| Revocation | subsequent protected request denied | **source regression accepted; live logout/revoke observation pending current browser session** |
+| Logout | app-held relying session revoked/terminated | **accepted live** |
+| Revocation | subsequent protected request denied | **accepted live** |
 | Identity/Gateway outage | protected operation fails closed; public browse remains | open |
 
 ---
@@ -586,18 +586,22 @@ Regression only. No broad migration.
 
 ## 15. Immediate next decision
 
-The live human login, `identity.describe()`, and `identity.can(aerovista.member)` gates are accepted.
+The live Identity/App Adapter acceptance is complete for the flagship baseline:
 
-Next:
+- Account login/handoff — accepted live;
+- secure relying-app session — accepted live;
+- `identity.describe()` — accepted live;
+- `identity.can(aerovista.member)` — accepted live;
+- anonymous protected denial — accepted live;
+- logout/local cookie termination — accepted live;
+- native AVCC session revoke — accepted live;
+- replay/stale-session/revocation failure modes — accepted in current-source regression suites.
 
-1. prove browser logout clears the relying-app cookie even if remote revoke is slow;
-2. observe the native session revoke request at Identity Gateway;
-3. prove a replayed/consumed handoff transaction is rejected;
-4. prove stale/predecessor session behavior fails closed and is not silently rebound to a replacement session;
-5. update this handoff and Notion with the final Identity acceptance matrix;
-6. release the held storefront Account UI PR #5 when Vercel can accept another production deployment.
+Next operational action:
 
-The storefront Account UI PR #5 remains held only by the Vercel daily deployment quota, not by Identity backend readiness. The backend identity chain is already accepted independently of that UI release.
+1. release the held Apparel Account UI PR #5 once Vercel accepts another deployment;
+2. perform customer-facing visual/interaction QA on sign in, create account, authenticated Account state, and logout;
+3. then begin Commerce v1 normalization, preserving the accepted legacy checkout/webhook/fulfillment path.
 
 ## 16. Running change log
 
@@ -648,6 +652,15 @@ The storefront Account UI PR #5 remains held only by the Vercel daily deployment
 - storefront Account UI remains in Apparel PR #5 at head `789f267...`; production build passes locally;
 - Vercel rejected the refreshed PR preview because the project exceeded 100 deployments/day on the free tier, so production UI promotion is temporarily rate-limited;
 - Codex review quota is exhausted for a fresh review of PR #5, but its application code was previously reviewed clean at `cd8d287...`; the only later change was merging current handoff documentation.
+
+### 2026-10-07 — live logout/revocation accepted
+
+- browser precondition: `beforeAuthenticated: true`;
+- `POST /api/logout` from the public Apparel origin returned HTTP 200 with `ok: true`;
+- immediate follow-up `GET /api/session` returned `authenticated: false`;
+- AVCC recorded a new successful `identity.session.revoke` audit event at `2026-10-08 06:08:38 UTC` through `identity_gateway`;
+- this proves local cookie termination and native relying-app session revoke both completed successfully;
+- a prior logout attempt from the auth-bridge origin correctly returned 403 and wrote no revoke event, proving exact-origin mutation enforcement.
 
 ### 2026-10-07 — replay/stale-session regression acceptance
 
