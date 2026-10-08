@@ -1,3 +1,16 @@
+# Production checkout acceptance — 2026-10-07
+
+The flagship checkout gate is accepted. The Gear API proxy now admits `https://apparel.aerovista.us` and the production Worker is deployed through the Store repo's explicit Cloudflare version flow. Store main `34351d81b83928896f6287a8951f851f1b70fab0` produced Worker version `be777901-d1be-4d24-b747-8225ea527106`, promoted at 100% traffic. The GitHub-hosted runner is denied by Cloudflare edge policy with HTTP 403 during the public probe, so CI records that specific condition as a warning; NXCore remains the accepted edge-admitted live probe.
+
+NXCore production acceptance proved:
+- `OPTIONS https://gear.aerovista.us/api/square/checkout` from Origin `https://apparel.aerovista.us` returns HTTP 204 with the exact `Access-Control-Allow-Origin` header plus checkout CORS methods/headers.
+- `GET https://gear.aerovista.us/api/square/bootstrap` returns HTTP 200 with the exact Apparel origin admitted.
+- Ridgeline Tee size S maps through `Default__S` to Square variation `CYMAIUALBD5E65AY64AE33CS` at 3299 cents; live checkout creation returned HTTP 200, Apparel CORS, `ok: true`, and a Square-hosted checkout URL.
+- Shadow Pants size M maps through `Default__M` to Square variation `AADW36VFWTN37URWPN6EHEXT` at 5200 cents; live checkout creation returned HTTP 200, Apparel CORS, `ok: true`, and a Square-hosted checkout URL.
+- No payment was submitted and no fulfillment was triggered during these smokes.
+
+The October 4 stale-price hold and the October 7 browser-CORS blocker are both closed. Square remains authoritative for catalog existence and base price; the curated JSON remains the storefront projection, not authority. The next platform phase is the Apparel Identity/App Adapter proof, followed by Commerce v1 normalization. Cindy remains a regression/reference surface and is not being migrated in this phase.
+
 # Checkpoint status — 2026-10-07
 
 The price hold is lifted. The mounted API catalog and `sku_map.generated.json` on NXCore were replaced from the October 4 Gear projection and `av-store-api` was restarted. The previous files were kept beside them as `*.bak-20261007`. The API prices Shadow Pants M (`AADW36VFWTN37URWPN6EHEXT`) at 5200 cents. The cart key `Default__M` is shared by many products and is not a price. This revision is published on `main` as `1a072a6` and is what `https://apparel.aerovista.us/` is serving. Raw masters and `public/products/_inbox/` stay unpublished. Cindy has not been migrated. Apparel identity proof and Commerce v1 remain the next platform phase.
