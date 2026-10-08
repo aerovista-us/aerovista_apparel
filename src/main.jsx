@@ -1007,7 +1007,7 @@ function App() {
         error: error?.message || 'Saved Pieces unavailable',
       }))
     } finally {
-      setSavedBusyId('')
+      if (generation === identityGenerationRef.current) setSavedBusyId('')
     }
   }
 
@@ -1055,15 +1055,19 @@ function App() {
 
   async function refreshAccountSummary() {
     if (identityState.status !== 'authenticated') return
+    const generation = identityGenerationRef.current
     setAccountSummaryState(current => ({ ...current, status: 'loading', error: null }))
     try {
       const summary = await loadAccountSummary()
+      if (generation !== identityGenerationRef.current) return
       setAccountSummaryState({ status: 'ready', data: summary, error: null })
     } catch (error) {
+      if (generation !== identityGenerationRef.current) return
       if (error?.status === 401 || error?.status === 403) {
         await revalidateIdentityAfterAccessDenial()
         return
       }
+      if (generation !== identityGenerationRef.current) return
       setAccountSummaryState(current => ({
         status: 'error',
         data: current.data,
