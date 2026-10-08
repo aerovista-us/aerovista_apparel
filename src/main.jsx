@@ -549,6 +549,7 @@ function App() {
   const [routeReady, setRouteReady] = useState(false)
   const [identityState, setIdentityState] = useState({ status: 'loading', authenticated: false, identity: null, csrfToken: null, error: null })
   const commercePromiseRef = useRef(null)
+  const logoutPromiseRef = useRef(null)
 
   function warmCommerce() {
     if (catalogState.status === 'ready') return Promise.resolve(catalogState)
@@ -694,18 +695,34 @@ function App() {
 
   async function signOut() {
     if (identityState.status !== 'authenticated') return
+    if (logoutPromiseRef.current) return logoutPromiseRef.current
+
+    const csrfToken = identityState.csrfToken
     setIdentityState(current => ({ ...current, error: null }))
-    try {
-      await logoutIdentity(identityState.csrfToken)
-      setIdentityState({ status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null })
-    } catch (error) {
-      setIdentityState(current => ({
-        ...current,
-        status: 'authenticated',
-        authenticated: true,
-        error: error?.message || 'Sign out failed. Your account session is still active.',
-      }))
-    }
+
+    const request = (async () => {
+      try {
+        await logoutIdentity(csrfToken)
+        setIdentityState(current => (
+          current.csrfToken === csrfToken
+            ? { status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null }
+            : current
+        ))
+      } catch (error) {
+        setIdentityState(current => {
+          if (current.status !== 'authenticated' || current.csrfToken !== csrfToken) return current
+          return {
+            ...current,
+            error: error?.message || 'Sign out failed. Your account session is still active.',
+          }
+        })
+      } finally {
+        logoutPromiseRef.current = null
+      }
+    })()
+
+    logoutPromiseRef.current = request
+    return request
   }
 
   const accountControl = <AccountControl
