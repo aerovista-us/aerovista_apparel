@@ -1,7 +1,7 @@
 # AeroVista Apparel — Customer Account Data Contract v1
 
-**Status:** Phase 0 foundation contract  
-**Application:** `apparel.aerovista.us`  
+**Status:** Phase 0 foundation contract
+**Application:** `apparel.aerovista.us`
 **Purpose:** Define customer-safe account data, API ownership, canonical identity propagation, and rollout controls for My AeroVista features.
 
 ## 1. Core rule
