@@ -6,6 +6,8 @@
 **Commerce baseline:** Legacy Store/Square/webhook/fulfillment path remains production authority while Commerce v1 is normalized  
 **Goal:** Make signing in materially useful to customers without creating a second identity, profile, catalog, payment, or fulfillment authority.
 
+**Phase 0 data/API contract:** [APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md](APPAREL_CUSTOMER_ACCOUNT_DATA_CONTRACT_V1.md)
+
 ---
 
 ## 1. Product outcome
