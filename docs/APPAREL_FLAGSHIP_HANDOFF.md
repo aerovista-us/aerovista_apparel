@@ -603,13 +603,18 @@ The live Identity/App Adapter acceptance is complete for the flagship baseline:
 - anonymous protected denial — accepted live;
 - logout/local cookie termination — accepted live;
 - native AVCC session revoke — accepted live;
-- replay/stale-session/revocation failure modes — accepted in current-source regression suites.
+- replay/stale-session/revocation failure modes — accepted in current-source regression suites;
+- customer-safe `GET /api/account/summary` — accepted live from ACOS merge `add944de877b9a37591bc3cca9e60b401475f2fa`.
 
-Next operational action:
+Vercel remains a release-capacity pause, not a development pause. Customer-account frontend work is accumulating in **draft Apparel PR #16** on `feat/apparel-customer-benefits-phase1-20261008`; do not promote it until the backend gates are accepted and Vercel can receive the release.
 
-1. release the held Apparel Account UI PR #5 once Vercel accepts another deployment;
-2. perform customer-facing visual/interaction QA on sign in, create account, authenticated Account state, and logout;
-3. then begin Commerce v1 normalization, preserving the accepted legacy checkout/webhook/fulfillment path.
+Current backend advancement:
+
+1. **My Orders / Commerce v1** — private Commerce PR #5 is in exact-head review after identity/HMAC/payment-reconciliation hardening. Production Commerce v1 remains off and the stopped NXCore sandbox has not been modified.
+2. **Saved Pieces** — ACOS PR #124 is in exact-head review. Dedicated Apparel-state Postgres, migration 001, app-owned identity-scoped persistence, and feature-off runtime packaging are source-tested; production customer-state remains disabled and no production database has been provisioned.
+3. **My AeroVista frontend** — draft PR #16 includes the hub shell plus hidden-by-default Saved Pieces interactions. Feature flags remain off.
+
+Next operational action is to merge clean backend source PRs first, preserve all production flags off, then rehearse isolated backend runtime gates. Release PR #16 only after those dependencies are accepted and Vercel resets.
 
 ## 16. Running change log
 
@@ -707,6 +712,35 @@ These are current-source acceptance gates. Destructive live replay/stale-session
 - runtime auth bridge remains blocked only on local root secret provisioning.
 
 ---
+
+### 2026-10-08 — My AeroVista Phase 1 continued during Vercel hold
+
+- treated the Vercel free-tier deployment cap as a release pause rather than a development stop;
+- created draft Apparel PR #16 as the single customer-benefits integration branch;
+- built the My AeroVista in-store account drawer with Orders, Closet, Saved, Fit, and Benefits availability states;
+- preserved the shared Account service as profile/account authority;
+- added and live-promoted customer-safe `GET /api/account/summary` through ACOS PR #123 / `add944de877b9a37591bc3cca9e60b401475f2fa`;
+- verified local/public Apparel auth health on host 3160 and anonymous summary denial with exact Apparel CORS;
+- began private Commerce v1 My Orders normalization in Commerce PR #5:
+  - canonical `av_identity_id` linkage only on HMAC-authenticated internal checkout;
+  - Idempotency-Key included in Commerce service signature;
+  - stable opaque `av_order_id`;
+  - provider-time payment reconciliation across multiple tenders and refunds;
+  - strict customer-safe account-order schema;
+  - public anonymous checkout contract unchanged;
+  - latest full source gate: repository/migration/secret checks pass and **80 tests pass**;
+  - production v1 remains off and the stopped NXCore sandbox remains untouched;
+- built Saved Pieces source in ACOS PR #124:
+  - dedicated app-owned Postgres state keyed by canonical identity;
+  - stores only identity ID, public product ID, and saved timestamp;
+  - exact-origin + CSRF mutations;
+  - dedicated Postgres Compose overlay remains production-off;
+  - safe field-based database secret configuration;
+  - atomic 500-piece per-identity ceiling;
+  - real Postgres smoke with URI-reserved password characters passed;
+  - latest source gate: **14/14 tests pass** plus syntax/Compose checks;
+- wired hidden-by-default Saved Pieces client/UI into draft PR #16 under `VITE_APPAREL_ACCOUNT_SAVED`;
+- draft PR #16 production build passes; no customer-visible feature is enabled yet.
 
 ## 17. Resume command
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X, UserRound, LogOut, Heart, Package, Ruler, Gift, ExternalLink
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
@@ -9,6 +9,17 @@ import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import { identityStanding } from './commerce/identity'
 import { fulfillmentNote } from './commerce/fulfillment'
+import {
+  beginIdentityLogin,
+  beginIdentityRegistration,
+  loadAccountSummary,
+  loadIdentitySession,
+  loadSavedPieces,
+  logoutIdentity,
+  removeSavedPiece,
+  savePiece,
+} from './identity/client'
+import { accountFeatures } from './config/accountFeatures'
 import './styles.css'
 import './product-gallery.css'
 import './illusion-polish.css'
@@ -194,7 +205,18 @@ function EditionTable({ fixture, items, collection, onOpen }) {
   </FixtureShell>
 }
 
-function ProductDrawer({ product, onClose, onAdd }) {
+function ProductDrawer({
+  product,
+  onClose,
+  onAdd,
+  savedEnabled = false,
+  saved = false,
+  savedBusy = false,
+  savedAvailable = false,
+  authenticated = false,
+  onToggleSaved,
+  onLogin,
+}) {
   const [size, setSize] = useState(product?.sizes?.[0] ?? '')
   const [galleryIndex, setGalleryIndex] = useState(0)
   useEffect(() => {
@@ -244,6 +266,22 @@ function ProductDrawer({ product, onClose, onAdd }) {
             <p className="price">{priceLabel(product, variant)}</p>
             <span className={`availability-line ${canAdd ? 'available' : 'unavailable'}`}><i aria-hidden="true"/>{canAdd ? 'Available' : product.commerceStatus === 'presentation' ? 'Preview' : 'Unavailable'}</span>
           </div>
+          {savedEnabled && <button
+            className={`save-piece-button ${saved ? 'is-saved' : ''}`}
+            type="button"
+            disabled={savedBusy || (authenticated && !savedAvailable)}
+            aria-pressed={saved}
+            onClick={() => authenticated ? onToggleSaved?.(product) : onLogin?.()}
+          >
+            <Heart size={16} fill={saved ? 'currentColor' : 'none'}/>
+            <span>{savedBusy
+              ? 'Saving…'
+              : saved
+                ? 'Saved piece'
+                : authenticated
+                  ? savedAvailable ? 'Save piece' : 'Saved unavailable'
+                  : 'Sign in to save'}</span>
+          </button>}
           <p className="product-description">{product.description}</p>
           <div className="selector">
             <span>{optionLabel}</span>
@@ -282,11 +320,149 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
             {checkoutBusy ? 'Opening secure checkout…' : <>Checkout <ArrowRight size={17}/></>}
           </button>
           <small>Square confirms the amount. Creating checkout does not mark an order paid or redeem a promotion.</small>
-          <small>{identityStanding.required ? 'Account access needs AeroVista identity. This store has not verified that path yet.' : ''}</small>
+          <small>{identityStanding.required ? 'My AeroVista benefits use your verified AeroVista identity. Public shopping and checkout remain available without signing in.' : ''}</small>
         </div>
       </aside>
     </div>
   )
+}
+
+
+function accountLabel(identity) {
+  return identity?.profile?.displayName
+    || identity?.displayName
+    || identity?.name
+    || 'Account'
+}
+
+function AccountControl({ state, onLogin, onRegister, onLogout, onOpenAccount }) {
+  if (state.status === 'authenticated') {
+    return <div className="account-control is-authenticated">
+      <button className="account-button" type="button" onClick={onOpenAccount} aria-label="Open My AeroVista">
+        <UserRound size={16}/><span>{accountLabel(state.identity)}</span>
+      </button>
+      <button className="account-icon-button" type="button" onClick={onLogout} aria-label="Sign out of AeroVista Account" title="Sign out">
+        <LogOut size={15}/>
+      </button>
+    </div>
+  }
+
+  return <div className="account-control" data-status={state.status}>
+    <button className="account-button" type="button" onClick={onLogin}>
+      <UserRound size={16}/><span>{state.status === 'loading' ? 'Account' : 'Sign in'}</span>
+    </button>
+    {state.status !== 'loading' && <button className="account-create-button" type="button" onClick={onRegister}>Create</button>}
+  </div>
+}
+
+const ACCOUNT_SECTION_META = Object.freeze([
+  { key: 'orders', label: 'Orders', note: 'Order status, tracking, and purchase history.', icon: Package },
+  { key: 'closet', label: 'Closet', note: 'Pieces you own, derived from verified purchases.', icon: ShoppingBag },
+  { key: 'saved', label: 'Saved', note: 'Keep pieces here and come back to them later.', icon: Heart },
+  { key: 'fit', label: 'Fit', note: 'Your usual sizes and store-specific fit preferences.', icon: Ruler },
+  { key: 'benefits', label: 'Benefits', note: 'Member access, private drops, and eligible offers.', icon: Gift },
+])
+
+function accountSectionEnabled(key) {
+  if (key === 'closet') return accountFeatures.orders || accountFeatures.saved
+  if (key === 'orders') return accountFeatures.orders
+  if (key === 'saved') return accountFeatures.saved
+  if (key === 'fit') return accountFeatures.fit
+  if (key === 'benefits') return accountFeatures.benefits
+  return false
+}
+
+function MyAeroVistaDrawer({
+  identityState,
+  summaryState,
+  savedState,
+  savedProducts,
+  savedBusyId,
+  onOpenSavedProduct,
+  onRemoveSaved,
+  onClose,
+  onRefresh,
+  onLogout,
+}) {
+  const summary = summaryState.data
+  const displayName = summary?.identity?.displayName || accountLabel(identityState.identity)
+  const summaryReady = summaryState.status === 'ready'
+
+  return <div className="drawer-shell account-drawer-shell" role="dialog" aria-modal="true" aria-label="My AeroVista">
+    <button className="drawer-scrim" onClick={onClose} aria-label="Close My AeroVista"/>
+    <aside className="drawer account-drawer">
+      <button className="icon-btn drawer-close" onClick={onClose} aria-label="Close My AeroVista"><X size={20}/></button>
+      <div className="drawer-content account-drawer-content">
+        <span className="eyebrow">MY AEROVISTA</span>
+        <div className="account-drawer-heading">
+          <div>
+            <h2>{displayName || 'Your AeroVista'}</h2>
+            <p>Your store follows you without turning Apparel into a second account system.</p>
+          </div>
+          <span className="account-connected"><span/>Connected</span>
+        </div>
+
+        {summaryState.status === 'loading' && <div className="account-summary-state">Loading your account benefits…</div>}
+        {summaryState.status === 'error' && <div className="account-summary-state is-error">
+          <span>Your account is connected, but benefit details are temporarily unavailable.</span>
+          <button type="button" onClick={onRefresh}>Retry</button>
+        </div>}
+
+        <div className="account-benefit-grid">
+          {ACCOUNT_SECTION_META.map(({ key, label, note, icon: Icon }) => {
+            const enabled = accountSectionEnabled(key)
+            const available = summaryReady && summary?.features?.[key]?.available === true
+            const status = available && enabled ? 'Available' : enabled ? 'Connecting' : 'In build'
+            return <section className="account-benefit-card" key={key} data-enabled={enabled ? 'true' : 'false'}>
+              <div className="account-benefit-icon"><Icon size={18}/></div>
+              <div className="account-benefit-copy">
+                <div className="account-benefit-title"><b>{label}</b><span>{status}</span></div>
+                <p>{note}</p>
+              </div>
+              <ChevronRight size={16} aria-hidden="true"/>
+            </section>
+          })}
+        </div>
+
+        {accountFeatures.saved && <section className="account-saved-preview" aria-label="Saved Pieces">
+          <div className="account-saved-preview-head">
+            <div><Heart size={15}/><b>Saved Pieces</b></div>
+            <span>{savedState.status === 'ready' ? `${savedState.items.length} / 500` : savedState.status === 'loading' ? 'Loading' : 'Unavailable'}</span>
+          </div>
+
+          {savedState.status === 'error' && <p className="account-saved-empty">{savedState.error || 'Saved Pieces are temporarily unavailable.'}</p>}
+          {savedState.status === 'ready' && savedProducts.length === 0 && <p className="account-saved-empty">Save pieces from the showroom and they’ll collect here.</p>}
+          {savedState.status === 'ready' && savedProducts.length > 0 && <div className="account-saved-list">
+            {savedProducts.slice(0, 8).map(({ item, product }) => <div className="account-saved-row" key={item.productId}>
+              <button type="button" className="account-saved-open" onClick={() => product && onOpenSavedProduct(product)} disabled={!product}>
+                <span>{product?.name || item.productId}</span>
+                <small>{product?.collection || 'Saved piece'}</small>
+              </button>
+              <button
+                type="button"
+                className="account-saved-remove"
+                aria-label={`Remove ${product?.name || item.productId} from Saved Pieces`}
+                disabled={savedBusyId === item.productId}
+                onClick={() => onRemoveSaved(item.productId)}
+              ><X size={14}/></button>
+            </div>)}
+            {savedProducts.length > 8 && <div className="account-saved-more">+{savedProducts.length - 8} more saved pieces</div>}
+          </div>}
+        </section>}
+
+        <div className="account-drawer-actions">
+          <a href="https://account.aerocoreos.com/" className="account-profile-link">
+            Profile & Account <ExternalLink size={14}/>
+          </a>
+          <button type="button" className="account-signout-link" onClick={onLogout}>
+            <LogOut size={14}/> Sign out
+          </button>
+        </div>
+
+        <small>Orders, payment, fulfillment, and member pricing stay authoritative in Commerce and Square. Apparel only shows customer-safe projections.</small>
+      </div>
+    </aside>
+  </div>
 }
 
 function CollectionNav({ products, collection, onCollection, mobile = false }) {
@@ -296,11 +472,12 @@ function CollectionNav({ products, collection, onCollection, mobile = false }) {
   </nav>
 }
 
-function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollection }) {
+function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollection, accountControl }) {
   return <header className="store-header">
     <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
     <CollectionNav products={products} collection={collection} onCollection={onCollection}/>
     <div className="header-actions">
+      {accountControl}
       <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
     </div>
   </header>
@@ -313,7 +490,7 @@ const galleryDestinations = [
   { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and sticker editions on the center table.', status: 'ON VIEW', live: true },
 ]
 
-function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag }) {
+function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag, accountControl }) {
   const openDestination = id => {
     if (id === 'womens') return onOpenWomens()
     if (id === 'place') return onOpenPlace()
@@ -324,7 +501,7 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects
     <header className="foyer-header">
       <button className="wordmark" onClick={onOutside} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="foyer-location">ENTRY GALLERY</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      <div className="foyer-actions">{accountControl}<button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button></div>
     </header>
     <div className="foyer-stage">
       <div className="foyer-image" aria-hidden="true"/>
@@ -377,7 +554,7 @@ function WomenStudioPiece({ display, product, onOpen }) {
   </button>
 }
 
-function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBag }) {
+function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBag, accountControl }) {
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
   const featureProduct = productMap.get('aerovista-apex-pattern-print-swimsuit-one-piece')
   const roomMessage = catalogState.status === 'loading'
@@ -390,7 +567,10 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
     <header className="studio-header">
       <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="studio-location">WOMEN'S STUDIO · NOCTURNE EDIT</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      <div className="studio-actions">
+        {accountControl}
+        <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      </div>
     </header>
     <div className="women-studio-scene">
       <div className="women-studio-image" aria-hidden="true"/><div className="women-studio-shade" aria-hidden="true"/>
@@ -462,7 +642,7 @@ function ViewNav({ view, onView }) {
   return <nav className="view-nav" aria-label="Look around the store">{spaceViews.map(space => <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}><i aria-hidden="true"/><span>{space.label}</span></button>)}</nav>
 }
 
-function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView }) {
+function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView, accountControl }) {
   const [collection, setCollection] = useState('All')
   const compact = useCompactStore()
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
@@ -477,7 +657,7 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, 
         : `${visibleProducts.length} highlighted · ${products.length} pieces remain in the room`
 
   return <section className="interior space-arrive" data-catalog-status={catalogState.status}>
-    <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
+    <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection} accountControl={accountControl}/>
     <div className={`interior-scene view-${view}`}>
       <div className="interior-image"/><div className="room-shade"/>
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
@@ -514,7 +694,30 @@ function App() {
   const [checkoutNotice, setCheckoutNotice] = useState(initialRoute.checkout)
   const [pendingProduct, setPendingProduct] = useState(initialRoute.product)
   const [routeReady, setRouteReady] = useState(false)
+  const [identityState, setIdentityState] = useState({ status: 'loading', authenticated: false, identity: null, csrfToken: null, error: null })
+  const [accountOpen, setAccountOpen] = useState(false)
+  const [accountSummaryState, setAccountSummaryState] = useState({ status: 'idle', data: null, error: null })
+  const [savedState, setSavedState] = useState({ status: 'idle', items: [], error: null })
+  const [savedBusyId, setSavedBusyId] = useState('')
+  const savedIds = useMemo(
+    () => new Set(savedState.items.map(item => item.productId)),
+    [savedState.items],
+  )
+  const savedRecordByProductId = useMemo(
+    () => new Map(savedState.items.map(item => [item.productId, item])),
+    [savedState.items],
+  )
+  const productById = useMemo(
+    () => new Map([...showroomProducts, ...womenStudioProducts].map(product => [product.id, product])),
+    [showroomProducts, womenStudioProducts],
+  )
+  const savedProducts = useMemo(
+    () => savedState.items.map(item => ({ item, product: productById.get(item.productId) || null })),
+    [savedState.items, productById],
+  )
   const commercePromiseRef = useRef(null)
+  const logoutPromiseRef = useRef(null)
+  const identityGenerationRef = useRef(0)
 
   function warmCommerce() {
     if (catalogState.status === 'ready') return Promise.resolve(catalogState)
@@ -540,6 +743,58 @@ function App() {
     commercePromiseRef.current = promise
     return promise
   }
+
+
+  useEffect(() => {
+    let active = true
+    loadIdentitySession()
+      .then(session => {
+        if (!active) return
+        identityGenerationRef.current += 1
+        if (session?.authenticated) {
+          setIdentityState({
+            status: 'authenticated',
+            authenticated: true,
+            identity: session.identity || null,
+            csrfToken: session.csrfToken || null,
+            error: null,
+          })
+        } else {
+          setIdentityState({ status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null })
+        }
+      })
+      .catch(error => {
+        if (!active) return
+        identityGenerationRef.current += 1
+        setIdentityState({
+          status: 'unavailable',
+          authenticated: false,
+          identity: null,
+          csrfToken: null,
+          error: error?.message || 'Account service unavailable',
+        })
+      })
+      .finally(() => {
+        if (!active) return
+        const url = new URL(window.location.href)
+        if (url.searchParams.has('auth')) {
+          url.searchParams.delete('auth')
+          window.history.replaceState(window.history.state, '', url)
+        }
+      })
+    return () => { active = false }
+  }, [])
+
+  useEffect(() => {
+    if (!accountFeatures.saved || identityState.status !== 'authenticated') {
+      if (identityState.status !== 'loading') {
+        setSavedState({ status: 'idle', items: [], error: null })
+      }
+      return
+    }
+
+    void refreshSavedPieces()
+  }, [identityState.status, identityState.csrfToken])
 
   useEffect(() => {
     if (initialRoute.space !== 'outside') warmCommerce()
@@ -588,7 +843,7 @@ function App() {
   }, [pendingProduct, showroomProducts, womenStudioProducts])
 
   useEffect(() => {
-    const modalOpen = Boolean(selected || bagOpen)
+    const modalOpen = Boolean(selected || bagOpen || accountOpen)
     if (!modalOpen) return undefined
     const priorOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -596,13 +851,14 @@ function App() {
       if (event.key !== 'Escape') return
       setSelected(null)
       setBagOpen(false)
+      setAccountOpen(false)
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = priorOverflow
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [selected, bagOpen])
+  }, [selected, bagOpen, accountOpen])
 
   function enter() {
     if (entering) return
@@ -618,6 +874,268 @@ function App() {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
     setSelected(null); setCheckoutError(''); setBagOpen(true)
   }
+
+  async function refreshSavedPieces({ revalidateOnDenied = true, generation = identityGenerationRef.current } = {}) {
+    if (!accountFeatures.saved) {
+      if (generation === identityGenerationRef.current) {
+        setSavedState({ status: 'idle', items: [], error: null })
+      }
+      return false
+    }
+
+    if (generation !== identityGenerationRef.current) return false
+    setSavedState(current => ({ ...current, status: 'loading', error: null }))
+    try {
+      const payload = await loadSavedPieces()
+      if (generation !== identityGenerationRef.current) return false
+      setSavedState({
+        status: 'ready',
+        items: Array.isArray(payload?.items) ? payload.items : [],
+        error: null,
+      })
+      return true
+    } catch (error) {
+      if (generation !== identityGenerationRef.current) return false
+      if (revalidateOnDenied && (error?.status === 401 || error?.status === 403)) {
+        await revalidateIdentityAfterAccessDenial()
+        return false
+      }
+      if (generation !== identityGenerationRef.current) return false
+      setSavedState({
+        status: 'error',
+        items: [],
+        error: error?.message || 'Saved Pieces unavailable',
+      })
+      return false
+    }
+  }
+
+  async function revalidateIdentityAfterAccessDenial() {
+    identityGenerationRef.current += 1
+    const generation = identityGenerationRef.current
+    setAccountOpen(false)
+    setAccountSummaryState({ status: 'idle', data: null, error: null })
+    setSavedState({ status: 'idle', items: [], error: null })
+    setSavedBusyId('')
+
+    try {
+      const session = await loadIdentitySession()
+      if (generation !== identityGenerationRef.current) return false
+      if (!session?.authenticated) {
+        setIdentityState({
+          status: 'anonymous',
+          authenticated: false,
+          identity: null,
+          csrfToken: null,
+          error: null,
+        })
+        return false
+      }
+
+      setIdentityState({
+        status: 'authenticated',
+        authenticated: true,
+        identity: session.identity || null,
+        csrfToken: session.csrfToken || null,
+        error: null,
+      })
+
+      if (accountFeatures.saved) {
+        await refreshSavedPieces({ revalidateOnDenied: false, generation })
+      }
+      return true
+    } catch (sessionError) {
+      if (generation !== identityGenerationRef.current) return false
+      setIdentityState({
+        status: 'unavailable',
+        authenticated: false,
+        identity: null,
+        csrfToken: null,
+        error: sessionError?.message || 'Account service unavailable',
+      })
+      return false
+    }
+  }
+
+  async function toggleSavedPiece(product) {
+    if (!accountFeatures.saved || !product?.id) return
+    if (identityState.status !== 'authenticated') {
+      beginIdentityLogin()
+      return
+    }
+    if (savedBusyId || savedState.status !== 'ready') return
+
+    const generation = identityGenerationRef.current
+    const productId = product.id
+    const isSaved = savedIds.has(productId)
+    setSavedBusyId(productId)
+    setSavedState(current => ({ ...current, error: null }))
+
+    try {
+      if (isSaved) {
+        const savedRecord = savedRecordByProductId.get(productId)
+        if (!savedRecord?.id) throw new Error('Saved Pieces record is unavailable')
+        await removeSavedPiece(savedRecord.id, identityState.csrfToken)
+        if (generation !== identityGenerationRef.current) return
+        setSavedState(current => ({
+          status: 'ready',
+          items: current.items.filter(item => item.productId !== productId),
+          error: null,
+        }))
+      } else {
+        const payload = await savePiece(productId, identityState.csrfToken)
+        if (generation !== identityGenerationRef.current) return
+        const item = payload?.item
+        if (!item?.id || item.productId !== productId) {
+          throw new Error('Saved Pieces returned an invalid record')
+        }
+        setSavedState(current => ({
+          status: 'ready',
+          items: [item, ...current.items.filter(existing => existing.productId !== productId)],
+          error: null,
+        }))
+      }
+    } catch (error) {
+      if (generation !== identityGenerationRef.current) return
+      if (error?.status === 401 || error?.status === 403) {
+        await revalidateIdentityAfterAccessDenial()
+        return
+      }
+      setSavedState(current => ({
+        ...current,
+        status: 'error',
+        error: error?.message || 'Saved Pieces unavailable',
+      }))
+    } finally {
+      if (generation === identityGenerationRef.current) setSavedBusyId('')
+    }
+  }
+
+  async function removeSavedById(productId) {
+    if (
+      !accountFeatures.saved
+      || identityState.status !== 'authenticated'
+      || savedBusyId
+      || savedState.status !== 'ready'
+    ) return
+    const savedRecord = savedRecordByProductId.get(productId)
+    if (!savedRecord?.id) return
+    const generation = identityGenerationRef.current
+    setSavedBusyId(productId)
+    setSavedState(current => ({ ...current, error: null }))
+    try {
+      await removeSavedPiece(savedRecord.id, identityState.csrfToken)
+      if (generation !== identityGenerationRef.current) return
+      setSavedState(current => ({
+        status: 'ready',
+        items: current.items.filter(item => item.productId !== productId),
+        error: null,
+      }))
+    } catch (error) {
+      if (generation !== identityGenerationRef.current) return
+      if (error?.status === 401 || error?.status === 403) {
+        await revalidateIdentityAfterAccessDenial()
+        return
+      }
+      setSavedState(current => ({
+        ...current,
+        status: 'error',
+        error: error?.message || 'Saved Pieces unavailable',
+      }))
+    } finally {
+      if (generation === identityGenerationRef.current) setSavedBusyId('')
+    }
+  }
+
+  function openSavedProduct(product) {
+    if (!product) return
+    setAccountOpen(false)
+    setSelected(product)
+  }
+
+  async function refreshAccountSummary() {
+    if (identityState.status !== 'authenticated') return
+    const generation = identityGenerationRef.current
+    setAccountSummaryState(current => ({ ...current, status: 'loading', error: null }))
+    try {
+      const summary = await loadAccountSummary()
+      if (generation !== identityGenerationRef.current) return
+      setAccountSummaryState({ status: 'ready', data: summary, error: null })
+    } catch (error) {
+      if (generation !== identityGenerationRef.current) return
+      if (error?.status === 401 || error?.status === 403) {
+        await revalidateIdentityAfterAccessDenial()
+        return
+      }
+      if (generation !== identityGenerationRef.current) return
+      setAccountSummaryState(current => ({
+        status: 'error',
+        data: current.data,
+        error: error?.message || 'Account summary unavailable',
+      }))
+    }
+  }
+
+  function openAccountHub() {
+    if (!accountFeatures.hub) {
+      window.location.assign('https://account.aerocoreos.com/')
+      return
+    }
+    setAccountOpen(true)
+    if (accountSummaryState.status === 'idle' || accountSummaryState.status === 'error') {
+      void refreshAccountSummary()
+    }
+  }
+
+  async function signOut() {
+    if (identityState.status !== 'authenticated') return
+    if (logoutPromiseRef.current) return logoutPromiseRef.current
+
+    const csrfToken = identityState.csrfToken
+    identityGenerationRef.current += 1
+    const generation = identityGenerationRef.current
+    setIdentityState(current => ({ ...current, error: null }))
+
+    const request = (async () => {
+      try {
+        await logoutIdentity(csrfToken)
+        setIdentityState(current => (
+          current.csrfToken === csrfToken
+            ? { status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null }
+            : current
+        ))
+        setAccountOpen(false)
+        setAccountSummaryState({ status: 'idle', data: null, error: null })
+        setSavedState({ status: 'idle', items: [], error: null })
+        setSavedBusyId('')
+      } catch (error) {
+        setIdentityState(current => {
+          if (current.status !== 'authenticated' || current.csrfToken !== csrfToken) return current
+          return {
+            ...current,
+            error: error?.message || 'Sign out failed. Your account session is still active.',
+          }
+        })
+        if (accountFeatures.saved && generation === identityGenerationRef.current) {
+          void refreshSavedPieces({ revalidateOnDenied: true, generation })
+        }
+      } finally {
+        logoutPromiseRef.current = null
+      }
+    })()
+
+    logoutPromiseRef.current = request
+    return request
+  }
+
+  const accountControl = <AccountControl
+    state={identityState}
+    onLogin={() => beginIdentityLogin()}
+    onRegister={() => beginIdentityRegistration()}
+    onLogout={signOut}
+    onOpenAccount={openAccountHub}
+  />
+
   async function checkout() {
     setCheckoutBusy(true); setCheckoutError('')
     try {
@@ -630,6 +1148,10 @@ function App() {
   }
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
+    {identityState.status === 'authenticated' && identityState.error && <div className="identity-notice" role="alert">
+      <span>Couldn’t sign out. Your account session is still active.</span>
+      <button type="button" onClick={() => setIdentityState(current => ({ ...current, error: null }))}>Dismiss</button>
+    </div>}
     {checkoutNotice && <div className="checkout-return" role="status">
       <p>{checkoutNotice === 'success'
         ? 'You came back from checkout. This return is not payment proof. An order is confirmed only after Square verifies payment.'
@@ -638,11 +1160,34 @@ function App() {
       <button type="button" onClick={() => setCheckoutNotice('')}>Dismiss</button>
     </div>}
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
-    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
-    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView}/>}
-    {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
-    <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
+    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>} 
+    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView} accountControl={accountControl}/>} 
+    {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>} 
+    <ProductDrawer
+      product={selected}
+      onClose={() => setSelected(null)}
+      onAdd={add}
+      savedEnabled={accountFeatures.saved}
+      saved={Boolean(selected?.id && savedIds.has(selected.id))}
+      savedBusy={Boolean(selected?.id && savedBusyId === selected.id)}
+      savedAvailable={savedState.status === 'ready'}
+      authenticated={identityState.status === 'authenticated'}
+      onToggleSaved={toggleSavedPiece}
+      onLogin={() => beginIdentityLogin()}
+    />
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
+    {accountOpen && identityState.status === 'authenticated' && <MyAeroVistaDrawer
+      identityState={identityState}
+      summaryState={accountSummaryState}
+      savedState={savedState}
+      savedProducts={savedProducts}
+      savedBusyId={savedBusyId}
+      onOpenSavedProduct={openSavedProduct}
+      onRemoveSaved={removeSavedById}
+      onClose={() => setAccountOpen(false)}
+      onRefresh={refreshAccountSummary}
+      onLogout={signOut}
+    />}
   </main>
 }
 
