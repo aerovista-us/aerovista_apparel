@@ -89,7 +89,7 @@ function apiError(payload, fallback, fallbackCode, status) {
 }
 
 export async function loadSavedPieces() {
-  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/saved`, {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/account/saved`, {
     method: 'GET',
     credentials: 'include',
     headers: { Accept: 'application/json' },
@@ -102,7 +102,7 @@ export async function loadSavedPieces() {
 }
 
 export async function savePiece(productId, csrfToken) {
-  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/saved`, {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/account/saved`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -120,7 +120,7 @@ export async function savePiece(productId, csrfToken) {
 }
 
 export async function removeSavedPiece(productId, csrfToken) {
-  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/saved/remove`, {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/account/saved/remove`, {
     method: 'POST',
     credentials: 'include',
     headers: {
