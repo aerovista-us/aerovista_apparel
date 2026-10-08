@@ -420,7 +420,10 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
     <header className="studio-header">
       <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="studio-location">WOMEN'S STUDIO · NOCTURNE EDIT</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      <div className="studio-actions">
+        {accountControl}
+        <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      </div>
     </header>
     <div className="women-studio-scene">
       <div className="women-studio-image" aria-hidden="true"/><div className="women-studio-shade" aria-hidden="true"/>
@@ -691,10 +694,17 @@ function App() {
 
   async function signOut() {
     if (identityState.status !== 'authenticated') return
+    setIdentityState(current => ({ ...current, error: null }))
     try {
       await logoutIdentity(identityState.csrfToken)
-    } finally {
       setIdentityState({ status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null })
+    } catch (error) {
+      setIdentityState(current => ({
+        ...current,
+        status: 'authenticated',
+        authenticated: true,
+        error: error?.message || 'Sign out failed. Your account session is still active.',
+      }))
     }
   }
 
@@ -717,6 +727,10 @@ function App() {
   }
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
+    {identityState.status === 'authenticated' && identityState.error && <div className="identity-notice" role="alert">
+      <span>Couldn’t sign out. Your account session is still active.</span>
+      <button type="button" onClick={() => setIdentityState(current => ({ ...current, error: null }))}>Dismiss</button>
+    </div>}
     {checkoutNotice && <div className="checkout-return" role="status">
       <p>{checkoutNotice === 'success'
         ? 'You came back from checkout. This return is not payment proof. An order is confirmed only after Square verifies payment.'
