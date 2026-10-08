@@ -79,3 +79,60 @@ export async function loadAccountSummary() {
 
   return payload
 }
+
+
+function apiError(payload, fallback, fallbackCode, status) {
+  const error = new Error(payload?.error || fallback)
+  error.code = payload?.code || fallbackCode
+  error.status = status
+  return error
+}
+
+export async function loadSavedPieces() {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/saved`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw apiError(payload, 'Saved Pieces unavailable', 'saved_unavailable', response.status)
+  }
+  return payload
+}
+
+export async function savePiece(productId, csrfToken) {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/saved`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-Apparel-CSRF': String(csrfToken || ''),
+    },
+    body: JSON.stringify({ productId }),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw apiError(payload, 'Could not save this piece', 'saved_write_failed', response.status)
+  }
+  return payload
+}
+
+export async function removeSavedPiece(productId, csrfToken) {
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/saved/remove`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-Apparel-CSRF': String(csrfToken || ''),
+    },
+    body: JSON.stringify({ productId }),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw apiError(payload, 'Could not remove this piece', 'saved_remove_failed', response.status)
+  }
+  return payload
+}
