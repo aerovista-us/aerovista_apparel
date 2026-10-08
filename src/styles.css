@@ -95,3 +95,34 @@
   .account-drawer-actions{align-items:stretch;flex-direction:column}
   .account-profile-link,.account-signout-link{justify-content:center}
 }
+
+
+.save-piece-button{
+  min-height:38px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin:0 0 10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.025);
+  color:#9ca6ae;
+  font-size:8px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+.save-piece-button:hover:not(:disabled){
+  border-color:rgba(0,174,239,.35);
+  color:#e3f7ff;
+}
+.save-piece-button.is-saved{
+  border-color:rgba(0,174,239,.28);
+  background:rgba(0,174,239,.055);
+  color:#ccefff;
+}
+.save-piece-button:disabled{
+  opacity:.55;
+  cursor:wait;
+}
