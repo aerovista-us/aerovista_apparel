@@ -584,6 +584,12 @@ Regression only. No broad migration.
 
 ---
 
+## Customer account benefits roadmap
+
+Implementation plan: [APPAREL_CUSTOMER_ACCOUNT_BENEFITS_PLAN_V1.md](APPAREL_CUSTOMER_ACCOUNT_BENEFITS_PLAN_V1.md)
+
+The approved execution order is: contract reconciliation → Account shell → My Orders → Saved/Closet → Fit → Benefits → restock/support → deterministic recommendations.
+
 ## 15. Immediate next decision
 
 The live Identity/App Adapter acceptance is complete for the flagship baseline:
