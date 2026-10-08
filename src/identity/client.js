@@ -119,16 +119,15 @@ export async function savePiece(productId, csrfToken) {
   return payload
 }
 
-export async function removeSavedPiece(productId, csrfToken) {
-  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/account/saved/remove`, {
-    method: 'POST',
+export async function removeSavedPiece(savedId, csrfToken) {
+  const id = encodeURIComponent(String(savedId || '').trim())
+  const response = await fetch(`${APPAREL_AUTH_ORIGIN}/api/account/saved/${id}`, {
+    method: 'DELETE',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
       'X-Apparel-CSRF': String(csrfToken || ''),
     },
-    body: JSON.stringify({ productId }),
   })
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
