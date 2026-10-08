@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X, UserRound, LogOut
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
@@ -9,6 +9,7 @@ import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import { identityStanding } from './commerce/identity'
 import { fulfillmentNote } from './commerce/fulfillment'
+import { beginIdentityLogin, beginIdentityRegistration, loadIdentitySession, logoutIdentity } from './identity/client'
 import './styles.css'
 import './product-gallery.css'
 import './illusion-polish.css'
@@ -289,6 +290,34 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
   )
 }
 
+
+function accountLabel(identity) {
+  return identity?.profile?.displayName
+    || identity?.displayName
+    || identity?.name
+    || 'Account'
+}
+
+function AccountControl({ state, onLogin, onRegister, onLogout }) {
+  if (state.status === 'authenticated') {
+    return <div className="account-control is-authenticated">
+      <a className="account-button" href="https://account.aerocoreos.com/" aria-label="Open AeroVista Account">
+        <UserRound size={16}/><span>{accountLabel(state.identity)}</span>
+      </a>
+      <button className="account-icon-button" type="button" onClick={onLogout} aria-label="Sign out of AeroVista Account" title="Sign out">
+        <LogOut size={15}/>
+      </button>
+    </div>
+  }
+
+  return <div className="account-control" data-status={state.status}>
+    <button className="account-button" type="button" onClick={onLogin}>
+      <UserRound size={16}/><span>{state.status === 'loading' ? 'Account' : 'Sign in'}</span>
+    </button>
+    {state.status !== 'loading' && <button className="account-create-button" type="button" onClick={onRegister}>Create</button>}
+  </div>
+}
+
 function CollectionNav({ products, collection, onCollection, mobile = false }) {
   const collections = ['All', ...Array.from(new Set(products.map(product => product.collection)))]
   return <nav className={mobile ? 'mobile-collection-nav' : ''} aria-label="Collections">
@@ -296,11 +325,12 @@ function CollectionNav({ products, collection, onCollection, mobile = false }) {
   </nav>
 }
 
-function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollection }) {
+function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollection, accountControl }) {
   return <header className="store-header">
     <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
     <CollectionNav products={products} collection={collection} onCollection={onCollection}/>
     <div className="header-actions">
+      {accountControl}
       <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
     </div>
   </header>
@@ -313,7 +343,7 @@ const galleryDestinations = [
   { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and sticker editions on the center table.', status: 'ON VIEW', live: true },
 ]
 
-function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag }) {
+function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag, accountControl }) {
   const openDestination = id => {
     if (id === 'womens') return onOpenWomens()
     if (id === 'place') return onOpenPlace()
@@ -324,7 +354,7 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects
     <header className="foyer-header">
       <button className="wordmark" onClick={onOutside} aria-label="Return outside"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="foyer-location">ENTRY GALLERY</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      <div className="foyer-actions">{accountControl}<button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button></div>
     </header>
     <div className="foyer-stage">
       <div className="foyer-image" aria-hidden="true"/>
@@ -377,7 +407,7 @@ function WomenStudioPiece({ display, product, onOpen }) {
   </button>
 }
 
-function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBag }) {
+function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBag, accountControl }) {
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
   const featureProduct = productMap.get('aerovista-apex-pattern-print-swimsuit-one-piece')
   const roomMessage = catalogState.status === 'loading'
@@ -390,7 +420,10 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
     <header className="studio-header">
       <button className="wordmark" onClick={onExit} aria-label="Return to the entry gallery"><span className="apex">/\\</span> AEROVISTA</button>
       <span className="studio-location">WOMEN'S STUDIO · NOCTURNE EDIT</span>
-      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      <div className="studio-actions">
+        {accountControl}
+        <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? 'item' : 'items'}`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+      </div>
     </header>
     <div className="women-studio-scene">
       <div className="women-studio-image" aria-hidden="true"/><div className="women-studio-shade" aria-hidden="true"/>
@@ -462,7 +495,7 @@ function ViewNav({ view, onView }) {
   return <nav className="view-nav" aria-label="Look around the store">{spaceViews.map(space => <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}><i aria-hidden="true"/><span>{space.label}</span></button>)}</nav>
 }
 
-function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView }) {
+function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView, accountControl }) {
   const [collection, setCollection] = useState('All')
   const compact = useCompactStore()
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
@@ -477,7 +510,7 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, 
         : `${visibleProducts.length} highlighted · ${products.length} pieces remain in the room`
 
   return <section className="interior space-arrive" data-catalog-status={catalogState.status}>
-    <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection}/>
+    <StoreHeader products={products} bagCount={bagCount} onBag={onBag} onExit={onExit} collection={collection} onCollection={setCollection} accountControl={accountControl}/>
     <div className={`interior-scene view-${view}`}>
       <div className="interior-image"/><div className="room-shade"/>
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
@@ -514,7 +547,9 @@ function App() {
   const [checkoutNotice, setCheckoutNotice] = useState(initialRoute.checkout)
   const [pendingProduct, setPendingProduct] = useState(initialRoute.product)
   const [routeReady, setRouteReady] = useState(false)
+  const [identityState, setIdentityState] = useState({ status: 'loading', authenticated: false, identity: null, csrfToken: null, error: null })
   const commercePromiseRef = useRef(null)
+  const logoutPromiseRef = useRef(null)
 
   function warmCommerce() {
     if (catalogState.status === 'ready') return Promise.resolve(catalogState)
@@ -540,6 +575,45 @@ function App() {
     commercePromiseRef.current = promise
     return promise
   }
+
+
+  useEffect(() => {
+    let active = true
+    loadIdentitySession()
+      .then(session => {
+        if (!active) return
+        if (session?.authenticated) {
+          setIdentityState({
+            status: 'authenticated',
+            authenticated: true,
+            identity: session.identity || null,
+            csrfToken: session.csrfToken || null,
+            error: null,
+          })
+        } else {
+          setIdentityState({ status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null })
+        }
+      })
+      .catch(error => {
+        if (!active) return
+        setIdentityState({
+          status: 'unavailable',
+          authenticated: false,
+          identity: null,
+          csrfToken: null,
+          error: error?.message || 'Account service unavailable',
+        })
+      })
+      .finally(() => {
+        if (!active) return
+        const url = new URL(window.location.href)
+        if (url.searchParams.has('auth')) {
+          url.searchParams.delete('auth')
+          window.history.replaceState(window.history.state, '', url)
+        }
+      })
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     if (initialRoute.space !== 'outside') warmCommerce()
@@ -618,6 +692,46 @@ function App() {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
     setSelected(null); setCheckoutError(''); setBagOpen(true)
   }
+
+  async function signOut() {
+    if (identityState.status !== 'authenticated') return
+    if (logoutPromiseRef.current) return logoutPromiseRef.current
+
+    const csrfToken = identityState.csrfToken
+    setIdentityState(current => ({ ...current, error: null }))
+
+    const request = (async () => {
+      try {
+        await logoutIdentity(csrfToken)
+        setIdentityState(current => (
+          current.csrfToken === csrfToken
+            ? { status: 'anonymous', authenticated: false, identity: null, csrfToken: null, error: null }
+            : current
+        ))
+      } catch (error) {
+        setIdentityState(current => {
+          if (current.status !== 'authenticated' || current.csrfToken !== csrfToken) return current
+          return {
+            ...current,
+            error: error?.message || 'Sign out failed. Your account session is still active.',
+          }
+        })
+      } finally {
+        logoutPromiseRef.current = null
+      }
+    })()
+
+    logoutPromiseRef.current = request
+    return request
+  }
+
+  const accountControl = <AccountControl
+    state={identityState}
+    onLogin={() => beginIdentityLogin()}
+    onRegister={() => beginIdentityRegistration()}
+    onLogout={signOut}
+  />
+
   async function checkout() {
     setCheckoutBusy(true); setCheckoutError('')
     try {
@@ -630,6 +744,10 @@ function App() {
   }
 
   return <main className="app" data-commerce={catalogState.status} data-commerce-mode={commerceConfig.mode}>
+    {identityState.status === 'authenticated' && identityState.error && <div className="identity-notice" role="alert">
+      <span>Couldn’t sign out. Your account session is still active.</span>
+      <button type="button" onClick={() => setIdentityState(current => ({ ...current, error: null }))}>Dismiss</button>
+    </div>}
     {checkoutNotice && <div className="checkout-return" role="status">
       <p>{checkoutNotice === 'success'
         ? 'You came back from checkout. This return is not payment proof. An order is confirmed only after Square verifies payment.'
@@ -638,9 +756,9 @@ function App() {
       <button type="button" onClick={() => setCheckoutNotice('')}>Dismiss</button>
     </div>}
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
-    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
-    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView}/>}
-    {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
+    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>} 
+    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView} accountControl={accountControl}/>} 
+    {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>} 
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
   </main>
