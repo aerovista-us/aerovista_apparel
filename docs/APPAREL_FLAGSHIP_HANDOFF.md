@@ -450,14 +450,14 @@ Apparel is not called Identity-integrated until all rows have production evidenc
 
 | Gate | Required result | State |
 | --- | --- | --- |
-| Account login start | redirects to central Account with correct app id/state/return | open |
+| Account login start | redirects to central Account with correct app id/state/return | **accepted live** |
 | Account registration start | same handoff contract | open |
 | Callback state validation | invalid/replayed state rejected | open |
-| Handoff exchange | one-time code exchanged server-side only | open |
-| Secure local session | HttpOnly + Secure; no raw native token in JS/localStorage | open |
-| `identity.describe()` | canonical identity descriptor returned | open |
-| `identity.can()` | live `aerovista.member` decision enforced server-side | pending human-login proof |
-| Protected content | payload withheld on deny | open |
+| Handoff exchange | one-time code exchanged server-side only | **accepted live** |
+| Secure local session | HttpOnly + Secure; no raw native token in JS/localStorage | **accepted live** |
+| `identity.describe()` | canonical identity descriptor returned | **accepted live** |
+| `identity.can()` | live `aerovista.member` decision enforced server-side | **accepted live** |
+| Protected content | payload withheld on deny | unauthenticated deny accepted; authenticated allow accepted |
 | Missing capability | 403/fail closed | open |
 | Invalid/expired identity | deny | open |
 | Handoff replay | deny | open |
@@ -586,17 +586,18 @@ Regression only. No broad migration.
 
 ## 15. Immediate next decision
 
-Run the first real human Account handoff against the live public bridge:
+The live human login, `identity.describe()`, and `identity.can(aerovista.member)` gates are accepted.
 
-1. open `https://apparel-auth.aerovista.us/login?return_to=https%3A%2F%2Fapparel.aerovista.us%2F`;
-2. authenticate through central Account;
-3. after returning to Apparel, open `https://apparel-auth.aerovista.us/api/session`;
-4. confirm `authenticated: true` without exposing the full identity payload;
-5. open `https://apparel-auth.aerovista.us/api/protected/account`;
-6. confirm HTTP 200 / `allowed: true`, proving live `identity.describe()` + `identity.can(aerovista.member)`;
-7. then prove logout/revoke and replay/stale-session failure behavior.
+Next:
 
-The storefront Account UI PR #5 is held until Vercel can accept another production deployment.
+1. prove browser logout clears the relying-app cookie even if remote revoke is slow;
+2. observe the native session revoke request at Identity Gateway;
+3. prove a replayed/consumed handoff transaction is rejected;
+4. prove stale/predecessor session behavior fails closed and is not silently rebound to a replacement session;
+5. update this handoff and Notion with the final Identity acceptance matrix;
+6. release the held storefront Account UI PR #5 when Vercel can accept another production deployment.
+
+The storefront Account UI PR #5 remains held only by the Vercel daily deployment quota, not by Identity backend readiness. The backend identity chain is already accepted independently of that UI release.
 
 ## 16. Running change log
 
@@ -618,6 +619,17 @@ The storefront Account UI PR #5 is held until Vercel can accept another producti
 - identified App Adapter v0.4.0 as the required existing integration seam;
 - set Identity/App Adapter proof as the active phase.
 
+### 2026-10-07 — Live human Account handoff accepted
+
+- completed a real central Account sign-in through `apparel-auth.aerovista.us`;
+- live `/api/session` returned `authenticated: true` with the canonical identity descriptor;
+- live protected account route returned `allowed: true` using `authorization: identity.can`;
+- baseline capability is the governed `aerovista.member` grant;
+- this proves the production chain Account -> one-time handoff -> secure Apparel session -> App Adapter -> Identity Gateway -> `identity.describe()` -> `identity.can()`;
+- no new role, user database, or browser-side authorization authority was introduced;
+- remaining identity gates are logout/revoke, handoff replay, stale predecessor/replacement handling, invalid/expired session, and gateway-unavailable fail-closed behavior;
+- do not use the live founder identity as a destructive QA fixture for revoke/suspend testing.
+
 ### 2026-10-07 — Apparel auth runtime locally accepted
 
 - provisioned `IDGW_SERVICE_SECRET_APPAREL` on Gateway + Apparel bridge without exposing the value;
@@ -636,6 +648,15 @@ The storefront Account UI PR #5 is held until Vercel can accept another producti
 - storefront Account UI remains in Apparel PR #5 at head `789f267...`; production build passes locally;
 - Vercel rejected the refreshed PR preview because the project exceeded 100 deployments/day on the free tier, so production UI promotion is temporarily rate-limited;
 - Codex review quota is exhausted for a fresh review of PR #5, but its application code was previously reviewed clean at `cd8d287...`; the only later change was merging current handoff documentation.
+
+### 2026-10-07 — live human Account handoff accepted
+
+- completed a real central Account sign-in through `https://apparel-auth.aerovista.us/login`;
+- returned through the public Apparel auth callback successfully;
+- `GET /api/session` in the same browser returned `authenticated: true`, proving the live relying-app session and `identity.describe()` path;
+- `GET /api/protected/account` returned `allowed: true`, proving live server-side `identity.can(aerovista.member)`;
+- anonymous protected access had already been proven to return 401 fail-closed;
+- next acceptance gates are logout/local cookie termination, native revoke observation, replay rejection, and stale/predecessor-session behavior.
 
 ### 2026-10-07 — Identity/App Adapter source accepted
 
