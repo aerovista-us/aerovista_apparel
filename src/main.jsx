@@ -365,7 +365,18 @@ function accountSectionEnabled(key) {
   return false
 }
 
-function MyAeroVistaDrawer({ identityState, summaryState, onClose, onRefresh, onLogout }) {
+function MyAeroVistaDrawer({
+  identityState,
+  summaryState,
+  savedState,
+  savedProducts,
+  savedBusyId,
+  onOpenSavedProduct,
+  onRemoveSaved,
+  onClose,
+  onRefresh,
+  onLogout,
+}) {
   const summary = summaryState.data
   const displayName = summary?.identity?.displayName || accountLabel(identityState.identity)
   const summaryReady = summaryState.status === 'ready'
@@ -405,6 +416,32 @@ function MyAeroVistaDrawer({ identityState, summaryState, onClose, onRefresh, on
             </section>
           })}
         </div>
+
+        {accountFeatures.saved && <section className="account-saved-preview" aria-label="Saved Pieces">
+          <div className="account-saved-preview-head">
+            <div><Heart size={15}/><b>Saved Pieces</b></div>
+            <span>{savedState.status === 'ready' ? `${savedState.items.length} / 500` : savedState.status === 'loading' ? 'Loading' : 'Unavailable'}</span>
+          </div>
+
+          {savedState.status === 'error' && <p className="account-saved-empty">{savedState.error || 'Saved Pieces are temporarily unavailable.'}</p>}
+          {savedState.status === 'ready' && savedProducts.length === 0 && <p className="account-saved-empty">Save pieces from the showroom and they’ll collect here.</p>}
+          {savedState.status === 'ready' && savedProducts.length > 0 && <div className="account-saved-list">
+            {savedProducts.slice(0, 8).map(({ item, product }) => <div className="account-saved-row" key={item.productId}>
+              <button type="button" className="account-saved-open" onClick={() => product && onOpenSavedProduct(product)} disabled={!product}>
+                <span>{product?.name || item.productId}</span>
+                <small>{product?.collection || 'Saved piece'}</small>
+              </button>
+              <button
+                type="button"
+                className="account-saved-remove"
+                aria-label={`Remove ${product?.name || item.productId} from Saved Pieces`}
+                disabled={savedBusyId === item.productId}
+                onClick={() => onRemoveSaved(item.productId)}
+              ><X size={14}/></button>
+            </div>)}
+            {savedProducts.length > 8 && <div className="account-saved-more">+{savedProducts.length - 8} more saved pieces</div>}
+          </div>}
+        </section>}
 
         <div className="account-drawer-actions">
           <a href="https://account.aerocoreos.com/" className="account-profile-link">
@@ -659,6 +696,14 @@ function App() {
     () => new Set(savedState.items.map(item => item.productId)),
     [savedState.items],
   )
+  const productById = useMemo(
+    () => new Map([...showroomProducts, ...womenStudioProducts].map(product => [product.id, product])),
+    [showroomProducts, womenStudioProducts],
+  )
+  const savedProducts = useMemo(
+    () => savedState.items.map(item => ({ item, product: productById.get(item.productId) || null })),
+    [savedState.items, productById],
+  )
   const commercePromiseRef = useRef(null)
   const logoutPromiseRef = useRef(null)
 
@@ -878,6 +923,34 @@ function App() {
     }
   }
 
+  async function removeSavedById(productId) {
+    if (!accountFeatures.saved || identityState.status !== 'authenticated' || savedBusyId) return
+    setSavedBusyId(productId)
+    setSavedState(current => ({ ...current, error: null }))
+    try {
+      await removeSavedPiece(productId, identityState.csrfToken)
+      setSavedState(current => ({
+        status: 'ready',
+        items: current.items.filter(item => item.productId !== productId),
+        error: null,
+      }))
+    } catch (error) {
+      setSavedState(current => ({
+        ...current,
+        status: 'error',
+        error: error?.message || 'Saved Pieces unavailable',
+      }))
+    } finally {
+      setSavedBusyId('')
+    }
+  }
+
+  function openSavedProduct(product) {
+    if (!product) return
+    setAccountOpen(false)
+    setSelected(product)
+  }
+
   async function refreshAccountSummary() {
     if (identityState.status !== 'authenticated') return
     setAccountSummaryState(current => ({ ...current, status: 'loading', error: null }))
@@ -990,6 +1063,11 @@ function App() {
     {accountOpen && identityState.status === 'authenticated' && <MyAeroVistaDrawer
       identityState={identityState}
       summaryState={accountSummaryState}
+      savedState={savedState}
+      savedProducts={savedProducts}
+      savedBusyId={savedBusyId}
+      onOpenSavedProduct={openSavedProduct}
+      onRemoveSaved={removeSavedById}
       onClose={() => setAccountOpen(false)}
       onRefresh={refreshAccountSummary}
       onLogout={signOut}
