@@ -87,7 +87,12 @@ The handoff is a coordination SOT, not a replacement for the owning authority.
 - Identity Gateway runtime is live on ACOS commit `53a12be17513759b3dc90d32de1d8b690921dae2`; guarded deploy passed 9 files / 64 tests, local/public health, unauthenticated broker rejection, and AVCC connectivity.
 - Pre-Apparel Gateway rollback commit: `d1689f472229fe06524b606d217d81202f07675b`
 - New relying-app service source: `services/apparel-auth`, target `https://apparel-auth.aerovista.us`, local port 3150.
-- `apparel-auth` runtime is **not deployed yet** because `IDGW_SERVICE_SECRET_APPAREL` still requires local root provisioning.
+- `apparel-auth` is now running locally on **127.0.0.1:3160** from merged ACOS source `b42df9c196277ba33b1b081f18b7dfdd4840c64a`.
+- `IDGW_SERVICE_SECRET_APPAREL` was provisioned on both sides and Identity Gateway was guarded-reloaded at `53a12be17513759b3dc90d32de1d8b690921dae2`.
+- Local health returns `{"ok":true,"service":"apparel-auth","version":"0.1.0"}`.
+- Broker-auth acceptance passed through the bridge's own callback path: valid transaction state + intentionally invalid handoff code returned `404 code_not_found`, proving the Apparel HMAC was accepted before the code lookup failed closed.
+- Cloudflare ingress is live and validated for `apparel-auth.aerovista.us -> http://127.0.0.1:3160`; cloudflared restarted active.
+- **Public DNS is the remaining ingress blocker.** The intended `apparel-auth.aerovista.us` record does not yet exist in the `aerovista.us` zone.
 
 **Important:** the standalone Identity Gateway `STATUS.md` is older than the October ACOS Identity runtime ledger. Prefer newer accepted runtime/source evidence when they disagree.
 
@@ -538,13 +543,16 @@ Never print, commit, or place in browser code:
    - App Adapter v0.4.0 consumed server-side;
    - browser UI prepared separately in held Apparel PR #5;
    - secure native session remains server/HttpOnly only.
-3. **Platform registration — PARTIAL LIVE**
+3. **Platform registration — LIVE EXCEPT DNS**
    - relying app/origin registered;
    - broker allowlist deployed live;
-   - dedicated shared secret source wiring complete;
-   - **runtime secret value still pending one local root installer command**;
-   - auth bridge runtime/ingress still pending.
-4. **First live identity proof — NEXT AFTER SECRET/DEPLOY**
+   - dedicated shared secret provisioned on Gateway + Apparel bridge;
+   - Identity Gateway reloaded successfully and passed guarded acceptance;
+   - `apparel-auth` live locally on 127.0.0.1:3160;
+   - bridge HMAC admission proven through controlled invalid-handoff test;
+   - Cloudflare ingress active;
+   - **public `aerovista.us` DNS record still required**.
+4. **First live identity proof — NEXT AFTER DNS**
    - Account login;
    - callback/handoff;
    - `identity.describe()`;
@@ -581,23 +589,37 @@ Regression only. No broad migration.
 
 ## 15. Immediate next decision
 
-The one current manual boundary is secret generation/install because Remote Desktop safety refuses credential creation/mutation.
+The remaining ingress boundary is DNS.
 
-On NXCore, run exactly:
+Cloudflare tunnel ingress is already active:
 
-```bash
-sudo /srv/ACOS/recovery/install-apparel-auth-secret-20261007.sh
+```text
+apparel-auth.aerovista.us -> http://127.0.0.1:3160
 ```
 
-The installer generates the secret locally, never prints it, backs up `identity-gateway.env`, writes the same value to Gateway and `apparel-auth.env`, and enforces `0640 root:glyph`.
+Create this record in the **aerovista.us** Cloudflare DNS zone:
 
-After that:
+```text
+Type: CNAME
+Name: apparel-auth
+Target: 5211ded8-f95c-44a6-8362-afbbf5ada0fc.cfargotunnel.com
+Proxy: Proxied
+```
 
-1. restart/redeploy Identity Gateway at `53a12be...` so the newly provisioned environment enters the container;
-2. run `/srv/ACOS/recovery/deploy-apparel-auth-20261007.sh 53a12be17513759b3dc90d32de1d8b690921dae2`;
-3. add Cloudflare Tunnel ingress/DNS for `apparel-auth.aerovista.us -> http://127.0.0.1:3150`;
-4. run machine acceptance;
-5. merge/release held Apparel PR #5 only after the bridge is healthy.
+Then remove the accidental record created in the wrong zone if present:
+
+```text
+apparel-auth.aerovista.us.aerocoreos.com
+```
+
+After correct DNS resolves:
+
+1. prove public `/health`, exact-origin CORS, and anonymous session behavior;
+2. run interactive Account login -> callback -> `identity.describe()`;
+3. register the first explicit Apparel capability definition before any allow-case grant test;
+4. prove capability deny/allow and protected payload withholding;
+5. prove logout/revoke/replay/stale-session failure behavior;
+6. merge/release held Apparel PR #5 only after the public bridge is accepted.
 
 ---
 
@@ -620,6 +642,22 @@ After that:
 - created this living handoff;
 - identified App Adapter v0.4.0 as the required existing integration seam;
 - set Identity/App Adapter proof as the active phase.
+
+### 2026-10-07 — Apparel auth runtime locally accepted
+
+- provisioned `IDGW_SERVICE_SECRET_APPAREL` on Gateway + Apparel bridge without exposing the value;
+- guarded-reloaded Identity Gateway `53a12be...`; local/public health, unauthenticated broker rejection, and AVCC connectivity all passed;
+- corrected an NXCore port collision: host 3150 was already serving mag-auth, so Apparel auth was moved to host **3160** while keeping container port 3150;
+- merged the non-secret port correction as ACOS PR #103 / `b42df9c196277ba33b1b081f18b7dfdd4840c64a`;
+- deployed `apparel-auth` locally on 127.0.0.1:3160;
+- local health identifies `service=apparel-auth`;
+- exact Apparel CORS + credentialed anonymous session passes;
+- protected route denies unauthenticated access with 401;
+- foreign-origin logout denies with 403;
+- valid login-state + fake handoff code returns `404 code_not_found`, proving HMAC broker admission;
+- activated and validated Cloudflare ingress for `apparel-auth.aerovista.us -> 127.0.0.1:3160`;
+- public DNS remains the only ingress blocker;
+- a mistaken helper invocation created `apparel-auth.aerovista.us.aerocoreos.com` in the wrong zone; remove it during DNS cleanup.
 
 ### 2026-10-07 — Identity/App Adapter source accepted
 
