@@ -84,6 +84,15 @@ html.interior-displays-ready .interior-image:after{
   background-image:url('./store/window-sets/inside-right.png');
   opacity:.88;
 }
+.view-place .interior-image:before,
+.view-place .interior-image:after,
+.view-more .interior-image:before,
+.view-more .interior-image:after,
+.view-objects .interior-image:before,
+.view-objects .interior-image:after{
+  opacity:0!important;
+  background-image:none!important;
+}
 
 @media (max-width:760px){
   .exterior .exterior-image{transform:translate(-50%,-50%) scale(1.04)!important}

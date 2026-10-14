@@ -20,7 +20,7 @@
   filter:drop-shadow(0 13px 10px rgba(0,0,0,.72));transition:filter .22s,transform .22s,opacity .22s
 }
 .studio-piece .product-image.stage{width:100%;height:100%}
-.studio-piece .product-image.stage img{object-fit:contain;filter:drop-shadow(0 9px 7px rgba(0,0,0,.68))}
+.studio-piece .product-image.stage img{object-fit:contain;transform:scale(var(--piece-scale, 1));transform-origin:center 22%;filter:drop-shadow(0 9px 7px rgba(0,0,0,.68))}
 .studio-piece:hover,.studio-piece:focus-visible{z-index:9;transform:translateY(-2.5%);filter:drop-shadow(0 16px 13px rgba(0,0,0,.82)) drop-shadow(0 0 11px rgba(190,165,204,.22));outline:1px solid rgba(203,180,213,.42);outline-offset:4px}
 .studio-left-near{left:6.2%;top:22%;width:13.5%;height:48%}
 .studio-left-mid{left:19.8%;top:26%;width:9.2%;height:40%}

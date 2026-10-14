@@ -71,6 +71,7 @@
 }
 .fixture-hat-shelf .shelf.a{top:49%;height:3px}
 .fixture-hat-shelf .shelf.b{display:none}
+.fixture-shoe-shelf .merch-shoe:after,
 .fixture-hat-shelf .merch-cap:after{
   content:"";
   position:absolute;
@@ -104,37 +105,53 @@
   box-shadow:0 12px 18px rgba(0,0,0,.64),inset 0 1px rgba(255,255,255,.12);
 }
 .fixture-table-stack .table-base{top:50%;background:linear-gradient(90deg,rgba(10,13,16,.7),rgba(35,40,44,.72),rgba(10,13,16,.7))}
-.fixture-table-stack .merch-deck:after{
-  content:"";
-  position:absolute;
-  left:12%;
-  right:12%;
-  bottom:-2%;
-  height:7%;
-  border-radius:50%;
-  background:rgba(0,0,0,.72);
-  filter:blur(2px);
+.fixture-table-stack .merch-deck .merch-object,
+.fixture-table-stack .merch-cooler .merch-object{
+  transform-style:preserve-3d;
 }
-.fixture-table-stack .merch-deck .product-image.stage img{
-  padding:3px;
-  mix-blend-mode:screen;
-  filter:brightness(2.6) contrast(.88) drop-shadow(0 7px 7px rgba(0,0,0,.72));
+.fixture-table-stack .merch-deck .merch-object{
+  transform:perspective(720px) rotateX(22deg);
+  transform-origin:center bottom;
 }
 .fixture-table-stack .merch-deck .product-image.stage{
-  overflow:hidden;
-  border:1px solid rgba(180,189,196,.48);
-  border-radius:2px;
-  background:linear-gradient(145deg,#434b51,#171c20 62%,#090c0f);
-  box-shadow:inset 0 1px rgba(255,255,255,.12),0 7px 13px rgba(0,0,0,.68);
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+.fixture-table-stack .merch-deck .product-image.stage img{
+  padding:0;
+  mix-blend-mode:normal;
+  object-position:50% 78%;
+  filter:
+    drop-shadow(0 2px 0 #efeae2)
+    drop-shadow(0 4px 0 #c8c2b6)
+    drop-shadow(0 8px 5px rgba(0,0,0,.5));
+}
+.fixture-table-stack .merch-cooler .merch-object{
+  transform:perspective(760px) rotateX(10deg);
+  transform-origin:center bottom;
+}
+.fixture-table-stack .merch-cooler:after{
+  content:"";
+  position:absolute;
+  left:16%;
+  right:16%;
+  bottom:1%;
+  height:8%;
+  border-radius:50%;
+  background:rgba(0,0,0,.55);
+  filter:blur(2px);
+  transform:rotateX(68deg);
 }
 @media (min-width:901px){
   .fixture-table-stack .merch-deck{
-    width:3.8cqw!important;
-    height:9.8cqh!important;
+    width:5.2cqw!important;
+    height:6.2cqh!important;
   }
   .fixture-table-stack .merch-cooler{
-    width:4.4cqw!important;
-    height:9.8cqh!important;
+    width:3.6cqw!important;
+    height:8.4cqh!important;
   }
   .fixture-table-stack .merch-sticker{
     width:4.2cqw!important;

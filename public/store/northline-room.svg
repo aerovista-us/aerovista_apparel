@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-label="NorthLine night gallery">
+  <defs>
+    <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#050910"/><stop offset="1" stop-color="#102033"/></linearGradient>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#16324a"/><stop offset=".45" stop-color="#0c1c2c"/><stop offset="1" stop-color="#071018"/></linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#07111c"/><stop offset=".55" stop-color="#163044"/><stop offset="1" stop-color="#2a4d68"/></linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#05080c"/><stop offset=".62" stop-color="#0c141c"/><stop offset="1" stop-color="#141c26"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1a3344"/><stop offset=".28" stop-color="#101c28"/><stop offset="1" stop-color="#070b10"/></linearGradient>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1d4e73"/><stop offset=".42" stop-color="#0e2438"/><stop offset="1" stop-color="#071018"/></linearGradient>
+    <radialGradient id="warm" cx="18%" cy="28%" r="62%"><stop stop-color="#9ec8ea" stop-opacity=".22"/><stop offset=".5" stop-color="#3d6f96" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <radialGradient id="pool" cx="50%" cy="50%" r="50%"><stop stop-color="#b9daf2" stop-opacity=".2"/><stop offset="1" stop-color="#b9daf2" stop-opacity="0"/></radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1a4664" stop-opacity=".55"/><stop offset=".5" stop-color="#0c2030" stop-opacity=".2"/><stop offset="1" stop-color="#8fb4cc" stop-opacity=".08"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="21" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .04"/></feComponentTransfer></filter>
+    <clipPath id="bayL"><polygon points="92,317 449,305 449,505 92,642"/></clipPath>
+    <clipPath id="backMural"><rect x="560" y="188" width="552" height="385"/></clipPath>
+  </defs>
+
+  <rect width="1672" height="941" fill="#050910"/>
+  <polygon points="0,0 515,145 1157,145 1672,0" fill="url(#ceiling)"/>
+  <polygon points="0,0 515,145 515,610 0,941" fill="url(#wallL)"/>
+  <polygon points="1672,0 1157,145 1157,610 1672,941" fill="url(#wallR)"/>
+  <rect x="515" y="145" width="642" height="465" fill="url(#back)"/>
+  <polygon points="0,941 515,610 1157,610 1672,941" fill="url(#floor)"/>
+  <rect width="1672" height="941" fill="url(#warm)"/>
+
+  <g fill="none" stroke="#1c3348" stroke-width="2" opacity=".9">
+    <path d="M242 42 L566 169 H1106 L1430 42"/>
+    <path d="M394 14 L620 128 H1052 L1278 14"/>
+    <path d="M570 0 L677 90 H995 L1102 0"/>
+  </g>
+  <g stroke="#7f9cb4" stroke-width="3" opacity=".42">
+    <line x1="548" y1="104" x2="1124" y2="104"/>
+    <line x1="603" y1="71" x2="1069" y2="71"/>
+  </g>
+  <g fill="#d5e8f6" opacity=".8" filter="url(#glow)">
+    <circle cx="635" cy="104" r="3.2"/><circle cx="735" cy="104" r="3.2"/><circle cx="836" cy="104" r="3.2"/><circle cx="937" cy="104" r="3.2"/><circle cx="1037" cy="104" r="3.2"/>
+  </g>
+
+  <g stroke="#24384a" stroke-width="2" opacity=".8">
+    <line x1="88" y1="98" x2="88" y2="884"/><line x1="207" y1="126" x2="207" y2="807"/><line x1="328" y1="158" x2="328" y2="730"/><line x1="446" y1="193" x2="446" y2="651"/>
+    <line x1="1584" y1="98" x2="1584" y2="884"/><line x1="1465" y1="126" x2="1465" y2="807"/><line x1="1344" y1="158" x2="1344" y2="730"/><line x1="1226" y1="193" x2="1226" y2="651"/>
+  </g>
+
+  <g opacity=".94">
+    <polygon points="72,283 468,284 468,518 72,685" fill="#0a1826" stroke="#3d627c" stroke-width="2"/>
+    <polygon points="1204,284 1600,283 1600,685 1204,518" fill="#0a1016" stroke="#24303a" stroke-width="2"/>
+    <polygon points="92,317 449,305 449,505 92,642" fill="url(#glass)"/>
+    <polygon points="1223,305 1580,317 1580,642 1223,505" fill="#101820" opacity=".35"/>
+  </g>
+
+  <g clip-path="url(#bayL)">
+    <rect x="70" y="280" width="420" height="380" fill="url(#night)"/>
+    <circle cx="360" cy="360" r="28" fill="#f4f7fb" opacity=".92"/>
+    <circle cx="360" cy="360" r="46" fill="#d5e6f4" opacity=".16"/>
+    <g fill="#fff" opacity=".55">
+      <circle cx="140" cy="348" r="1.2"/><circle cx="188" cy="372" r="1"/><circle cx="230" cy="340" r="1.3"/><circle cx="280" cy="386" r=".9"/><circle cx="410" cy="356" r="1.1"/>
+    </g>
+    <path d="M80 470 L150 430 L210 452 L280 400 L340 438 L430 392 L470 430 V660 H80Z" fill="#071018"/>
+    <path d="M80 500 L170 468 L250 492 L330 450 L470 488 V660 H80Z" fill="#0c2434" opacity=".85"/>
+    <path d="M90 548 H430" stroke="#2f8fd0" stroke-width="2" opacity=".55"/>
+  </g>
+  <g clip-path="url(#backMural)">
+    <rect x="560" y="188" width="552" height="385" fill="url(#night)"/>
+    <circle cx="980" cy="292" r="36" fill="#f7f4ee" opacity=".9"/>
+    <path d="M560 430 L680 360 L790 410 L930 330 L1080 400 L1112 372 V573 H560Z" fill="#08131c"/>
+    <path d="M560 470 L760 430 L940 468 L1112 420 V573 H560Z" fill="#102433"/>
+    <path d="M600 500 H1040" stroke="#3aa0dc" stroke-width="2" opacity=".45"/>
+  </g>
+  <text x="836" y="250" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="13" letter-spacing="8" fill="#d5e4f0">NORTHLINE</text>
+
+  <g stroke="#9eb4c6" stroke-width="3" opacity=".7">
+    <line x1="116" y1="341" x2="436" y2="322"/><line x1="1236" y1="322" x2="1556" y2="341"/>
+    <line x1="132" y1="582" x2="432" y2="478"/><line x1="1240" y1="478" x2="1540" y2="582"/>
+  </g>
+
+  <g stroke="#2a3c4a" stroke-width="2" opacity=".65">
+    <line x1="836" y1="610" x2="836" y2="941"/>
+    <line x1="724" y1="610" x2="595" y2="941"/><line x1="948" y1="610" x2="1077" y2="941"/>
+    <line x1="612" y1="610" x2="354" y2="941"/><line x1="1060" y1="610" x2="1318" y2="941"/>
+    <line x1="515" y1="668" x2="1157" y2="668"/><line x1="424" y1="744" x2="1248" y2="744"/><line x1="309" y1="839" x2="1363" y2="839"/>
+  </g>
+  <path d="M220 610 L150 941 H290 L250 610Z" fill="#7eb6dc" opacity=".05"/>
+
+  <ellipse cx="280" cy="690" rx="280" ry="130" fill="url(#pool)" transform="rotate(-7 280 690)"/>
+  <ellipse cx="836" cy="700" rx="180" ry="60" fill="#9ec8ea" opacity=".05"/>
+
+  <g fill="#0c141c" stroke="#3a4c5c" stroke-width="2">
+    <polygon points="696,640 976,640 1042,704 630,704"/>
+    <polygon points="650,704 1022,704 995,812 677,812"/>
+  </g>
+  <path d="M113 274 L360 318 L222 610" fill="#d7ebf8" opacity=".04"/>
+  <rect width="1672" height="941" filter="url(#grain)" opacity=".55"/>
+</svg>

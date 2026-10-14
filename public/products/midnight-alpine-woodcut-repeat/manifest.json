@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "productId": "midnight-alpine-woodcut-repeat",
+  "productName": "Midnight Alpine Woodcut Repeat",
+  "hero": "/products/midnight-alpine-woodcut-repeat/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-front-6ac8362c7bda1.png",
+      "sourceSha256": "4df120cd6041425f88ab6fa0c58c7aec120b8f271c224cbdd588d3562db2aefe",
+      "outputSha256": "4bc52957eae0830112c7505bada460341bde3c1b1a13ee169b15713f277c53e3"
+    },
+    {
+      "file": "10-front-01.webp",
+      "view": "front",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-front-6ac8362c7b1bb.png",
+      "sourceSha256": "4ac2288437121c3a1d4b6751e5c934dc3361d81d1cd99b6f393ba2e92ca27c0b",
+      "outputSha256": "7a053a84e5c371b96f0ff25287c47e6100f5244907e15946b713f45a4317363e"
+    },
+    {
+      "file": "10-front-02.webp",
+      "view": "front",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-front-6ac8362c7b77b.png",
+      "sourceSha256": "baaf326325b43dc2743453e3d5c9d3a5c4ae9ac1c5ca71838baddd08bc2d05d4",
+      "outputSha256": "4d7e3ffb8d63181eaba13172c7bbb1affd803c22184f6060e8a6029611b94117"
+    },
+    {
+      "file": "10-front-03.webp",
+      "view": "front",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-front-6ac8362c7bbc4.png",
+      "sourceSha256": "3192c6ca0a43d1c0f82f4bf3f16a7f6c04b653001f2140cfcbf634302fac6ca2",
+      "outputSha256": "bdd75459dc9f41c1aa0a5fad46d72855ea829030b274e1078970cabbf80fe230"
+    },
+    {
+      "file": "20-back-01.webp",
+      "view": "back",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-back-6ac8362c7b60c.png",
+      "sourceSha256": "cba98a914e3c12ed053fe2f5fe1780e345397c8a7773a7f42e6d71f4f3cde690",
+      "outputSha256": "af4a2ed988fcb0ac14c459bded56f7e48859d8be8e3ceba3fb9a2c28fc8baeeb"
+    },
+    {
+      "file": "35-left-front-01.webp",
+      "view": "left-front",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-left-front-6ac8362c7b4a6.png",
+      "sourceSha256": "eaf85ec8b1d317ebbeeb7546328f371fc4c573723a5aa905fde80755d18ece02",
+      "outputSha256": "e1a838164942d2e391f0adccb8bde90dee70c403dbf7793c8e8df13c46b0d1bc"
+    },
+    {
+      "file": "40-right-01.webp",
+      "view": "right",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-right-6ac8362c7b8f9.png",
+      "sourceSha256": "ef99154b9cca7a6a16b706c21f487d6e88dd13df6547c77ddc215a3f54cb328b",
+      "outputSha256": "0a6de9faa373254d9a88f1e756cf933188fbf2678eeee16dc95edc802802c72e"
+    },
+    {
+      "file": "40-right-02.webp",
+      "view": "right",
+      "source": "Midnight Alpine Woodcut Repeat.zip",
+      "original": "mens-athletic-shoes-black-right-6ac8362c7ba52.png",
+      "sourceSha256": "e0e49c8dff26998b3b88c9fb33bae633f92eb9fd5868fc9aca267409d7590638",
+      "outputSha256": "513a38e694ca48f8aec55382de3e463dbce563bf5ad29c0811a347e57420fd11"
+    }
+  ],
+  "sourceArchives": [
+    "Midnight Alpine Woodcut Repeat.zip"
+  ],
+  "duplicateArchives": [],
+  "originalArchivesPreservedAt": "aerovista_apparel/public/products/_inbox/"
+}

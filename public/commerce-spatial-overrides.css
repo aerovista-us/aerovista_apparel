@@ -86,6 +86,21 @@
     transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.15)!important;
     transform-origin:73% 51%!important;
   }
+  .view-objects .interior-image,
+  .view-objects .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(0,-7%,0) scale(1.38)!important;
+    transform-origin:50% 78%!important;
+  }
+  .view-place .interior-image,
+  .view-place .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.15)!important;
+    transform-origin:27% 51%!important;
+  }
+  .view-more .interior-image,
+  .view-more .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.15)!important;
+    transform-origin:73% 51%!important;
+  }
 
   .view-room:has(.merch-item:hover) .interior-image,
   .view-room:has(.merch-item:hover) .fixture-layer,
@@ -105,19 +120,50 @@
   .view-right:has(.merch-item:focus-visible) .fixture-layer{
     transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.17)!important;
   }
+  .view-objects:has(.merch-item:hover) .interior-image,
+  .view-objects:has(.merch-item:hover) .fixture-layer,
+  .view-objects:has(.merch-item:focus-visible) .interior-image,
+  .view-objects:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(0,-7%,0) scale(1.4)!important;
+  }
+  .view-place:has(.merch-item:hover) .interior-image,
+  .view-place:has(.merch-item:hover) .fixture-layer,
+  .view-place:has(.merch-item:focus-visible) .interior-image,
+  .view-place:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.17)!important;
+  }
+  .view-more:has(.merch-item:hover) .interior-image,
+  .view-more:has(.merch-item:hover) .fixture-layer,
+  .view-more:has(.merch-item:focus-visible) .interior-image,
+  .view-more:has(.merch-item:focus-visible) .fixture-layer{
+    transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.17)!important;
+  }
 
   /* Product boxes are now a percentage of the physical scene, not fixed px. */
   .fixture-wall-rack .merch-item:not(.merch-cap):not(.merch-deck){
     width:4.8cqw!important;
     height:11.1cqh!important;
   }
-  .fixture-hat-shelf .merch-cap{
+  .fixture-hat-shelf .merch-cap,
+  .fixture-hat-shelf .merch-hat{
     width:4.8cqw!important;
     height:7.6cqh!important;
   }
+  .fixture-shoe-shelf .merch-shoe{
+    width:7.4cqw!important;
+    height:5.2cqh!important;
+  }
+  .fixture-hat-shelf .merch-sticker{
+    width:3.4cqw!important;
+    height:6.2cqh!important;
+  }
   .fixture-table-stack .merch-deck{
+    width:5.2cqw!important;
+    height:6.2cqh!important;
+  }
+  .fixture-table-stack .merch-cooler{
     width:3.6cqw!important;
-    height:9.3cqh!important;
+    height:8.4cqh!important;
   }
 
   /* Hanger geometry belongs to the same scene scale. */
@@ -143,19 +189,21 @@
      authored rail. Upper-rail art is lifted a touch more. */
   .fixture-wall-rack .merch-object{
     --merch-art-scale:1.07;
-    --merch-art-lift:-.20cqh;
+    --merch-art-lift:0cqh;
   }
-  .fixture-wall-rack .merch-item:nth-of-type(-n+4) .merch-object{
-    --merch-art-scale:1.07;
-    --merch-art-lift:-.62cqh;
-  }
-  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
+  .fixture-left-wall-rack .merch-object,
+  .fixture-place-line-wall .merch-object{
     transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(7deg) skewY(1deg) scale(calc(var(--merch-art-scale) * var(--stage-scale,1)))!important;
     transform-origin:right center;
   }
-  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-object{
+  .fixture-right-wall-rack .merch-object,
+  .fixture-further-edit-wall .merch-object{
     transform:translateY(var(--merch-art-lift)) perspective(720px) rotateY(-7deg) skewY(-1deg) scale(calc(var(--merch-art-scale) * var(--stage-scale,1)))!important;
     transform-origin:left center;
+  }
+  .fixture-shoe-shelf .merch-object{
+    transform:perspective(720px) rotateY(-7deg) skewY(-1deg)!important;
+    transform-origin:left bottom;
   }
 
   .fixture:has(.merch-item:hover),

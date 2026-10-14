@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-idaho-after-dark-tee",
+  "productName": "aerovista-idaho-after-dark-tee",
+  "hero": "/store/products/aerovista-idaho-after-dark-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "idaho-after-dark-tee.png",
+      "sourceSha256": "3c24df48c149d34b7ee1064694606593da87b53a971ce5d3118b14fbd6f695ed",
+      "outputSha256": "593f40cb94e7a662200fcc82635b17385a1cfbc8347e861c7955a9b68a012347"
+    }
+  ]
+}

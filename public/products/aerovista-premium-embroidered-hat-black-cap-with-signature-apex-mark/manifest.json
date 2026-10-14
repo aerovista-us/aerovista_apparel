@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark",
+  "productName": "AeroVista Premium Embroidered Hat \u2013 Black Cap with Signature Apex Mark",
+  "hero": "/store/products/aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "apparel public/products",
+      "original": "01-hero.webp",
+      "sourceSha256": "e2f2d68de8c3d3838e5db6e71161fef597556268ff30f15a67d3ccc392af309b",
+      "outputSha256": "e2f2d68de8c3d3838e5db6e71161fef597556268ff30f15a67d3ccc392af309b"
+    }
+  ]
+}

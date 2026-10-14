@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "glitch-orbit-logo-black",
+  "productName": "Glitch Orbit Logo - Black",
+  "hero": "/store/products/glitch-orbit-logo-black/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "store/img",
+      "original": "glitch A.png",
+      "sourceSha256": "a928242991cb4b2659780df0c65e87c31740bde3702bb34e1cbaf017209b8f10",
+      "outputSha256": "a928242991cb4b2659780df0c65e87c31740bde3702bb34e1cbaf017209b8f10"
+    }
+  ]
+}

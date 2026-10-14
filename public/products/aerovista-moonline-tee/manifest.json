@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-moonline-tee",
+  "productName": "aerovista-moonline-tee",
+  "hero": "/store/products/aerovista-moonline-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "moonline-tee.png",
+      "sourceSha256": "5c5b1c5e7179751b627a8b7ffb4e2810b0793759b6fe609555f820ba213698a5",
+      "outputSha256": "dd0ccd65286aa1059715a0a87871af7dc805ee466db89238ccb88f06120aef94"
+    }
+  ]
+}

@@ -1,3 +1,63 @@
+# Showroom promotion — 2026-10-13
+
+The verified showroom is the production checkpoint: men's gallery rooms, NorthLine and Further Edit plates, the footwear shelf, the sticker box on the table, From-prices, and the Women's Studio scale and Vespera name. Inbox masters, loose place-line PNGs, and off-floor galleries stay unpublished. Mugs, Future's Past hoodies, the duffle, phone cases, denim, and resort canvases stay off the floor.
+
+# Women's Studio — 2026-10-13
+
+All six Women's Studio pieces and the center swim editorial load from local galleries. The dress, Vespera hoodie, swimsuit, and Summit bomber are scaled up inside their niches so the square source shots fill more of the bay. The customer name is Vespera Moonscript Hoodie.
+
+# Store audit corrections — 2026-10-13
+
+The Further Edit Ash tee and the Glitch Orbit cap now use their local WebP heroes instead of a Gear PNG and a loose PNG. Wall and shelf tags say "From" when sellable sizes differ by a dollar or more. The selected size in the product drawer still shows that size's price. Further Edit copy no longer mentions Square.
+
+# Table objects — 2026-10-12
+
+The sticker box, Apex Relic deck, and can cooler sit on the men's gallery table. The deck no longer has a frame around it. The box, the deck, and the cooler each have a visible edge so they stand off the tabletop.
+
+# Shoe shelf — 2026-10-12
+
+The men's footwear shelf now uses a side view for each shoe. Midnight Alpine uses the single-shoe side, `40-right-01.webp`. Shadow Sneaks uses `50-side.webp`, the side shoe from `45-right-front-01.webp` with the second sole removed. The product drawer still opens on the hero.
+
+# Sticker box — 2026-10-12
+
+The sticker box is an open tray over the men's gallery. The lid sits behind the cardboard shell, and the stickers rest in the well. Grabbing one lifts it and nudges the pile. A toss slides it and shoves whatever it hits. A tap still opens the product drawer, and the sticker shows its name and price while it is held. The miniature on the men's gallery table uses the same tray.
+
+# Catalog console image paths — 2026-10-11
+
+Products that had a real image file but no `/store/products/{id}/` path now use that gallery path in the hosted catalog console at https://store-console.aerocoreos.com/. Twenty flat-filename products were linked, and the glossy mug, five Future's Past hoodies, and the NorthLine heroes are on the console store mount. Thirty catalog rows still have no image because no source file exists. The API catalog was not replaced. These products were not added to the apparel floor.
+
+# Product images — 2026-10-11
+
+NorthLine heroes now use the mockups from [aerovista-us/northline assets/products](https://github.com/aerovista-us/northline/tree/main/assets/products): Ridgeline, Idaho After Dark, Blue Divide, Source Code, MoonLine, and Powderline tees, plus the MoonLine and Behind the Scenes hats. The Behind the Scenes tee and the Blue Divide sticker were not in that folder, so their current heroes stay. New inbox art is filed as galleries: `Black Aerovista Glossy Mug.zip` is `black-aerovista-glossy-mug` (11 oz front is the hero, plus the 15 oz front and both handle views). `time-circet.zip` is the five Future's Past black hoodies: Biff, Doc, Flux, Parradox, and Marty. Those products stay off the apparel floor. The source zips stay in `public/products/_inbox/`.
+
+# Look and feel pass — 2026-10-10
+
+The local flagship room pass is on `feature/entry-gallery`. Men's main floor, tee wall, and hoodie wall share `interior.svg`. NorthLine, Further Edit, and Objects each have their own room plate. Wall rows rise from the front of the rail toward the back. NorthLine and Further Edit hats sit on shelves, and the phone layout uses the same shelf and table zones. The Glitch Orbit cap uses the cap fixture so it sits with the other headwear. The NorthLine shelf is dropped just enough that the front tee clears the hats. The men's gallery has a second shelf under the hoodie wall, opposite the headwear. Shadow Sneaks and Midnight Alpine sit on that shelf. Mugs and the duffle stay off the floor. Raw masters and `public/products/_inbox/` stay unpublished.
+
+# Store Console identity plan — 2026-10-10
+
+The catalog console now starts at the existing `catalog-console` AeroCore handoff. Opening https://store-console.aerocoreos.com/ redirects to AVCC sign-in. The operator password remains only at `?breakglass=1`. The plan is `aerovista-store/docs/STORE_CONSOLE_IDENTITY_INTEGRATION_PLAN.md`. Account proves authentication, Identity grants capability, and App Adapter only transports that result.
+
+# Catalog console — 2026-10-10
+
+The hosted catalog console at https://store-console.aerocoreos.com/ now opens the October 8 projection: 115 products, with image paths for Laced Kitty, Holographic Kitty, Shadow Sneaks, Midnight Alpine Woodcut Repeat, and the Shadow camo duffle. The previous console catalog was backed up on NXCore. The API catalog that apparel checkout reads was not replaced.
+
+# Inbox galleries — 2026-10-08
+
+Five new inbox zips are filed under their Square product ids. `Laced Kitty.zip` is `laced-kitty` (black and blue 15 oz mugs). `Holographic Kitty.zip` is `holographic-kitty`. `Shadow Sneaks.zip` is `shadow-sneaks`. `Midnight Alpine Woodcut Repeat.zip` is `midnight-alpine-woodcut-repeat` (athletic shoes). `duff.zip` is `shadow-camo-duffle-bag`. Each gallery uses `01-hero.webp` plus the numbered front, back, side, and angle views. These products stay off the apparel floor. The zips remain in `public/products/_inbox/`.
+
+# Catalog projection — 2026-10-08
+
+The October 8 Square export `1149XBNG8C8ZE_catalog-2026-10-08-2105.xlsx` was projected into the Gear catalog. NorthLine tees stay at $32.99 and the embroidered hats stay at $38.99, with the second Behind the Scenes hat variation still at $42.00. No placeholder row was published. NorthLine tee mockups are not attached yet. This projection is local until it is deployed through Gear.
+
+# Room themes — 2026-10-08
+
+NorthLine, Further Edit, and Objects & Editions no longer share the men's gallery shell. NorthLine uses a night ridgeline room (`public/store/northline-room.svg`), Further Edit uses a warm quiet wall (`further-edit-room.svg`), and Objects uses a lit editions table (`objects-room.svg`). The men's main floor, tee wall, and hoodie wall stay on `interior.svg` because those cameras are one room. Women's Studio, the entry gallery, and the exterior already had their own plates. Wall and table geometry is unchanged, so the clothes stay on the same rails.
+
+# Room placement — 2026-10-08
+
+Wall rows rise slightly from the front of the rail toward the back, matching the room perspective. The men's left wall now hangs on two rails, lower on the dark panel. NorthLine is the customer name for the former Place Line. Its tees use the left wall, its hats and the Blue Divide sticker use the shelf, and the camera is centered on that wall. Further Edit uses the right wall. Objects & Editions keeps the table camera, now centered with the room plane. The directory board is wider and its type is 13–15px so the notes stay readable in a narrower window.
+
 # Production checkout acceptance — 2026-10-07
 
 The flagship checkout gate is accepted. The Gear API proxy now admits `https://apparel.aerovista.us` and the production Worker is deployed through the Store repo's explicit Cloudflare version flow. Store main `34351d81b83928896f6287a8951f851f1b70fab0` produced Worker version `be777901-d1be-4d24-b747-8225ea527106`, promoted at 100% traffic. The GitHub-hosted runner is denied by Cloudflare edge policy with HTTP 403 during the public probe, so CI records that specific condition as a warning; NXCore remains the accepted edge-admitted live probe.
@@ -63,13 +123,7 @@ These notes preserve the implementation details and decisions that are most like
   - five hats
   - five Objects & Editions products
 - Wall apparel and hats now use normalized fixture scales to avoid unintended size gradients across a row.
-- The center table contains:
-  - Apex Relic playing cards
-  - Pattern can cooler
-  - Apex Draft sticker
-  - BillyGoat sticker
-  - Holographic Goat sticker
-- The table includes a shuffle control that cycles through authored sticker arrangements. A future iteration can add direct drag/sort behavior once pointer, touch and keyboard interaction are designed together.
+- The center table contains the Apex Relic playing cards, the pattern can cooler, and a sticker-box board. Apex Draft, BillyGoat, Holographic Goat, and the Blue Divide sticker open on that board.
 
 ## Spatial calibration
 
@@ -101,7 +155,7 @@ These notes preserve the implementation details and decisions that are most like
 1. Add a dedicated Women's room after the catalog has enough products to make it feel intentionally merchandised.
 2. Prefer one wall per major line before creating a separate room for every line.
 3. Consider a third, higher headwear row only after its room perspective and mobile equivalent are designed together.
-4. Expand the sticker table into direct canvas-style sorting with accessible touch, pointer and keyboard controls.
+4. The sticker box opened this. Stickers drag and toss on a canvas over the men's gallery, and a tap still buys through the product drawer.
 5. Continue adding rooms or rotating walls as inventory grows instead of shrinking merchandise into a dense catalog grid.
 
 ## Entry Gallery addition — 2026-08-31

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "productId": "shadow-sneaks",
+  "productName": "Shadow Sneaks",
+  "hero": "/products/shadow-sneaks/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-front-6ac8370511b6d.png",
+      "sourceSha256": "2d4e4bb2fa02eac2e96bbb70bcf271f83e57477c48adbea61f5f145169d06f94",
+      "outputSha256": "4f7b3fde71593a8c94b9867ca2a5b78f2010b554936463596ef7118f8b99d562"
+    },
+    {
+      "file": "10-front-01.webp",
+      "view": "front",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-front-2-6ac8370511f34.png",
+      "sourceSha256": "a1eda0ba62229fc2c947856ff0a0d27ffebb255f40c6938d85981c5d5d030a83",
+      "outputSha256": "ecd3256e04bf7a759c46058bfc27ea87e86c00616cc0ef40250572611efc6d19"
+    },
+    {
+      "file": "10-front-02.webp",
+      "view": "front",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-front-6ac8370510a7b.png",
+      "sourceSha256": "cd37305aa64d32033cb39789b9db601674182a6b4f449fec0fdac85d8d481b08",
+      "outputSha256": "8943d2283f4f4ae265f85e370505c2656a499bfcee134bbb9b67066714a122f5"
+    },
+    {
+      "file": "20-back-01.webp",
+      "view": "back",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-back-6ac8370511391.png",
+      "sourceSha256": "d3550adf1b8d670d213fcbdd3dda6c01561fec99b8478471d00651a8de594bfd",
+      "outputSha256": "27f42d927fe5d1175327003a0c8f79f74e09ba3a70b40c82398d660061574e8a"
+    },
+    {
+      "file": "35-left-front-01.webp",
+      "view": "left-front",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-left-front-2-6ac83705126c2.png",
+      "sourceSha256": "5f7c786c70ba5075ae19464595db2e134cfc13cfc1227da73cd70db90d301a7c",
+      "outputSha256": "43eed02c63f0ec33a7261c63eb395aa7499d55f9a1bb04b94b318077021fb014"
+    },
+    {
+      "file": "35-left-front-02.webp",
+      "view": "left-front",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-left-front-6ac8370510f58.png",
+      "sourceSha256": "4ecb6439ea1f6602279a82c1edb48a4e58664d445c530fef1f518d83e98f0444",
+      "outputSha256": "eac9d81633715a1051a68527787c14a438f78d95b40dc0d3f2e6ddc6f6c335bb"
+    },
+    {
+      "file": "45-right-front-01.webp",
+      "view": "right-front",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-right-front-6ac83705117a5.png",
+      "sourceSha256": "11cc9f1a07bda6f58b1999a02a85e63fa2b98ee287dbb4afeba467879cb08fb6",
+      "outputSha256": "cad67ed9a6e740e3d517760285aba42ddeb58f3117b471caf5fb6ed444f52e61"
+    },
+    {
+      "file": "45-right-front-02.webp",
+      "view": "right-front",
+      "source": "Shadow Sneaks.zip",
+      "original": "mens-lace-up-canvas-shoes-black-right-front-6ac83705122d7.png",
+      "sourceSha256": "9bf73144caa1b53b5132f12cb5a2ba0ee5850b55a6bccc6e6d51c190db884b79",
+      "outputSha256": "dc840862aadec80880402c61be6a17a5252a78f48b6a26fbcf1e549eb4f5bb06"
+    },
+    {
+      "file": "50-side.webp",
+      "view": "side",
+      "source": "45-right-front-01.webp",
+      "original": "single-shoe cut of the right-front pair",
+      "outputSha256": "b34e0a6cd198ebf0dac393f194ed1539ce11336508d8574491e65fadd05adb9a"
+    }
+  ],
+  "sourceArchives": [
+    "Shadow Sneaks.zip"
+  ],
+  "duplicateArchives": [],
+  "originalArchivesPreservedAt": "aerovista_apparel/public/products/_inbox/"
+}

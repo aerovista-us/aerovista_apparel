@@ -13,7 +13,7 @@ The current build uses a lightweight 2.5D spatial illusion: authored exterior/in
 1. Arrive outside the AeroVista storefront.
 2. Click the front door and cross the threshold through a push-in transition.
 3. Arrive in the Entry Gallery, a high-end orientation room with mannequins and a physical directory.
-4. Enter Women's Studio, Men's Gallery, the Place Line, or Objects & Editions from the directory. Shopping state is kept in the page address (`space`, `product`, `view`) so refresh and sharing reopen the same room. A checkout return is not payment proof.
+4. Enter Women's Studio, Men's Gallery, NorthLine, or Objects & Editions from the directory. Shopping state is kept in the page address (`space`, `product`, `view`) so refresh and sharing reopen the same room. A checkout return is not payment proof.
 5. Approach merchandise directly in the room. Focus shifts bring the selected area forward and quiet the surrounding space.
 6. Select a piece to open product details, sizes and bag controls.
 7. On mobile, use the same room directory, then move vertically through the selected gallery as a guided walk.

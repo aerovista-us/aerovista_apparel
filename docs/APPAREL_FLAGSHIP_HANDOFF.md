@@ -153,7 +153,7 @@ The flagship customer-facing room has already advanced through:
 - Men’s Gallery;
 - Entry Gallery;
 - Women’s Studio;
-- Place Line;
+- NorthLine (the former Place Line camera);
 - Further Edit;
 - responsive production review around desktop, ~820px, and ~390px.
 

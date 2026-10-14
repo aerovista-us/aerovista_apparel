@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-blue-divide-tee",
+  "productName": "aerovista-blue-divide-tee",
+  "hero": "/store/products/aerovista-blue-divide-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "blue-divide-tee.png",
+      "sourceSha256": "d0479ccb1663140bf07ee4190826eb971742c9aa179c2baa44a319baf8d055e2",
+      "outputSha256": "fd4c3bd6767bd9c643217189f61e13be214a33ca9920de7c0e147bbba05f0259"
+    }
+  ]
+}

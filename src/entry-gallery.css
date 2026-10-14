@@ -24,7 +24,7 @@
 .foyer-intro p{margin:0;max-width:245px;color:#aeb8c0;font-size:9px;line-height:1.55}
 
 .directory-board{
-  position:absolute;z-index:10;left:40.5%;top:24%;width:19%;height:40%;
+  position:absolute;z-index:10;left:37%;top:21%;width:26%;height:48%;
   display:flex;flex-direction:column;padding:10px 12px 12px;
   color:#e8edf2;background:linear-gradient(180deg,rgba(8,11,15,.55),rgba(5,8,11,.28));
   border:1px solid rgba(154,178,193,.16);box-shadow:inset 0 0 24px rgba(0,0,0,.12)
@@ -32,20 +32,20 @@
 .directory-mark{height:18%;display:grid;place-items:center;border-bottom:1px solid rgba(179,194,203,.16)}
 .directory-mark img{display:block;width:48%;height:84%;object-fit:contain;filter:grayscale(1) brightness(1.8) drop-shadow(0 4px 10px #000)}
 .directory-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 2px 8px}
-.directory-heading span{font:600 12px Orbitron;letter-spacing:.12em}
-.directory-heading small{font-size:12px;letter-spacing:.06em;color:#9aa6af;white-space:nowrap}
+.directory-heading span{font:600 14px Orbitron;letter-spacing:.12em}
+.directory-heading small{font-size:12px;letter-spacing:.04em;color:#9aa6af;white-space:normal;text-align:right}
 .directory-list{display:flex;flex-direction:column;min-height:0;border-top:1px solid rgba(179,194,203,.1)}
 .directory-row{
-  flex:1;min-height:0;width:100%;display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:7px;
+  flex:1;min-height:0;width:100%;display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:8px;overflow:hidden;
   margin:0;padding:5px 2px;border:0;border-bottom:1px solid rgba(179,194,203,.1);
   color:#8e99a2;background:transparent;text-align:left
 }
 button.directory-row{cursor:pointer}
 .directory-row>span:nth-child(2){min-width:0;display:flex;flex-direction:column;gap:2px}
-.directory-row b{font-size:13px;font-weight:600;letter-spacing:.02em;color:#dce3e8}
-.directory-row small{display:block;max-width:none;overflow:visible;text-overflow:unset;font-size:12px;line-height:1.35;color:#c5ced6;white-space:normal}
-.directory-direction{font-size:12px;letter-spacing:.08em;color:#9aa6af}
-.directory-row em{display:flex;align-items:center;gap:2px;font-size:12px;font-style:normal;letter-spacing:.06em;white-space:nowrap;color:#c5ced6}
+.directory-row b{font-size:15px;font-weight:600;letter-spacing:.02em;color:#dce3e8}
+.directory-row small{display:block;max-width:none;overflow:visible;text-overflow:unset;font-size:13px;line-height:1.35;color:#c5ced6;white-space:normal}
+.directory-direction{font-size:13px;letter-spacing:.08em;color:#9aa6af}
+.directory-row em{display:flex;align-items:center;gap:2px;font-size:13px;font-style:normal;letter-spacing:.06em;white-space:nowrap;color:#c5ced6}
 .directory-row.is-live{color:#fff}
 .directory-row.is-live em{color:#61c9ef}
 .directory-row.is-live:hover,.directory-row.is-live:focus-visible{background:rgba(0,174,239,.09);outline:1px solid rgba(0,174,239,.3);outline-offset:-1px}
@@ -80,7 +80,7 @@ button.directory-row{cursor:pointer}
 @media(max-width:900px){
   .directory-board{left:36.5%;width:27%;height:48%}
   .threshold-womens{left:8%;width:25%}.threshold-mens{right:8%;width:25%}
-  .directory-row{grid-template-columns:38px 1fr auto}
+  .directory-row{grid-template-columns:62px 1fr auto}
 }
 
 @media(max-width:760px){
@@ -97,15 +97,15 @@ button.directory-row{cursor:pointer}
     backdrop-filter:blur(12px)
   }
   .directory-mark{height:58px}.directory-mark img{width:120px}
-  .directory-heading{padding:11px 2px 9px}.directory-heading span{font-size:12px}.directory-heading small{font-size:12px}
-  .directory-row{grid-template-columns:54px 1fr auto;padding:8px 3px}
-  .directory-row b{font-size:13px}.directory-row small{font-size:12px}.directory-direction,.directory-row em{font-size:12px}
+  .directory-heading{padding:11px 2px 9px}.directory-heading span{font-size:14px}.directory-heading small{font-size:13px}
+  .directory-row{grid-template-columns:62px 1fr auto;padding:8px 3px}
+  .directory-row b{font-size:15px}.directory-row small{font-size:13px}.directory-direction,.directory-row em{font-size:13px}
   .foyer-floor-note{display:none}
 }
 
 @media(max-width:430px){
   .foyer-intro p{display:none}.foyer-stage{min-height:610px}.directory-board{height:390px;max-height:65%}
-  .directory-row{grid-template-columns:46px 1fr auto}.directory-row small{max-width:none;overflow:visible;text-overflow:clip;white-space:normal}
+  .directory-row{grid-template-columns:54px 1fr auto}.directory-row small{max-width:none;overflow:visible;text-overflow:clip;white-space:normal}
 }
 
 @media(prefers-reduced-motion:reduce){.space-arrive{animation:none}}

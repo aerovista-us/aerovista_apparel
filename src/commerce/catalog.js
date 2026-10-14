@@ -16,6 +16,8 @@ const localStageHeroes = Object.freeze({
   'aerovista-powderline-tee': 'products/aerovista-powderline-tee/01-hero.webp',
   'aerovista-built-behind-the-scenes-tee': 'products/aerovista-built-behind-the-scenes-tee/01-hero.webp',
   'aerovista-built-behind-the-scenes-hat': 'products/aerovista-built-behind-the-scenes-hat/01-hero.webp',
+  'architect-field-issue-tee-ash': 'products/architect-field-issue-tee-ash/01-hero.webp',
+  'glitch-orbit-logo-black': 'products/glitch-orbit-logo-black/01-hero.webp',
 })
 const APP_BASE = String(import.meta.env.BASE_URL || './').replace(/\/?$/, '/')
 
@@ -63,6 +65,7 @@ function typeForProduct(product) {
   if (/sticker|decal/.test(hay)) return 'sticker'
   if (/playing cards|card deck|\bdeck\b/.test(hay)) return 'deck'
   if (/\bhat\b|\bcap\b|trucker|snapback|flexfit/.test(hay)) return 'cap'
+  if (/\bshoes?\b|\bsneakers?\b|\bsneaks?\b/.test(hay)) return 'shoe'
   if (/\bpants?\b|\bshorts?\b|\bbottoms?\b/.test(hay)) return 'bottom'
   if (/bomber|jacket/.test(hay)) return 'bomber'
   if (/long.?sleeve/.test(hay)) return 'long-sleeve'
@@ -164,10 +167,11 @@ function normalizeProduct(product, mode, catalogVersion, sellableKeys) {
 
   return {
     id: String(product.id || ''),
-    name: customerName(product.title || product.name || product.id),
+    name: presentation.name || customerName(product.title || product.name || product.id),
     shortName: shortNameFor(product),
     type: presentation.type || typeForProduct(product),
     price: prices.length ? Math.min(...prices) : null,
+    priceHigh: prices.length ? Math.max(...prices) : null,
     collection: presentation.collection || laneForProduct(product),
     sourceCollection: product.collection || '',
     category: product.category || '',

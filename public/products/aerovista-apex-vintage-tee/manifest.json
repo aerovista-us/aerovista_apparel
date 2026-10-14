@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-apex-vintage-tee",
+  "productName": "AeroVista Apex Vintage Tee",
+  "hero": "/store/products/aerovista-apex-vintage-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "apparel public/products",
+      "original": "01-hero.webp",
+      "sourceSha256": "3a12e65f826ff9571ac1af45df31d0996f3f5da463969f19cc0cbf399e059d47",
+      "outputSha256": "3a12e65f826ff9571ac1af45df31d0996f3f5da463969f19cc0cbf399e059d47"
+    }
+  ]
+}

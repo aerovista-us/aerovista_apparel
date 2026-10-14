@@ -25,9 +25,33 @@ export const productPresentation = Object.freeze({
   // Headwear.
   'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark': { shortName: 'Apex Hat', accent: '#C0C0C0' },
   'aerovista-apex-camo-flexfit-hat': { shortName: 'Apex Camo Hat', accent: '#8A9187' },
-  'glitch-orbit-logo-black': { shortName: 'Glitch Orbit Cap', accent: '#AEB4BA', image: '/products/glitch-orbit-cap-black.png' },
+  'glitch-orbit-logo-black': { shortName: 'Glitch Orbit Cap', accent: '#AEB4BA', type: 'cap' },
   'aerovista-apex-mesh-trucker-cap': { shortName: 'Apex Mesh Cap', accent: '#D0D2D4' },
   'docklife-drip-osprey-rope-cap': { shortName: 'Docklife Osprey Cap', accent: '#8FBDB7' },
+  'shadow-sneaks': {
+    shortName: 'Shadow Sneaks', accent: '#8A9198', type: 'shoe', collection: 'Footwear',
+    image: '/products/shadow-sneaks/01-hero.webp',
+    display: { stageImageSuffix: '/50-side.webp', objectPosition: '50% 62%' },
+    fallback: {
+      name: 'Shadow Sneaks',
+      images: [
+        '/products/shadow-sneaks/01-hero.webp',
+        '/products/shadow-sneaks/50-side.webp',
+      ],
+    },
+  },
+  'midnight-alpine-woodcut-repeat': {
+    shortName: 'Midnight Alpine', accent: '#6E8CA8', type: 'shoe', collection: 'Footwear',
+    image: '/products/midnight-alpine-woodcut-repeat/01-hero.webp',
+    display: { stageImageSuffix: '/40-right-01.webp', objectPosition: '50% 58%' },
+    fallback: {
+      name: 'Midnight Alpine Woodcut Repeat',
+      images: [
+        '/products/midnight-alpine-woodcut-repeat/01-hero.webp',
+        '/products/midnight-alpine-woodcut-repeat/40-right-01.webp',
+      ],
+    },
+  },
 
   // Objects.
   'aerovista-apex-relic-playing-cards': { shortName: 'Apex Relic Deck', accent: '#00AEEF' },
@@ -103,7 +127,7 @@ export const productPresentation = Object.freeze({
     },
   },
   'vespra-moonscript-hoodie': {
-    shortName: 'Vespera Moonscript', accent: '#C7B0CF', type: 'hoodie', collection: 'Studio',
+    shortName: 'Vespera Moonscript', name: 'Vespera Moonscript Hoodie', accent: '#C7B0CF', type: 'hoodie', collection: 'Studio',
     fallback: {
       name: 'Vespera Moonscript Hoodie',
       images: [
@@ -113,16 +137,16 @@ export const productPresentation = Object.freeze({
       ],
     },
   },
-  'aerovista-ridgeline-tee': { shortName: 'Ridgeline Tee', accent: '#8FB7C9', collection: 'Place', fallback: { name: 'Ridgeline Tee', images: ['/products/aerovista-ridgeline-tee/01-hero.webp'] } },
-  'aerovista-idaho-after-dark-tee': { shortName: 'Idaho After Dark', accent: '#1C3A5A', collection: 'Place', fallback: { name: 'Idaho After Dark Tee', images: ['/products/aerovista-idaho-after-dark-tee/01-hero.webp'] } },
-  'aerovista-blue-divide-tee': { shortName: 'Blue Divide Tee', accent: '#2E6F9E', collection: 'Place', fallback: { name: 'Blue Divide Tee', images: ['/products/aerovista-blue-divide-tee/01-hero.webp'] } },
-  'aerovista-source-code-tee': { shortName: 'Source Code Tee', accent: '#7D8C9A', collection: 'Place', fallback: { name: 'Source Code Tee', images: ['/products/aerovista-source-code-tee/01-hero.webp'] } },
-  'aerovista-moonline-tee': { shortName: 'MoonLine Tee', accent: '#C9D4DE', collection: 'Place', fallback: { name: 'MoonLine Tee', images: ['/products/aerovista-moonline-tee/01-hero.webp'] } },
-  'aerovista-powderline-tee': { shortName: 'Powderline Tee', accent: '#D7E3EA', collection: 'Place', fallback: { name: 'Powderline Tee', images: ['/products/aerovista-powderline-tee/01-hero.webp'] } },
-  'aerovista-built-behind-the-scenes-tee': { shortName: 'Behind the Scenes Tee', accent: '#C4B8A5', collection: 'Place', fallback: { name: 'Built Behind the Scenes Tee', images: ['/products/aerovista-built-behind-the-scenes-tee/01-hero.webp'] } },
-  'aerovista-moonline-hat': { shortName: 'MoonLine Hat', accent: '#C9D4DE', type: 'hat', collection: 'Place', fallback: { name: 'MoonLine Hat', images: ['/products/aerovista-moonline-hat/01-hero.webp'] } },
-  'aerovista-built-behind-the-scenes-hat': { shortName: 'Behind the Scenes Hat', accent: '#C4B8A5', type: 'hat', collection: 'Place', fallback: { name: 'Built Behind the Scenes Hat', images: ['/products/aerovista-built-behind-the-scenes-hat/01-hero.webp'] } },
-  'aerovista-blue-divide-sticker': { shortName: 'Blue Divide Sticker', accent: '#2E6F9E', type: 'sticker', collection: 'Place', fallback: { name: 'Blue Divide Sticker', images: ['/products/aerovista-blue-divide-sticker/01-hero.webp'] } },
+  'aerovista-ridgeline-tee': { shortName: 'Ridgeline Tee', accent: '#8FB7C9', collection: 'NorthLine', fallback: { name: 'Ridgeline Tee', images: ['/products/aerovista-ridgeline-tee/01-hero.webp'] } },
+  'aerovista-idaho-after-dark-tee': { shortName: 'Idaho After Dark', accent: '#1C3A5A', collection: 'NorthLine', fallback: { name: 'Idaho After Dark Tee', images: ['/products/aerovista-idaho-after-dark-tee/01-hero.webp'] } },
+  'aerovista-blue-divide-tee': { shortName: 'Blue Divide Tee', accent: '#2E6F9E', collection: 'NorthLine', fallback: { name: 'Blue Divide Tee', images: ['/products/aerovista-blue-divide-tee/01-hero.webp'] } },
+  'aerovista-source-code-tee': { shortName: 'Source Code Tee', accent: '#7D8C9A', collection: 'NorthLine', fallback: { name: 'Source Code Tee', images: ['/products/aerovista-source-code-tee/01-hero.webp'] } },
+  'aerovista-moonline-tee': { shortName: 'MoonLine Tee', accent: '#C9D4DE', collection: 'NorthLine', fallback: { name: 'MoonLine Tee', images: ['/products/aerovista-moonline-tee/01-hero.webp'] } },
+  'aerovista-powderline-tee': { shortName: 'Powderline Tee', accent: '#D7E3EA', collection: 'NorthLine', fallback: { name: 'Powderline Tee', images: ['/products/aerovista-powderline-tee/01-hero.webp'] } },
+  'aerovista-built-behind-the-scenes-tee': { shortName: 'Behind the Scenes Tee', accent: '#C4B8A5', collection: 'NorthLine', fallback: { name: 'Built Behind the Scenes Tee', images: ['/products/aerovista-built-behind-the-scenes-tee/01-hero.webp'] } },
+  'aerovista-moonline-hat': { shortName: 'MoonLine Hat', accent: '#C9D4DE', type: 'hat', collection: 'NorthLine', fallback: { name: 'MoonLine Hat', images: ['/products/aerovista-moonline-hat/01-hero.webp'] } },
+  'aerovista-built-behind-the-scenes-hat': { shortName: 'Behind the Scenes Hat', accent: '#C4B8A5', type: 'hat', collection: 'NorthLine', fallback: { name: 'Built Behind the Scenes Hat', images: ['/products/aerovista-built-behind-the-scenes-hat/01-hero.webp'] } },
+  'aerovista-blue-divide-sticker': { shortName: 'Blue Divide Sticker', accent: '#2E6F9E', type: 'sticker', collection: 'NorthLine', fallback: { name: 'Blue Divide Sticker', images: ['/products/aerovista-blue-divide-sticker/01-hero.webp'] } },
 
   'aerovista-apex-flexfit-structured-cap-black': { shortName: 'Apex Flexfit Cap', accent: '#C0C0C0', type: 'hat', fallback: { name: 'AeroVista Apex Flexfit Structured Cap — Black', images: ['/products/aerovista-apex-flexfit-structured-cap-black/01-hero.webp'] } },
   'aerovista-apex-glitch-premium-pullover-hoodie-black': { shortName: 'Apex Glitch Hoodie', accent: '#00AEEF', fallback: { name: 'AeroVista Apex Glitch Premium Pullover Hoodie — Black', images: ['/products/aerovista-apex-glitch-premium-pullover-hoodie-black/01-hero.webp'] } },
@@ -177,6 +201,12 @@ export const productGalleryAdditions = Object.freeze({
   'aerovista-apex-pattern-print-swimsuit-one-piece': [
     '/products/aerovista-apex-pattern-print-swimsuit-one-piece/swimsuit.png',
   ],
+  'shadow-sneaks': [
+    '/products/shadow-sneaks/50-side.webp',
+  ],
+  'midnight-alpine-woodcut-repeat': [
+    '/products/midnight-alpine-woodcut-repeat/40-right-01.webp',
+  ],
 })
 
 export const retailZones = Object.freeze([
@@ -225,22 +255,29 @@ export const retailZones = Object.freeze([
     ],
   },
   {
+    id: 'footwear',
+    label: 'Footwear',
+    note: 'Shoes on the shelf opposite the headwear.',
+    kind: 'shelf',
+    productIds: [
+      'midnight-alpine-woodcut-repeat',
+      'shadow-sneaks',
+    ],
+  },
+  {
     id: 'objects',
     label: 'Objects & Editions',
-    note: 'Collectibles and limited objects stay on the display surface.',
+    note: 'Cards and the cooler stay on the table. Stickers live in the box on that table.',
     kind: 'table',
     productIds: [
       'aerovista-apex-relic-playing-cards',
-      'aerovista-apex-mark-draft-series-s01-sticker',
-      'billygoat-sticker',
-      'holographic-stickers',
       'can-cooler',
     ],
   },
   {
     id: 'place-line',
-    label: 'Place Line',
-    note: 'Local place graphics that are visible in the October 4 Square catalog.',
+    label: 'NorthLine',
+    note: 'Ridgeline, After Dark, Blue Divide, Source Code, MoonLine, Powderline, and Behind the Scenes.',
     kind: 'wall',
     productIds: [
       'aerovista-ridgeline-tee',
@@ -250,6 +287,14 @@ export const retailZones = Object.freeze([
       'aerovista-moonline-tee',
       'aerovista-powderline-tee',
       'aerovista-built-behind-the-scenes-tee',
+    ],
+  },
+  {
+    id: 'place-line-shelf',
+    label: 'NorthLine headwear',
+    note: 'Hats on the shelf. The Blue Divide sticker stays with the objects, not on a clothing rail.',
+    kind: 'shelf',
+    productIds: [
       'aerovista-moonline-hat',
       'aerovista-built-behind-the-scenes-hat',
       'aerovista-blue-divide-sticker',
@@ -258,16 +303,24 @@ export const retailZones = Object.freeze([
   {
     id: 'further-edit',
     label: 'Further Edit',
-    note: 'Photographed pieces already visible in Square, kept off the main floor.',
+    note: 'Tees, sweatshirts, and hoodies on the quieter wall.',
     kind: 'wall',
     productIds: [
-      'aerovista-apex-flexfit-structured-cap-black',
       'aerovista-apex-glitch-premium-pullover-hoodie-black',
       'aerovista-apex-signal-sweatshirt',
       'architect-field-issue-tee-ash',
       'drafted-a-premium-sweatshirt',
       'aerovista-apex-pattern-hoodie',
       'powder-peaks-v2-premium-pullover-hoodie-black',
+    ],
+  },
+  {
+    id: 'further-edit-cap',
+    label: 'Further Edit headwear',
+    note: 'The structured cap sits on a shelf beside the Further Edit wall.',
+    kind: 'shelf',
+    productIds: [
+      'aerovista-apex-flexfit-structured-cap-black',
     ],
   },
 ])

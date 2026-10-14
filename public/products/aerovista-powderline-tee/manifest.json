@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-powderline-tee",
+  "productName": "aerovista-powderline-tee",
+  "hero": "/store/products/aerovista-powderline-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "powderline-tee.png",
+      "sourceSha256": "20da7cb4415b10455a9799948f1b7d324c0af84893e906eb76bd62f6835f4094",
+      "outputSha256": "223df4b44cdf47930d385bf36b66f3f92aadb9b42201228b89eba5fe53c0784e"
+    }
+  ]
+}

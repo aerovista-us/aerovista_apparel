@@ -3,6 +3,9 @@
 
 .exterior-image{background-image:url('./store/exterior.svg')!important}
 .interior-image{background-image:url('./store/interior.svg')!important}
+.view-place .interior-image{background-image:url('./store/northline-room.svg')!important}
+.view-more .interior-image{background-image:url('./store/further-edit-room.svg')!important}
+.view-objects .interior-image{background-image:url('./store/objects-room.svg')!important}
 .store-header nav{overflow-x:auto;scrollbar-width:none;justify-content:flex-start;padding:0 10px}
 .store-header nav::-webkit-scrollbar{display:none}
 .store-header nav button{flex:0 0 auto}
@@ -33,6 +36,12 @@
 .exterior:before,.interior-scene:before,.interior-scene:after{content:"";position:absolute;inset:0;pointer-events:none}
 .exterior:before{z-index:2;background:linear-gradient(112deg,transparent 0 39%,rgba(255,255,255,.018) 44%,transparent 50% 100%),radial-gradient(circle at 50% 63%,rgba(0,174,239,.05),transparent 31%);mix-blend-mode:screen}
 .interior-scene:before{z-index:2;background:linear-gradient(111deg,transparent 0 20%,rgba(219,186,143,.045) 30%,transparent 40% 60%,rgba(219,186,143,.038) 70%,transparent 80%),radial-gradient(ellipse at 50% 18%,rgba(238,203,158,.055),transparent 44%);mix-blend-mode:screen}
+.view-place.interior-scene:before{background:radial-gradient(ellipse at 22% 42%,rgba(150,196,230,.2),transparent 38%)}
+.view-more.interior-scene:before{background:radial-gradient(ellipse at 80% 40%,rgba(196,150,100,.16),transparent 36%)}
+.view-objects.interior-scene:before{background:radial-gradient(ellipse at 50% 68%,rgba(200,220,228,.16),transparent 32%)}
+.view-place .room-shade{background:linear-gradient(90deg,rgba(8,18,32,.32),transparent 30%,transparent 72%,rgba(5,8,12,.22)),linear-gradient(0deg,rgba(6,12,20,.3),transparent 32%)}
+.view-more .room-shade{background:linear-gradient(90deg,rgba(5,6,8,.24),transparent 26%,transparent 58%,rgba(36,22,12,.28)),linear-gradient(0deg,rgba(12,8,6,.32),transparent 32%)}
+.view-objects .room-shade{background:radial-gradient(ellipse at 50% 74%,transparent 10%,rgba(4,6,8,.16) 46%,rgba(4,6,8,.42) 100%),linear-gradient(0deg,rgba(4,6,8,.18),transparent 36%)}
 .interior-scene:after{z-index:3;top:58%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.013) 22%,rgba(0,0,0,.12) 75%),radial-gradient(ellipse at 50% 10%,rgba(0,174,239,.035),transparent 45%);transform:scaleY(.72);transform-origin:top;filter:blur(.2px)}
 
 /* --- exterior: door behaves like a threshold rather than a button --- */
@@ -62,19 +71,24 @@
 @media (min-width:761px){
   .fixture-wall-rack .merch-item:not(.merch-cap):not(.merch-deck){width:88px;height:114px}
   .fixture-hat-shelf .merch-cap{width:88px;height:74px}
-  .fixture-table-stack .merch-deck{width:66px;height:98px}
+  .fixture-shoe-shelf .merch-shoe{width:118px;height:62px}
+  .fixture-table-stack .merch-deck{width:92px;height:70px}
 
   /* Products inherit the visual angle of their wall plane. */
-  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-object{
+  .fixture-left-wall-rack .merch-object,
+  .fixture-place-line-wall .merch-object{
     transform:perspective(720px) rotateY(7deg) skewY(1deg);
     transform-origin:right center;
   }
-  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-object{
+  .fixture-right-wall-rack .merch-object,
+  .fixture-further-edit-wall .merch-object{
     transform:perspective(720px) rotateY(-7deg) skewY(-1deg);
     transform-origin:left center;
   }
-  .fixture-layer>.fixture-wall-rack:nth-child(1) .merch-tag{transform-origin:left top}
-  .fixture-layer>.fixture-wall-rack:nth-child(2) .merch-tag{transform-origin:right top}
+  .fixture-left-wall-rack .merch-tag,
+  .fixture-place-line-wall .merch-tag{transform-origin:left top}
+  .fixture-right-wall-rack .merch-tag,
+  .fixture-further-edit-wall .merch-tag{transform-origin:right top}
 }
 
 /* Hanging apparel gets a visual connection to the real rail. */

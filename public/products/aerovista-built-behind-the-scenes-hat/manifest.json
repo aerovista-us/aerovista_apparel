@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-built-behind-the-scenes-hat",
+  "productName": "aerovista-built-behind-the-scenes-hat",
+  "hero": "/store/products/aerovista-built-behind-the-scenes-hat/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "built-behind-the-scenes-hat.jpeg",
+      "sourceSha256": "c66bf15ae4b7b06c0e234128d948937b45ad2131b7fdfd8dca1a24fa4f38f0ac",
+      "outputSha256": "d6ab1aa7c5e91105dff2fb545cdc4de8d3804c6cda90bbbe8e06781b57e189dd"
+    }
+  ]
+}

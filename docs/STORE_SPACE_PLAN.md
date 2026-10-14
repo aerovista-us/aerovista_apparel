@@ -35,7 +35,7 @@ Core AeroVista and division-created pieces. This wall can rotate more frequently
 A dedicated shelf presentation. This should remain visually clean and easy to scan.
 
 ### Objects & Editions
-Collectible and non-apparel releases. The center table combines the Apex Relic deck and can cooler with a loose sticker spread. A physical shuffle control lets visitors sort through alternate sticker arrangements while every piece remains selectable.
+Collectible and non-apparel releases. The center table holds the Apex Relic deck, the can cooler, and a miniature open sticker box. The deck sits directly on the tabletop. The box, deck, and cooler have a raised edge so they read as objects on the table. Opening the box sets the men's gallery behind a cardboard tray. Stickers lift when grabbed, shove the pile, and can be tossed. A tap buys through the product drawer.
 
 ## Expansion backlog
 
@@ -44,7 +44,7 @@ This plan is a design note, not current catalog or commerce authority. See [APPA
 1. Women's Studio shipped on 2026-08-31. The nocturne edit is open from the Entry Gallery. This item is no longer future work.
 2. Give each major line a wall before creating a separate room for every line; this keeps the flagship legible while inventory grows.
 3. Add a third, higher headwear row only after its wall perspective and reachable mobile equivalent are designed together.
-4. Evolve the sticker table from shuffled arrangements to direct drag/sort interaction after pointer, touch and keyboard behavior can be equally supported.
+4. The sticker box is open from the men's gallery table. Pointer and touch drag and toss the stickers; arrow keys nudge a focused sticker, and Enter buys it.
 
 ## Mobile design
 

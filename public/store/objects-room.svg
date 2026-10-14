@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-label="Objects and Editions table room">
+  <defs>
+    <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#07090c"/><stop offset="1" stop-color="#12161c"/></linearGradient>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1a2228"/><stop offset=".55" stop-color="#10161c"/><stop offset="1" stop-color="#080c10"/></linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#05070a"/><stop offset=".7" stop-color="#10141a"/><stop offset="1" stop-color="#181c22"/></linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#05070a"/><stop offset=".7" stop-color="#10141a"/><stop offset="1" stop-color="#181c22"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2a3338"/><stop offset=".35" stop-color="#151c22"/><stop offset="1" stop-color="#07090c"/></linearGradient>
+    <radialGradient id="spot" cx="50%" cy="62%" r="42%"><stop stop-color="#d7e4ea" stop-opacity=".2"/><stop offset=".45" stop-color="#7f9aa6" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <radialGradient id="pool" cx="50%" cy="50%" r="50%"><stop stop-color="#d5e6ee" stop-opacity=".28"/><stop offset="1" stop-color="#d5e6ee" stop-opacity="0"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="4" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .04"/></feComponentTransfer></filter>
+  </defs>
+
+  <rect width="1672" height="941" fill="#07090c"/>
+  <polygon points="0,0 515,145 1157,145 1672,0" fill="url(#ceiling)"/>
+  <polygon points="0,0 515,145 515,610 0,941" fill="url(#wallL)"/>
+  <polygon points="1672,0 1157,145 1157,610 1672,941" fill="url(#wallR)"/>
+  <rect x="515" y="145" width="642" height="465" fill="url(#back)"/>
+  <polygon points="0,941 515,610 1157,610 1672,941" fill="url(#floor)"/>
+  <rect width="1672" height="941" fill="url(#spot)"/>
+
+  <g fill="none" stroke="#1e262c" stroke-width="2" opacity=".8">
+    <path d="M242 42 L566 169 H1106 L1430 42"/>
+    <path d="M394 14 L620 128 H1052 L1278 14"/>
+    <path d="M570 0 L677 90 H995 L1102 0"/>
+  </g>
+  <g fill="#e7eef2" opacity=".85" filter="url(#glow)">
+    <circle cx="836" cy="104" r="4"/>
+  </g>
+
+  <g stroke="#22282e" stroke-width="2" opacity=".45">
+    <line x1="88" y1="98" x2="88" y2="884"/><line x1="207" y1="126" x2="207" y2="807"/><line x1="328" y1="158" x2="328" y2="730"/><line x1="446" y1="193" x2="446" y2="651"/>
+    <line x1="1584" y1="98" x2="1584" y2="884"/><line x1="1465" y1="126" x2="1465" y2="807"/><line x1="1344" y1="158" x2="1344" y2="730"/><line x1="1226" y1="193" x2="1226" y2="651"/>
+  </g>
+
+  <g opacity=".7">
+    <polygon points="72,283 468,284 468,518 72,685" fill="#080a0d" stroke="#1c2228" stroke-width="2"/>
+    <polygon points="1204,284 1600,283 1600,685 1204,518" fill="#080a0d" stroke="#1c2228" stroke-width="2"/>
+  </g>
+
+  <g>
+    <rect x="590" y="210" width="492" height="340" fill="#10161c" stroke="#8aa0aa" stroke-width="2"/>
+    <g fill="#1a242c" stroke="#3a4a52">
+      <rect x="620" y="248" width="70" height="96"/>
+      <rect x="708" y="248" width="70" height="96"/>
+      <rect x="796" y="248" width="70" height="96"/>
+      <rect x="884" y="248" width="70" height="96"/>
+      <rect x="972" y="248" width="70" height="96"/>
+      <rect x="620" y="364" width="70" height="96"/>
+      <rect x="708" y="364" width="70" height="96"/>
+      <rect x="796" y="364" width="70" height="96"/>
+      <rect x="884" y="364" width="70" height="96"/>
+      <rect x="972" y="364" width="70" height="96"/>
+    </g>
+    <text x="836" y="500" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="12" letter-spacing="6" fill="#d5e0e6">EDITIONS</text>
+  </g>
+
+  <g stroke="#2a3840" stroke-width="2" opacity=".4">
+    <line x1="116" y1="341" x2="436" y2="322"/><line x1="1236" y1="322" x2="1556" y2="341"/>
+    <line x1="132" y1="582" x2="432" y2="478"/><line x1="1240" y1="478" x2="1540" y2="582"/>
+  </g>
+
+  <g stroke="#2c3840" stroke-width="2" opacity=".55">
+    <line x1="836" y1="610" x2="836" y2="941"/>
+    <line x1="724" y1="610" x2="595" y2="941"/><line x1="948" y1="610" x2="1077" y2="941"/>
+    <line x1="612" y1="610" x2="354" y2="941"/><line x1="1060" y1="610" x2="1318" y2="941"/>
+    <line x1="515" y1="668" x2="1157" y2="668"/><line x1="424" y1="744" x2="1248" y2="744"/><line x1="309" y1="839" x2="1363" y2="839"/>
+  </g>
+
+  <ellipse cx="836" cy="730" rx="340" ry="120" fill="url(#pool)"/>
+
+  <g stroke="#9eb0b8" stroke-width="2">
+    <polygon points="696,640 976,640 1042,704 630,704" fill="#243038"/>
+    <polygon points="650,704 1022,704 995,812 677,812" fill="#141c22"/>
+  </g>
+  <path d="M650 704 H1022" stroke="#d7e4ea" stroke-width="2" opacity=".55"/>
+  <rect x="760" y="609" width="152" height="34" rx="3" fill="#1c2830" stroke="#9eb0b8"/>
+  <text x="836" y="630" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="8" letter-spacing="3" fill="#d5e0e6">OBJECTS</text>
+  <rect width="1672" height="941" filter="url(#grain)" opacity=".45"/>
+</svg>

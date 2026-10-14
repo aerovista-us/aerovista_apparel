@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-ridgeline-tee",
+  "productName": "aerovista-ridgeline-tee",
+  "hero": "/store/products/aerovista-ridgeline-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "ridgeline-tee.png",
+      "sourceSha256": "2de76c5ac4a67f52d5adc644c37f2050255a4d1e8015bd4c132d17454df47c6c",
+      "outputSha256": "b7b1f380562c88098e2605a03e1fb0cb411655c36e6c1544fd08d40bd75e8277"
+    }
+  ]
+}

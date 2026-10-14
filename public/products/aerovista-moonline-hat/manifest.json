@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-moonline-hat",
+  "productName": "aerovista-moonline-hat",
+  "hero": "/store/products/aerovista-moonline-hat/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "moonline-hat.png",
+      "sourceSha256": "95cc693938512e4734ac51526030e1536fa5618d9d23b9091f50c5bf7a2aa8f2",
+      "outputSha256": "77fc08aa06e464baf300660aa263b9f12ae3cb8cf262cab27af313443d763582"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "architect-built-different-hoodie-black",
+  "productName": "Architect \u2014 Built Different Hoodie \u2014 Black",
+  "hero": "/store/products/architect-built-different-hoodie-black/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "apparel public/products",
+      "original": "01-hero.webp",
+      "sourceSha256": "d45f1ef32fdb43b2962f5c7f140ae982cb3084e03bbce19dfedec7e2549e9d36",
+      "outputSha256": "d45f1ef32fdb43b2962f5c7f140ae982cb3084e03bbce19dfedec7e2549e9d36"
+    }
+  ]
+}

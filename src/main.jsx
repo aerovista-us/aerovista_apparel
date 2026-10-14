@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Shuffle, Sparkles, X
+  ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, DoorOpen, Minus, Sparkles, X
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
@@ -9,7 +9,9 @@ import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog } from './commerce/client'
 import { identityStanding } from './commerce/identity'
 import { fulfillmentNote } from './commerce/fulfillment'
+import { StickerBox, StickerBoxButton } from './sticker-box'
 import './styles.css'
+import './sticker-box.css'
 import './product-gallery.css'
 import './illusion-polish.css'
 import './entry-gallery.css'
@@ -22,7 +24,9 @@ function priceLabel(product, variant = null) {
   if (product?.commerceStatus === 'presentation') return 'Preview'
   if (product?.commerceStatus === 'unavailable') return 'Unavailable'
   if (product?.commerceStatus === 'offline') return 'Catalog offline'
-  return Number.isFinite(product?.price) ? money.format(product.price) : 'Preview'
+  if (!Number.isFinite(product?.price)) return 'Preview'
+  if (Number.isFinite(product.priceHigh) && product.priceHigh - product.price >= 1) return `From ${money.format(product.price)}`
+  return money.format(product.price)
 }
 
 function commerceNote(product) {
@@ -35,10 +39,10 @@ function commerceNote(product) {
 const spaceViews = [
   { id: 'left', label: 'Tees & Bombers', note: 'Turn toward tees on the upper rail, with bombers and Shadow Wear bottoms below.' },
   { id: 'room', label: "Men's Gallery · Main Floor", note: 'Take in the full room, feature wall and central editions table.' },
-  { id: 'right', label: 'Hoodie Wall', note: 'Turn toward the dedicated hoodie wall for AeroVista, Architect and Shadow Wear layers.' },
-  { id: 'objects', label: 'Objects & Editions', note: 'The center table holds cards, the cooler, and the sticker editions.' },
-  { id: 'place', label: 'Place Line', note: 'Ridgeline, After Dark, Blue Divide, Source Code, MoonLine, Powderline, and Behind the Scenes.' },
-  { id: 'more', label: 'Further Edit', note: 'Photographed pieces that are visible in Square and waiting on a quieter wall.' },
+  { id: 'right', label: 'Hoodie Wall', note: 'Turn toward the hoodie wall. The shoe shelf sits opposite the headwear.' },
+  { id: 'objects', label: 'Objects & Editions', note: 'The center table holds the cards, the cooler, and the sticker box.' },
+  { id: 'place', label: 'NorthLine', note: 'Ridgeline, After Dark, Blue Divide, Source Code, MoonLine, Powderline, and Behind the Scenes.' },
+  { id: 'more', label: 'Further Edit', note: 'Tees, sweatshirts, and hoodies on the quieter wall.' },
 ]
 
 function fixtureVisible(fixture, view) {
@@ -155,12 +159,12 @@ function FixtureShell({ fixture, children }) {
   )
 }
 
-function Fixture({ fixture, productMap, collection, onOpen }) {
+function Fixture({ fixture, productMap, products, collection, onOpen, onOpenBox }) {
   const items = fixture.slots
     .map(slot => ({ slot, product: productMap.get(slot.productId) }))
     .filter(({ product }) => product)
-  if (!items.length) return null
-  if (fixture.type === 'table-stack') return <EditionTable fixture={fixture} items={items} collection={collection} onOpen={onOpen}/>
+  if (!items.length && fixture.type !== 'table-stack') return null
+  if (fixture.type === 'table-stack') return <EditionTable fixture={fixture} items={items} products={products} collection={collection} onOpen={onOpen} onOpenBox={onOpenBox}/>
   return <FixtureShell fixture={fixture}>{items.map(({ product, slot }, index) => <MerchItem
     key={`${fixture.id}-${product.id}-${index}`}
     product={product}
@@ -170,27 +174,17 @@ function Fixture({ fixture, productMap, collection, onOpen }) {
   />)}</FixtureShell>
 }
 
-function EditionTable({ fixture, items, collection, onOpen }) {
-  const [spread, setSpread] = useState(0)
+function EditionTable({ fixture, items, products, collection, onOpen, onOpenBox }) {
   return <FixtureShell fixture={fixture}>
     <span className="edition-table-label" aria-hidden="true">OBJECTS · EDITIONS</span>
-    {items.map(({ product, slot }, index) => {
-      const positions = slot.spreads?.length ? slot.spreads : [slot]
-      const position = { ...slot, ...positions[spread % positions.length] }
-      return <MerchItem
-        key={`${fixture.id}-${product.id}-${index}`}
-        product={product}
-        slot={position}
-        onOpen={onOpen}
-        highlighted={collection === 'All' || product.collection === collection}
-      />
-    })}
-    <button
-      type="button"
-      className="edition-shuffle"
-      onClick={() => setSpread(current => current + 1)}
-      aria-label="Shuffle the sticker display"
-    ><Shuffle size={11}/><span>Shuffle stickers</span></button>
+    {items.map(({ product, slot }, index) => <MerchItem
+      key={`${fixture.id}-${product.id}-${index}`}
+      product={product}
+      slot={slot}
+      onOpen={onOpen}
+      highlighted={collection === 'All' || product.collection === collection}
+    />)}
+    <StickerBoxButton products={products} onOpen={onOpenBox}/>
   </FixtureShell>
 }
 
@@ -309,8 +303,8 @@ function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollecti
 const galleryDestinations = [
   { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A curated edit of women-specific and unisex pieces.', status: 'OPEN', live: true },
   { id: 'mens', direction: 'RIGHT', name: "Men's Gallery", note: 'Apparel, headwear and current editions.', status: 'OPEN', live: true },
-  { id: 'place', direction: 'AHEAD', name: 'Place Line', note: 'Ridgeline, After Dark, Blue Divide, Source Code, MoonLine, Powderline, and Behind the Scenes.', status: 'OPEN', live: true },
-  { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and sticker editions on the center table.', status: 'ON VIEW', live: true },
+  { id: 'place', direction: 'AHEAD', name: 'NorthLine', note: 'Ridgeline, After Dark, Blue Divide, and the rest of the line.', status: 'OPEN', live: true },
+  { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and the sticker box on the center table.', status: 'ON VIEW', live: true },
 ]
 
 function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag }) {
@@ -360,18 +354,18 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects
 }
 
 const womenStudioDisplays = [
-  { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-03.webp' },
-  { id: 'vespra-moonscript-hoodie', slot: 'left-mid', image: 'products/vespra-moonscript-hoodie/01-hero.webp' },
-  { id: 'night-ranger-bear-pullover-hoodie', slot: 'left-far', image: 'products/night-ranger-bear-pullover-hoodie/01-hero.webp' },
-  { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-02.webp' },
-  { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'right-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp' },
-  { id: 'shadow-wear-tactical-bomber-jacket-summit-edition', slot: 'right-far', image: 'products/shadow-wear-tactical-bomber-jacket-summit-edition/01-hero.webp' },
+  { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-03.webp', scale: 1.12 },
+  { id: 'vespra-moonscript-hoodie', slot: 'left-mid', image: 'products/vespra-moonscript-hoodie/01-hero.webp', scale: 1.2 },
+  { id: 'night-ranger-bear-pullover-hoodie', slot: 'left-far', image: 'products/night-ranger-bear-pullover-hoodie/01-hero.webp', scale: 1 },
+  { id: 'aerovista-apex-pattern-print-swimsuit-one-piece', slot: 'right-near', image: 'products/aerovista-apex-pattern-print-swimsuit-one-piece/10-front-02.webp', scale: 1.12 },
+  { id: 'aerovista-wave-mark-full-zip-hoodie-white', slot: 'right-mid', image: 'products/aerovista-wave-mark-full-zip-hoodie-white/01-hero.webp', scale: 1 },
+  { id: 'shadow-wear-tactical-bomber-jacket-summit-edition', slot: 'right-far', image: 'products/shadow-wear-tactical-bomber-jacket-summit-edition/01-hero.webp', scale: 1.35 },
 ]
 
 function WomenStudioPiece({ display, product, onOpen }) {
   if (!product) return null
   const image = display.image ? `${import.meta.env.BASE_URL}${display.image}` : product.image
-  return <button className={`studio-piece studio-${display.slot}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog">
+  return <button className={`studio-piece studio-${display.slot}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog" style={{ '--piece-scale': display.scale || 1 }}>
     <ProductImage product={product} image={image} stage/>
     <span className="studio-product-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
   </button>
@@ -439,13 +433,13 @@ function MobileShelfPiece({ product, onOpen, highlighted = true }) {
   return <button className={`mobile-shelf-piece${highlighted ? '' : ' is-muted'}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog"><ProductImage product={product} stage/><span className="retail-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
 }
 
-function MobileStore({ products, productMap, collection, onCollection, onProduct, catalogState }) {
+function MobileStore({ products, productMap, collection, onCollection, onProduct, onOpenBox, catalogState }) {
   const zones = retailZones.map(zone => ({ ...zone, items: zone.productIds.map(id => productMap.get(id)).filter(Boolean) })).filter(zone => zone.items.length)
   const introCopy = catalogState.status === 'loading'
     ? 'Preparing current sizes and availability while you enter.'
     : catalogState.status === 'offline'
       ? 'The room is open, but live availability is temporarily offline.'
-      : 'Swipe along each fixture, then select a piece for current sizes and availability.'
+      : 'Swipe along each wall, then select a piece for current sizes and availability.'
   return <section className="mobile-store">
     <div className="mobile-store-intro"><span className="eyebrow">MEN'S GALLERY</span><h2>Continue through the showroom</h2><p>{introCopy}</p></div>
     <CollectionNav products={products} collection={collection} onCollection={onCollection} mobile/>
@@ -453,7 +447,7 @@ function MobileStore({ products, productMap, collection, onCollection, onProduct
       <header className="retail-zone-header"><div><span>{zone.label}</span><p>{zone.note}</p></div><small>{collection === 'All' ? zone.items.length : zone.items.filter(product => product.collection === collection).length} {collection === 'All' ? 'pieces' : 'lit'}</small></header>
       {zone.kind === 'wall' && <div className="mobile-wall"><div className="mobile-rail" aria-hidden="true"/><div className="mobile-hanging-row">{zone.items.map(product => <MobileHangingPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div></div>}
       {zone.kind === 'shelf' && <div className="mobile-shelf"><div className="mobile-shelf-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div><div className="shelf-edge" aria-hidden="true"/></div>}
-      {zone.kind === 'table' && <div className="mobile-display-table"><div className="mobile-object-row">{zone.items.map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div><div className="display-table-edge" aria-hidden="true"/></div>}
+      {zone.kind === 'table' && <div className="mobile-display-table"><StickerBoxButton products={products} onOpen={onOpenBox}/><div className="mobile-object-row">{zone.items.filter(product => product.type !== 'sticker').map(product => <MobileShelfPiece key={product.id} product={product} onOpen={onProduct} highlighted={collection === 'All' || product.collection === collection}/>)}</div><div className="display-table-edge" aria-hidden="true"/></div>}
     </section>)}
   </section>
 }
@@ -462,7 +456,7 @@ function ViewNav({ view, onView }) {
   return <nav className="view-nav" aria-label="Look around the store">{spaceViews.map(space => <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}><i aria-hidden="true"/><span>{space.label}</span></button>)}</nav>
 }
 
-function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView }) {
+function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView, onOpenBox }) {
   const [collection, setCollection] = useState('All')
   const compact = useCompactStore()
   const productMap = useMemo(() => new Map(products.map(product => [product.id, product])), [products])
@@ -482,11 +476,11 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, 
       <div className="interior-image"/><div className="room-shade"/>
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
       <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Entry Gallery</button>
-      {!compact && <div className="fixture-layer">{fixtures.filter(fixture => fixtureVisible(fixture, view)).map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} collection={collection} onOpen={onProduct}/>)}</div>}
+      {!compact && <div className="fixture-layer">{fixtures.filter(fixture => fixtureVisible(fixture, view)).map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} products={products} collection={collection} onOpen={onProduct} onOpenBox={onOpenBox}/>)}</div>}
       <ViewNav view={view} onView={onView}/>
       <div className="center-prompt floor-status" data-status={catalogState.status} role="status" aria-live="polite"><Sparkles size={14}/><span>{floorMessage}</span></div>
     </div>
-    {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} catalogState={catalogState}/>} 
+    {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} onOpenBox={onOpenBox} catalogState={catalogState}/>} 
   </section>
 }
 
@@ -495,13 +489,14 @@ function readStoreRoute() {
   const space = ['foyer', 'mens', 'womens'].includes(params.get('space')) ? params.get('space') : 'outside'
   const view = spaceViews.some(item => item.id === params.get('view')) ? params.get('view') : 'room'
   const checkout = params.get('checkout') === 'success' || params.get('checkout') === 'cancel' ? params.get('checkout') : ''
-  return { space, view, product: params.get('product') || '', checkout }
+  return { space, view, product: params.get('product') || '', checkout, stickerBox: space === 'mens' && params.get('box') === 'stickers' }
 }
 
 function App() {
-  const initialRoute = useMemo(() => (typeof window === 'undefined' ? { space: 'outside', view: 'room', product: '', checkout: '' } : readStoreRoute()), [])
+  const initialRoute = useMemo(() => (typeof window === 'undefined' ? { space: 'outside', view: 'room', product: '', checkout: '', stickerBox: false } : readStoreRoute()), [])
   const [space, setSpace] = useState(initialRoute.space)
   const [mensView, setMensView] = useState(initialRoute.view)
+  const [stickerBox, setStickerBox] = useState(initialRoute.stickerBox)
   const [entering, setEntering] = useState(false)
   const [selected, setSelected] = useState(null)
   const [bagOpen, setBagOpen] = useState(false)
@@ -548,6 +543,7 @@ function App() {
       const route = readStoreRoute()
       setSpace(route.space)
       setMensView(route.view)
+      setStickerBox(route.stickerBox)
       setCheckoutNotice(route.checkout)
       setPendingProduct(route.product)
       if (route.space !== 'outside') warmCommerce()
@@ -567,6 +563,8 @@ function App() {
       params.set('space', space)
       if (space === 'mens') params.set('view', mensView)
       else params.delete('view')
+      if (space === 'mens' && stickerBox) params.set('box', 'stickers')
+      else params.delete('box')
       if (selected?.id) params.set('product', selected.id)
       else if (!pendingProduct) params.delete('product')
     }
@@ -574,9 +572,9 @@ function App() {
     const current = window.location.search.replace(/^\?/, '')
     if (next === current) return undefined
     const url = next ? `${window.location.pathname}?${next}` : window.location.pathname
-    window.history.pushState({ space, view: mensView }, '', url)
+    window.history.pushState({ space, view: mensView, stickerBox }, '', url)
     return undefined
-  }, [space, mensView, selected, pendingProduct, routeReady])
+  }, [space, mensView, stickerBox, selected, pendingProduct, routeReady])
 
   useEffect(() => {
     if (!pendingProduct) return undefined
@@ -588,21 +586,22 @@ function App() {
   }, [pendingProduct, showroomProducts, womenStudioProducts])
 
   useEffect(() => {
-    const modalOpen = Boolean(selected || bagOpen)
+    const modalOpen = Boolean(selected || bagOpen || stickerBox)
     if (!modalOpen) return undefined
     const priorOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const onKeyDown = (event) => {
       if (event.key !== 'Escape') return
-      setSelected(null)
-      setBagOpen(false)
+      if (selected) { setSelected(null); return }
+      if (bagOpen) { setBagOpen(false); return }
+      setStickerBox(false)
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = priorOverflow
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [selected, bagOpen])
+  }, [selected, bagOpen, stickerBox])
 
   function enter() {
     if (entering) return
@@ -610,10 +609,10 @@ function App() {
     setEntering(true)
     window.setTimeout(() => { setSpace('foyer'); setEntering(false) }, 680)
   }
-  function goOutside() { setSelected(null); setBagOpen(false); setSpace('outside') }
+  function goOutside() { setSelected(null); setBagOpen(false); setStickerBox(false); setSpace('outside') }
   function openMensGallery(view = 'room') { warmCommerce(); setMensView(view); setSpace('mens') }
   function openWomensStudio() { warmCommerce(); setSpace('womens') }
-  function returnToFoyer() { setSelected(null); setBagOpen(false); setSpace('foyer') }
+  function returnToFoyer() { setSelected(null); setBagOpen(false); setStickerBox(false); setSpace('foyer') }
   function add(product, size, variant) {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
     setSelected(null); setCheckoutError(''); setBagOpen(true)
@@ -639,7 +638,8 @@ function App() {
     </div>}
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
     {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
-    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView}/>}
+    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView} onOpenBox={() => setStickerBox(true)}/>}
+    {space === 'mens' && stickerBox && <StickerBox products={showroomProducts} priceLabel={priceLabel} onClose={() => setStickerBox(false)} onSelect={setSelected}/>}
     {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)}/>}
     <ProductDrawer product={selected} onClose={() => setSelected(null)} onAdd={add}/>
     {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 

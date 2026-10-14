@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "aerovista-source-code-tee",
+  "productName": "aerovista-source-code-tee",
+  "hero": "/store/products/aerovista-source-code-tee/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "aerovista-us/northline assets/products",
+      "original": "source-code-tee.png",
+      "sourceSha256": "81027b0d4bfb23294a90f25ada0c3ab3bf76de1486a948b88e6632725bdd9387",
+      "outputSha256": "2dce1795bf5c148bc276e3ada0c2f7e484042323c22fb3afd219ae108f15b946"
+    }
+  ]
+}

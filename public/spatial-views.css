@@ -36,15 +36,18 @@
 
 .view-objects .interior-image,
 .view-objects .fixture-layer{
-  transform:translate3d(0,-7%,0) scale(1.38);
+  transform:translate(-50%,-50%) translate3d(0,-7%,0) scale(1.38);
   transform-origin:50% 78%;
 }
 .view-place .interior-image,
-.view-place .fixture-layer,
+.view-place .fixture-layer{
+  transform:translate(-50%,-50%) translate3d(9.2%,1.1%,0) scale(1.15);
+  transform-origin:27% 51%;
+}
 .view-more .interior-image,
 .view-more .fixture-layer{
-  transform:translate3d(0,1%,0) scale(1.08);
-  transform-origin:50% 42%;
+  transform:translate(-50%,-50%) translate3d(-9.2%,1.1%,0) scale(1.15);
+  transform-origin:73% 51%;
 }
 
 /* Preserve the chosen camera when a customer approaches merchandise. */

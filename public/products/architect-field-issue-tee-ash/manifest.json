@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "productId": "architect-field-issue-tee-ash",
+  "productName": "Architect \u2014 Field Issue Tee - Ash",
+  "hero": "/store/products/architect-field-issue-tee-ash/01-hero.webp",
+  "images": [
+    {
+      "file": "01-hero.webp",
+      "view": "hero",
+      "source": "store/img",
+      "original": "Architect Field Issue Tee - Ash.png",
+      "sourceSha256": "815f16c879730a812dc255d609a0bd12d0a1fe06af901fffa204ce327233e4d7",
+      "outputSha256": "815f16c879730a812dc255d609a0bd12d0a1fe06af901fffa204ce327233e4d7"
+    }
+  ]
+}
