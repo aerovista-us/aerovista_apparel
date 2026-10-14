@@ -5,7 +5,7 @@
   border-bottom:1px solid rgba(255,255,255,.09);
   background:rgba(10,9,11,.97);backdrop-filter:blur(14px)
 }
-.studio-header .wordmark{justify-self:start}.studio-header .bag-button{justify-self:end}
+.studio-header .wordmark{justify-self:start}.studio-actions{justify-self:end;display:flex;align-items:center;gap:7px}.studio-header .bag-button{justify-self:end}
 .studio-location{font-size:8px;letter-spacing:.25em;color:#938b96}
 .women-studio-scene{position:relative;height:calc(100vh - 60px);min-height:670px;overflow:hidden;isolation:isolate}
 .women-studio-image{position:absolute;z-index:0;inset:0;background:url('/store/womens-studio-v1.webp') center center/cover no-repeat;filter:brightness(1.15) contrast(.95) saturate(.96)}
