@@ -584,7 +584,12 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
     </div>
     <section className="women-mobile-assortment" aria-label="Women's Studio opening edit">
       <div className="women-mobile-intro"><span className="eyebrow">NOCTURNE EDIT</span><h2>Women’s Studio</h2><p>Explore fluid silhouettes, moonlit graphics and selected unisex AeroVista layers.</p></div>
-      <div className="women-mobile-grid">{products.map(product => <button key={product.id} onClick={() => onProduct(product)} aria-label={`View ${product.name}`}><ProductImage product={product} stage/><span><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>)}</div>
+      <div className="women-mobile-grid">{womenStudioDisplays.map(display => {
+        const product = productMap.get(display.id)
+        if (!product) return null
+        const image = display.image ? `${import.meta.env.BASE_URL}${display.image}` : product.image
+        return <button key={product.id} onClick={() => onProduct(product)} aria-label={`View ${product.name}`} style={{ '--piece-scale': display.scale || 1 }}><ProductImage product={product} image={image} stage/><span><b>{product.shortName}</b><em>{priceLabel(product)}</em></span></button>
+      })}</div>
     </section>
   </section>
 }

@@ -1,6 +1,6 @@
 # Showroom promotion — 2026-10-13
 
-The verified showroom is the production checkpoint: men's gallery rooms, NorthLine and Further Edit plates, the footwear shelf, the sticker box on the table, From-prices, and the Women's Studio scale and Vespera name. Inbox masters, loose place-line PNGs, and off-floor galleries stay unpublished. Mugs, Future's Past hoodies, the duffle, phone cases, denim, and resort canvases stay off the floor.
+The verified showroom is on `main` at `8a3d209` and Vercel production accepted that deployment. It includes the men's gallery rooms, NorthLine and Further Edit plates, the footwear shelf, the sticker box on the table, From-prices, and the Women's Studio scale and Vespera name. Inbox masters, loose place-line PNGs, and off-floor galleries stay unpublished. Mugs, Future's Past hoodies, the duffle, phone cases, denim, and resort canvases stay off the floor. The phone grid in Women's Studio uses the same niche shots as the desktop bays.
 
 # Women's Studio — 2026-10-13
 
