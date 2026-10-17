@@ -2,8 +2,36 @@
 
 **Status:** active living handoff  
 **Canonical location:** `aerovista-us/aerovista_apparel/docs/APPAREL_FLAGSHIP_HANDOFF.md`  
-**Last reconciled:** 2026-10-07 America/Los_Angeles  
+**Last reconciled:** 2026-10-16 America/Los_Angeles  
 **Update rule:** every accepted production change, authority change, runtime promotion, or closed/open gate that affects Apparel must update this file in the same work cycle. Do not treat this as a historical report.
+
+---
+
+## 0. Current operational checkpoint — October 16, 2026
+
+This checkpoint supersedes stale pre-merge status statements below; historical sections remain as evidence rather than current release instructions.
+
+**Verified Git status:**
+- Apparel customer-benefits UI PR #16 is merged (exact reviewed head `6090d64b465f172dff10e78f504e4d99fcb0df38`). Its source includes the My AeroVista shell and feature-gated customer-benefit surfaces.
+- Private Commerce API PR #5 is merged (reviewed head `a41e49bce028bf0a896b0bddcbf91e600da59717`). Identity-linked checkout and verified-payment order projections are source-integrated; production Commerce v1 promotion is **not** implied.
+- ACOS Saved Pieces PR #124 was merged on October 16 as `179677f58bc696af25dfa35a514de87d7b01dbb1`. The dedicated app-state Postgres integration remains production-disabled until its separate runtime gate.
+- Legacy Apparel Account UI PR #5 remains open and should be examined for supersession by merged PR #16, not merged uncritically.
+
+**Verified NXCore runtime:**
+- The currently authorized Desktop Commander device is `701dd619-60c5-4c0c-ad87-89f9f3d5ee96` (device IDs can rotate).
+- `apparel-auth` is healthy at local host port 3160. Its recorded deployed SHA is `add944de877b9a37591bc3cca9e60b401475f2fa`, **older than** ACOS Saved Pieces PR #124; do not claim Saved Pieces is live.
+- The isolated Commerce sandbox `aerovista-commerce-sandbox` PostgreSQL and API containers are **stopped** and its status document still records migration `0006_commerce_rate_limits`; source migration `0007_apparel_identity_orders` has not been verified applied there.
+- This turn did not update production Store/Square/Printful containers, enable a new database, or change Vercel environment settings.
+
+**Next safe gates (in dependency order):**
+1. Validate the merged ACOS Saved Pieces source against current main, prepare a dedicated app-state Postgres migration/backup/runbook, and run an isolated state-store acceptance before enabling any Saved UI flag.
+2. Refresh Commerce sandbox from the reviewed merged commit with an explicit source snapshot, database backup/count baseline, migration 0007, isolated Docker health and rollback proof. Keep sandbox unpublished, Square sandbox-only, and fulfillment disabled.
+3. Confirm exact production Vercel SHA and feature flags for Apparel PR #16. A successful Preview is not proof of production promotion.
+4. Integrate trusted Apparel BFF identity into the Commerce internal HMAC caller, then prove authenticated order reads and cross-identity denial in a controlled QA environment.
+5. Enable one customer feature at a time after full browser/phone, CSRF, logout, catalog, and private-data isolation acceptance. Public browsing/checkout must remain unaffected.
+6. Update the runtime/Notion SOTs and this handoff after each accepted deployment.
+
+**Hold:** do not interpret merged source, passing unit tests, or Vercel Preview as production acceptance.
 
 ---
 
