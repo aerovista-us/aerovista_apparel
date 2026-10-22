@@ -8,6 +8,12 @@ Status: QA plan / no production release authorization.
 - Production customer features remain default-off. Existing public browse, Square checkout, Gear, and Printful must not change.
 - Vercel production SHA is unresolved due to connector authorization.
 
+## Existing Commerce regression coverage — inspected on NXCore, October 22
+- The Commerce sandbox source already contains `tests/test_v1_account_orders.py`, with tests for signed service HMAC denial, stale/bad signatures, public identity injection denial, identity-bound checkout, idempotency key replay/swap rejection, verified-payment projection, per-identity read isolation, partial tenders, currency mismatch, refund and out-of-order event handling, and cross-store authorization denial.
+- These are **code tests with a mocked Square payment-link provider and crafted signed webhook fixture**; they must not be labeled a live Square sandbox transaction or a complete Apparel browser-to-Commerce flow.
+- **Avoid duplicate engineering:** run the existing exact-head Commerce suite first, report its results, then add only missing E2E coverage for actual Square sandbox payment evidence and authenticated Apparel BFF identity/session-to-order requests. The current sandbox ledger having no paid QA order is not a failed existing code test.
+- NXCore /srv/ACOS and the Commerce sandbox deployment paths inspected in this pass are not Git worktrees. Do not edit or git-merge those running copies directly. Use a clean version-controlled worktree and guarded promotion.
+
 ## Next test slice — controlled paid order / negative identity isolation
 1. Record exact Git SHAs for Apparel UI, Commerce API, ACOS/apparel-auth and the QA database schema, with environment names and sanitized feature flags.
 2. In an isolated Square sandbox and Commerce QA ledger only, create a controlled identity A order through the normal checkout/session linkage, then deliver a **verified** Square payment event through the supported webhook pathway. No fabricated paid flags or manual ledger writes count as acceptance.
