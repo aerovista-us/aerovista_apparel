@@ -1,0 +1,26 @@
+/* Flagship refinement: readability, consistent merchandising and accessible controls.
+   Layout/room coordinates and commerce logic deliberately untouched. */
+:root{color-scheme:dark}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid #71d7ff;outline-offset:3px}
+.drawer-content h2{font-size:clamp(23px,2.2vw,29px);line-height:1.25;letter-spacing:.01em;text-wrap:balance}
+.drawer-content>p:not(.price){font-size:clamp(14px,1.1vw,16px);line-height:1.65;color:#d3dce3;overflow-wrap:anywhere}
+.drawer-content small{font-size:12px;line-height:1.65;color:#afbbc6}
+.drawer-content .price{font-size:20px;font-weight:700;letter-spacing:.01em}
+.selector>span{font-size:12px;letter-spacing:.08em;color:#c3d0da}
+.chips{gap:9px}.chips button{min-height:44px;min-width:44px;padding:10px 13px;font-size:13px;border-color:rgba(255,255,255,.26);border-radius:4px}
+.chips button.active{background:#123444;border-color:#71d7ff;color:white;box-shadow:0 0 0 1px #71d7ff inset}
+.primary{min-height:44px;font-size:13px;line-height:1.4}.drawer-close{min-width:44px;min-height:44px}
+.product-image.large{min-height:300px;height:min(40vh,390px);background:radial-gradient(circle at 50% 46%,#273039,#11161b 68%)}
+.product-image.large img{max-width:100%;max-height:100%;object-fit:contain;padding:clamp(12px,3vw,26px)}
+.merch-item:focus-visible .merch-tag{opacity:1;transform:translate(-50%,0)}
+.mobile-hanging-row,.mobile-shelf-row{overscroll-behavior-inline:contain;scroll-padding-inline:14px}
+.retail-tag b{overflow-wrap:anywhere}
+.bag-row b{font-size:13px;line-height:1.45}.bag-row span{font-size:12px}
+@media(max-width:767px){
+ .drawer{width:min(100vw,540px)}.drawer-content{padding:62px 20px 28px}
+ .drawer-content h2{font-size:23px}.drawer-content>p:not(.price){font-size:15px}
+ .product-image.large{height:min(38vh,330px);min-height:230px}
+ .mobile-hanging-piece{min-height:284px}.retail-tag b{font-size:11px;line-height:1.35}.retail-tag em{font-size:10px}
+ .chips button{font-size:14px}.save-piece-button{font-size:11px;min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.drawer,.merch-item,.product-image,.merch-tag{animation:none!important;transition:none!important}}
