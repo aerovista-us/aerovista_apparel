@@ -7,6 +7,18 @@
 
 ---
 
+## 0C. Saved Pieces isolation + restore acceptance — October 22, 2026
+
+This supersedes the earlier pending disposable Saved Pieces persistence and backup/restore items below.
+
+- Ran the merged `services/apparel-auth` customer-state code in a disposable `postgres:16-alpine` database named `apparel_state_qa`, on an internal Docker network with **no published ports**, without modifying the production `apparel-auth` container or creating production user records.
+- `npm run migrate:customer-state` applied schema 001.
+- **PASS:** identities `qa_identity_A` and `qa_identity_B` were initially empty; each saved a distinct product; a duplicate save for A preserved one record; B's attempt to delete A's product returned `removed=false`; a second independent pool read both records correctly; removing A's saved item left B's saved item intact.
+- **PASS:** PostgreSQL custom-format `pg_dump` restored into a separate database `apparel_state_restore_qa` within the disposable instance. Original/restore customer-saved row counts both equaled **1**. Test exited **0** and cleanup trap removed the disposable database container/network.
+- Earlier current-source test gate: **15/15 passed** after `npm ci` and syntax checks passed.
+- **Outstanding:** authenticated HTTP/CSRF/origin browser integration, provisioning/release of the production state database, production backup plan/rollback, and actual customer-facing feature activation. Keep all default-off flags.
+- **Outstanding:** signed Apparel service → isolated Commerce internal checkout/order query with controlled QA identity, and Vercel production SHA (connector scope 403).
+
 ## 0B. Saved Pieces isolated migration checkpoint — October 22, 2026
 
 - Inspected ACOS current main `services/apparel-auth` (merged Saved Pieces PR #124) in a detached, temporary NXCore worktree. Runtime `/srv/ACOS/services/apparel-auth` remains the older deployed commit `add944de877b9a37591bc3cca9e60b401475f2fa`, so **Saved is not live**.
