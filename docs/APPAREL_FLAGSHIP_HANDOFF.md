@@ -7,6 +7,14 @@
 
 ---
 
+## 0B. Saved Pieces isolated migration checkpoint — October 22, 2026
+
+- Inspected ACOS current main `services/apparel-auth` (merged Saved Pieces PR #124) in a detached, temporary NXCore worktree. Runtime `/srv/ACOS/services/apparel-auth` remains the older deployed commit `add944de877b9a37591bc3cca9e60b401475f2fa`, so **Saved is not live**.
+- A first `npm test` without installing dependencies failed to import `pg`; after `npm ci --no-audit --no-fund`, all **15 tests passed**, and `npm run check` passed. The initial failure was test environment setup, not demonstrated source regression.
+- Created a disposable isolated Docker network and `postgres:16-alpine` container with an ephemeral randomly generated DB password and no host port. A temporary Node 22 container invoked the source `npm run migrate:customer-state` script using separate credential fields; it reported **customer-state migration 001 applied**. PostgreSQL schema inspection proved the `apparel_saved_items` table, `(identity_id, product_id)` primary key, `saved_at` default, and descending saved timestamp index. The command's exit code was **0**; cleanup trap removed disposable containers/network.
+- **Not yet accepted:** end-to-end write → reload → delete with two distinct canonical identities against a dedicated QA DB; a backup/restore rehearsal; production DB provisioning or customer feature activation. Keep `ENABLE_APPAREL_CUSTOMER_STATE=0` and all customer-facing benefit flags disabled.
+- **Vercel limitation remains:** production SHA could not be verified from the Vercel connector because the `aerovista-us-projects` scope returned 403. Do not infer production SHA from GitHub merges or ready previews.
+
 ## 0A. Commerce sandbox acceptance update — October 17 (verified, retained October 22)
 
 This update supersedes the older 0006/pending migration statements below.
