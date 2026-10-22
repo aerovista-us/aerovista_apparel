@@ -8,6 +8,13 @@ Status: QA plan / no production release authorization.
 - Production customer features remain default-off. Existing public browse, Square checkout, Gear, and Printful must not change.
 - Vercel production SHA is unresolved due to connector authorization.
 
+## Executed source regressions — 2026-10-22 (NXCore)
+- Tested the existing isolated Commerce sandbox source at `/srv/Collab/mini.shops/AV-PNW.com/aerovista-commerce-sandbox` via a disposable container with that source mounted read-only; no production checkout, database, or customer feature flags were changed.
+- Account/order suite: `python -m pytest -q tests/test_v1_account_orders.py` => **18 passed** (one nonfatal pytest cache warning caused by read-only mount).
+- Complete Commerce v1 targeted regression: `python -m pytest -q -p no:cacheprovider tests/test_v1_*.py` => **64 passed in 2.36s**. Runtime container provisioned pytest ephemerally; host Python and production API image were not mutated.
+- QA-local file fingerprints: `tests/test_v1_account_orders.py` SHA-256 `ba7564ac95e242ba4194c8c1f5461aac6e86d5be8e3f960ba6f9388bb3f26ccf`; `commerce_v1/checkout.py` SHA-256 `af47a7f8b12a1ece8346f9faf5c9a91f89800c5148d00906481691539481cd4d`. These fingerprints identify inspected local files, **not a Git commit SHA**; reconcile them against canonical repository HEAD before claiming exact-source revision parity.
+- Remaining: provider-real Square sandbox paid-order proof, BFF session bridge, browser tests, and Vercel production SHA. These regression tests do not close those gates.
+
 ## Existing Commerce regression coverage — inspected on NXCore, October 22
 - The Commerce sandbox source already contains `tests/test_v1_account_orders.py`, with tests for signed service HMAC denial, stale/bad signatures, public identity injection denial, identity-bound checkout, idempotency key replay/swap rejection, verified-payment projection, per-identity read isolation, partial tenders, currency mismatch, refund and out-of-order event handling, and cross-store authorization denial.
 - These are **code tests with a mocked Square payment-link provider and crafted signed webhook fixture**; they must not be labeled a live Square sandbox transaction or a complete Apparel browser-to-Commerce flow.
