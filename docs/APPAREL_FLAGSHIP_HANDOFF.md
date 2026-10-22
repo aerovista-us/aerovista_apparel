@@ -7,6 +7,16 @@
 
 ---
 
+## 0D. Signed Commerce account-order query smoke — October 22, 2026
+
+- Started the isolated `aerovista-commerce-sandbox` Postgres and API containers on NXCore, verified the Commerce API Docker health check returned healthy and `HostConfig.PortBindings={}` (no host ports published).
+- Inside the Commerce API container, used the sandbox-only `COMMERCE_SERVICE_SECRET_APPAREL` to sign `POST /v1/internal/account/orders/query` with the documented HMAC material (method, path, UTC timestamp, blank idempotency line, raw JSON body). Both identities `qa_order_identity_A` and `qa_order_identity_B` received HTTP **200** and an empty `orders` array. Neither service credential nor signature was printed.
+- Verified existing sandbox ledger unchanged at **6 checkout sessions / 4 webhook events** and stopped both Commerce containers cleanly.
+- **Proven:** authenticated service signature acceptance, scoped empty order query, isolated runtime health and unpublished port status.
+- **Not yet proven:** cross-identity non-disclosure for an actual paid QA order, verified payment/order-history readout with seeded controlled evidence, and live Apparel BFF → Commerce broker integration. Do not call My Orders production accepted.
+- Saved Pieces isolated two-identity persistence and database backup/restore passed in checkpoint 0C; authenticated HTTP/CSRF/origin integration and production rollout remain gated.
+- Customer features, production Square checkout, and Printful fulfillment remain unchanged.
+
 ## 0C. Saved Pieces isolation + restore acceptance — October 22, 2026
 
 This supersedes the earlier pending disposable Saved Pieces persistence and backup/restore items below.
