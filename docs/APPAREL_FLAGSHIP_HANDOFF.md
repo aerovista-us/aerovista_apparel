@@ -7,6 +7,19 @@
 
 ---
 
+## 0A. Commerce sandbox acceptance update — October 17 (verified, retained October 22)
+
+This update supersedes the older 0006/pending migration statements below.
+
+- NXCore isolated Commerce Postgres is at **`0007_apparel_identity_orders`**. Both `checkout_sessions.av_identity_id` and unique `checkout_sessions.av_order_id` exist with their intended indexes/constraint.
+- A `pg_dump -Fc` backup was captured and its archive table-of-contents checked through the container's `pg_restore --list`: `/srv/Collab/mini.shops/AV-PNW.com/commerce-sandbox-db-backups/pre-0007-20261017.dump`, SHA-256 `688aed83e0aedade1ed91e43ad5d872284d16165cdf50143107aa1e923a41712`. Despite its filename, the preflight inspection found the database **already at 0007**. The backup is a rollback artifact for the already-migrated sandbox, not a backup of schema 0006.
+- Pre/post counts matched: **6 checkout sessions, 4 Commerce webhook events**.
+- Isolated Commerce API container rebuilt from the existing sandbox source, reached Docker **healthy**, public sandbox catalog request returned **200**, unsigned internal account orders request returned **403 SERVICE_NOT_ALLOWED**, with `HostConfig.PortBindings={}` (no published host ports).
+- Sandbox Square environment and disabled fulfillment remained unchanged. API and Postgres were stopped cleanly following smoke acceptance.
+- **Still open:** signed Apparel-service HMAC checkout/orders integration end-to-end with controlled QA identity, and backup **restore rehearsal**. Health/unsigned deny tests alone do not prove those.
+- **Still open:** production Vercel deployment SHA (connector reports 403 missing authorization to `aerovista-us-projects`), and isolated Saved Pieces database provision/migrate/write/reload/delete/rollback.
+- All unfinished customer-facing feature gates remain **off**. Production Store/Square/Printful were not modified by this sandbox acceptance.
+
 ## 0. Current operational checkpoint — October 16, 2026
 
 This checkpoint supersedes stale pre-merge status statements below; historical sections remain as evidence rather than current release instructions.
