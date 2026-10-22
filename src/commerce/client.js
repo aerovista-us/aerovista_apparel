@@ -73,6 +73,20 @@ async function loadV1Catalog() {
 }
 
 export async function loadCommerceCatalog() {
+  // Opt-in scoped catalog authority. Fail closed: never silently substitute Gear
+  // when a Flagship release is explicitly configured but is unavailable.
+  const scopedUrl = String(import.meta.env.VITE_FLAGSHIP_SCOPED_CATALOG_URL || '').trim()
+  if (scopedUrl) {
+    const payload = await fetchJson(scopedUrl, { cache: 'no-store' })
+    if (payload?.meta?.store !== 'flagship' || !Array.isArray(payload.products) || !payload.products.length) {
+      throw new Error('Invalid Flagship-scoped catalog projection.')
+    }
+    const ids = payload.products.map(item => String(item.id || ''))
+    if (ids.some(id => !id) || new Set(ids).size !== ids.length) {
+      throw new Error('Invalid or duplicate product IDs in Flagship catalog.')
+    }
+    return { mode: 'legacy', sourceUrl: scopedUrl, ...payload }
+  }
   return MODE === 'v1' ? loadV1Catalog() : loadLegacyCatalog()
 }
 
