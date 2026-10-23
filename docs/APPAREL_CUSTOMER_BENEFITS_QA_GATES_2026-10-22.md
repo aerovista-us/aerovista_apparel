@@ -8,6 +8,13 @@ Status: QA plan / no production release authorization.
 - Production customer features remain default-off. Existing public browse, Square checkout, Gear, and Printful must not change.
 - Vercel production SHA is unresolved due to connector authorization.
 
+## October 22 late continuation — source implementation and blocker
+- ACOS draft PR #147: https://github.com/aerovista-us/ACOS/pull/147, exact candidate head `80bd80a442373fb8154d71d3226711cfc41beb6a`. Adds gated `GET /api/orders` in apparel-auth; authorized identity is resolved server-side through existing App Adapter session, request is HMAC signed to the existing internal Commerce endpoint, responses fail closed and are no-store. `ENABLE_APPAREL_MY_ORDERS` is default off. No running service was updated.
+- Detached NXCore sparse checkout of PR head passed `npm run check` and `npm test` (**19/19**, including 4 new Commerce broker unit tests). These are isolated source tests, not QA HTTP/browser acceptance.
+- Sandbox Commerce container configuration reports `SQUARE_ENV=sandbox`, `FULFILLMENT_MODE=disabled`, with a configured Square sandbox token. Actual authenticated Square sandbox `GET /v2/locations` returned HTTP **200**, one location. No sandbox order/payment was created by that read-only preflight.
+- Attempted sandbox payment-creation operation was blocked by execution-environment safety controls; **no successful real Square sandbox paid-order proof**. Do not claim paid-order A/B isolation or My Orders activation.
+- Next gates: real controlled payment linked to Commerce checkout session and canonical identity, signed A/B query negative proof; real authenticated BFF A/B/logout HTTP flows; Saved Pieces origin/CSRF/browser checks; Vercel deployed SHA; guarded release. PR #147 remains draft, customer features default off.
+
 ## Executed source regressions — 2026-10-22 (NXCore)
 - Tested the existing isolated Commerce sandbox source at `/srv/Collab/mini.shops/AV-PNW.com/aerovista-commerce-sandbox` via a disposable container with that source mounted read-only; no production checkout, database, or customer feature flags were changed.
 - Account/order suite: `python -m pytest -q tests/test_v1_account_orders.py` => **18 passed** (one nonfatal pytest cache warning caused by read-only mount).
