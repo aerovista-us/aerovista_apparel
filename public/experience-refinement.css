@@ -1,0 +1,76 @@
+/* AeroVista Apparel — customer experience pass, Oct 2026.
+   Presentation-only: no layout coordinates, catalog, identity, or checkout changes. */
+:root {
+  --ux-focus:#79d9ff;
+  --ux-border:rgba(204,225,237,.22);
+  --ux-surface:rgba(12,20,27,.94);
+  --ux-text:#ecf5fa;
+  --ux-muted:#b5c8d4;
+}
+html { scroll-behavior:smooth; }
+body { -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+:where(button, a, input, select, textarea) { -webkit-tap-highlight-color:rgba(0,174,239,.18); }
+:where(button, a, input, select, textarea, [role="button"]):focus-visible {
+  outline:3px solid var(--ux-focus);
+  outline-offset:3px;
+}
+:where(button, a):disabled { cursor:not-allowed; opacity:.58; }
+.store-header {
+  border-bottom:1px solid var(--ux-border);
+  box-shadow:0 6px 28px rgba(0,0,0,.22);
+}
+.store-header nav button { min-height:44px; }
+.store-header nav button.active { font-weight:700; }
+.wordmark { line-height:1.4; }
+:where(.icon-btn,.bag-button,.account-button,.account-create-button,.account-icon-button,.walk-back) {
+  min-height:44px;
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+:where(.icon-btn,.bag-button,.account-button,.account-create-button,.account-icon-button):hover {
+  background:rgba(0,174,239,.10);
+  border-color:rgba(121,217,255,.58);
+}
+:where(.drawer-content,.bag-row) { overflow-wrap:anywhere; }
+.drawer-content h2 { max-width:28ch; text-wrap:balance; }
+.drawer-content p { line-height:1.65; }
+.drawer-content .price { font-variant-numeric:tabular-nums; }
+.drawer-content small { color:var(--ux-muted); }
+.chips button { min-width:44px; min-height:44px; }
+.chips button.active { box-shadow:0 0 0 1px rgba(121,217,255,.6) inset; }
+:where(.primary,.drawer-close,.save-piece-button) { min-height:44px; }
+:where(.primary,.chips button,.save-piece-button):focus-visible { outline-offset:3px; }
+.bag-row { border-color:var(--ux-border); }
+:where(.merch-item,.mobile-hanging-piece,.mobile-shelf-piece):focus-visible {
+  filter:drop-shadow(0 0 13px rgba(121,217,255,.4));
+}
+:where(.mobile-hanging-row,.mobile-shelf-row,.store-header nav) {
+  overscroll-behavior-inline:contain;
+}
+:where(.mobile-hanging-row,.mobile-shelf-row) { scroll-padding-inline:16px; }
+@media (max-width:900px) {
+  .store-header { padding-inline:clamp(10px,3vw,18px); }
+  .header-actions { gap:6px; }
+  .wordmark { letter-spacing:.12em; }
+  :where(.icon-btn,.bag-button,.account-button,.account-create-button,.account-icon-button) { min-height:44px; }
+}
+@media (max-width:767px) {
+  .drawer { max-width:100vw; }
+  .drawer-content { padding-bottom:max(30px,env(safe-area-inset-bottom)); }
+  .drawer-content h2 { line-height:1.3; }
+  .chips { gap:9px; }
+  .chips button { font-size:14px; }
+  .primary { line-height:1.5; }
+  .outside-copy p,.scene-label p { line-height:1.7; }
+}
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto; }
+  :where(.store-header,.icon-btn,.bag-button,.account-button,.account-create-button,.account-icon-button,.chips button,.primary) {
+    transition-duration:.01ms!important;
+    animation-duration:.01ms!important;
+  }
+}
+@media (prefers-contrast:more) {
+  :root { --ux-border:rgba(245,250,253,.65); --ux-muted:#d7e2e9; }
+  .store-header nav button { color:#e5eef5; }
+  .chips button { border-color:var(--ux-border); }
+}
