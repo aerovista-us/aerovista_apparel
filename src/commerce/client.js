@@ -52,6 +52,42 @@ async function fetchJson(url, options = {}) {
   return payload
 }
 
+// Apparel-only supplementary product: approved Square variation and product
+// artwork, guarded by the authoritative NXCore pricing manifest. Never updates
+// the shared Gear feed or exposes this item on other AeroVista storefronts.
+const MOUNT_SLED_ID = 'CCL2FBPVTS5FCGMBCWJM2SDD'
+async function applyFlagshipStickerAdditions(catalog) {
+  if (browserHost() !== 'apparel.aerovista.us') return catalog
+  try {
+    const contract = await fetchJson(API_BASE + '/api/apparel/stickers/contract', { cache: 'no-store' })
+    if (!contract?.enabled || !Object.prototype.hasOwnProperty.call(contract.variations || {}, MOUNT_SLED_ID)) return catalog
+    if ((catalog.products || []).some(p => p.id === 'mount-sled-sticker')) return catalog
+    return {
+      ...catalog,
+      products: [...catalog.products, {
+        id: 'mount-sled-sticker',
+        square_item_id: 'FNQ4ACB42ZGWHZOMHOXCTWPC',
+        name: 'Mount Sled Sticker',
+        description: 'A durable 4″ × 6″ bubble-free kiss-cut vinyl sticker with a satin finish. Made for bottles, laptops and gear.',
+        collection: 'NorthLine',
+        category: 'Stickers',
+        image: '/products/mount-sled-sticker/01-hero.webp',
+        images: ['/products/mount-sled-sticker/01-hero.webp'],
+        variants: [{
+          variation_id: MOUNT_SLED_ID,
+          size: '4″ × 6″',
+          sku: '6AED8C9060627_24972',
+          color: 'Default',
+          price: 8,
+        }],
+      }],
+    }
+  } catch {
+    // Fail closed: publication must never depend on unverified client data.
+    return catalog
+  }
+}
+
 async function loadLegacyCatalog() {
   let lastError = null
   for (const url of legacyCatalogCandidates()) {
@@ -59,7 +95,7 @@ async function loadLegacyCatalog() {
       // The public catalog is versioned upstream and safe to use from the browser cache.
       // Bootstrap and checkout remain no-store below because they carry live commerce state.
       const catalog = await fetchJson(url, { cache: 'default' })
-      if (Array.isArray(catalog?.products)) return { mode: 'legacy', sourceUrl: url, ...catalog }
+      if (Array.isArray(catalog?.products)) return applyFlagshipStickerAdditions({ mode: 'legacy', sourceUrl: url, ...catalog })
     } catch (error) {
       lastError = error
     }
