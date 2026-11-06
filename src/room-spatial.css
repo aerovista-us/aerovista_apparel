@@ -1,0 +1,105 @@
+/* An authored spatial scene, not a perspective transform of an ordinary grid.
+   Mirrors the Men's Gallery: architectural cover plane + physical fixtures +
+   merch slots in percentages of a fixed stage. Mobile retains the shoppable edit. */
+.spatial-room{position:relative;width:100%;height:clamp(680px,calc(100svh - 68px),1050px);
+  min-height:680px;overflow:hidden;isolation:isolate;background:#070a10;
+  --wall:#131c23;--wall-deep:#070b10;--floor:#141b21;--trim:#abc4d4;
+}
+.spatial-architecture,.spatial-fixture-layer{position:absolute;inset:0}
+.spatial-architecture{z-index:0;overflow:hidden;perspective:1400px;pointer-events:none}
+.spatial-architecture>div{position:absolute;box-sizing:border-box}
+.spatial-back-wall{inset:0 17% 30%;background:
+  radial-gradient(ellipse at 50% 38%,color-mix(in srgb,var(--room-accent) 9%,transparent),transparent 60%),
+  repeating-linear-gradient(90deg,transparent 0 90px,#ffffff04 91px 92px),
+  linear-gradient(180deg,color-mix(in srgb,var(--wall) 80%,#35414b),var(--wall-deep));
+  border-bottom:4px solid color-mix(in srgb,var(--trim) 43%,#0a0c0e);
+  box-shadow:inset 0 90px 100px #0008,inset 0 -18px 30px #0009;
+}
+.spatial-left-wall{left:0;top:0;width:18%;height:74%;clip-path:polygon(0 0,100% 0,100% 100%,0 85%);
+  background:linear-gradient(90deg,#030508,var(--wall) 80%,color-mix(in srgb,var(--wall) 70%,#58636a));
+  border-right:2px solid #a5bdc12a;box-shadow:inset -19px 0 24px #0004}
+.spatial-right-wall{right:0;top:0;width:18%;height:74%;clip-path:polygon(0 0,100% 0,100% 85%,0 100%);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--wall) 78%,#58636a),var(--wall-deep));
+  border-left:2px solid #a5bdc12a}
+.spatial-ceiling{top:0;left:0;right:0;height:18%;z-index:2;clip-path:polygon(0 0,100% 0,83% 100%,17% 100%);
+  background:linear-gradient(180deg,#030506,#131c26 92%,#89919c26);box-shadow:inset 0 -5px 11px #ffffff0b}
+.spatial-floor{bottom:0;left:0;right:0;height:32%;background:
+  repeating-linear-gradient(90deg,transparent 0 7.9%,#ffffff08 8%,transparent 8.1% 16%),
+  linear-gradient(180deg,var(--floor),#040609);
+  clip-path:polygon(17% 0,83% 0,100% 100%,0 100%);
+  border-top:1px solid #a4c4d755}
+.spatial-floor::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#ffffff0c,transparent 78%);pointer-events:none}
+.spatial-rear-glow{inset:4% 20% 28%;background:radial-gradient(ellipse at 50% 58%,color-mix(in srgb,var(--room-accent) 11%,transparent),transparent 66%);filter:blur(18px)}
+.spatial-sign{position:absolute;z-index:4;top:17%;left:44%;width:12%;text-align:center;
+  font:600 clamp(10px,1.1vw,16px) Orbitron,sans-serif;letter-spacing:.18em;
+  color:var(--room-accent);text-shadow:0 0 22px color-mix(in srgb,var(--room-accent) 50%,transparent)}
+.spatial-room-copy{position:absolute;z-index:9;top:4%;left:3%;max-width:390px;pointer-events:none;text-shadow:0 2px 14px #000}
+.spatial-room-copy h1{font:700 clamp(25px,2.6vw,42px)/1 Orbitron,sans-serif;letter-spacing:-.03em;margin:9px 0}
+.spatial-room-copy p{font-size:11px;color:#c9d2d9;line-height:1.5;max-width:335px}
+.spatial-fixture-layer{z-index:6;pointer-events:none}
+.spatial-fixture{position:absolute;pointer-events:none;perspective:950px;transform-style:preserve-3d}
+.spatial-fixture-structure{position:absolute;inset:0;pointer-events:none}
+.spatial-fixture-structure>span{position:absolute;display:block}
+.spatial-fixture-frame{inset:-5% -4%;background:linear-gradient(145deg,#141b2185,#03060922);
+  border:1px solid #d4e0eb29;box-shadow:inset 0 0 45px #0009,0 15px 30px #0006}
+.spatial-fixture-rail{left:3%;right:3%;top:15%;height:5px;border:1px solid #ffffff40;
+  background:linear-gradient(#9caab7,#38434c);box-shadow:0 4px 8px #000b}
+.spatial-fixture-rail::before,.spatial-fixture-rail::after{content:"";position:absolute;top:0;height:140px;width:2px;background:linear-gradient(#6e8090,transparent)}
+.spatial-fixture-rail::before{left:3%}.spatial-fixture-rail::after{right:3%}
+.spatial-fixture-inscription{position:absolute;left:3%;top:-18px;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#c0d4df;white-space:nowrap;text-shadow:0 2px 8px #000}
+.spatial-fixture-merch{position:absolute;inset:0;display:flex;justify-content:space-around;align-items:center;padding:8% 5% 4%;gap:1%;pointer-events:none}
+.spatial-merch{position:relative;flex:1;min-width:0;max-width:32%;height:82%;pointer-events:auto;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:0;background:transparent;border:0;
+  color:white;cursor:pointer;filter:drop-shadow(0 8px 8px #000a);transition:transform .25s,filter .25s}
+.spatial-merch:hover,.spatial-merch:focus-visible{z-index:12;transform:translateY(-6px) scale(1.09);filter:drop-shadow(0 17px 15px #000c) drop-shadow(0 0 12px var(--room-accent));outline:none}
+.spatial-merch .product-image.stage{width:100%;height:85%;background:transparent;border:0}
+.spatial-merch .product-image.stage img{object-fit:contain;width:100%;height:100%;padding:0;filter:drop-shadow(0 10px 9px #000)}
+.spatial-merch-label{display:flex;flex-direction:column;align-items:center;text-align:center;position:absolute;top:95%;
+  min-width:120px;max-width:185px;padding:6px 8px;background:#060a0eea;border:1px solid #a4b3bf50;
+  opacity:0;transform:translateY(8px);transition:opacity .22s,transform .22s;z-index:20}
+.spatial-merch-label b{font-size:9px;line-height:1.3}.spatial-merch-label small{font-size:8px;color:var(--room-accent)}
+.spatial-merch:hover .spatial-merch-label,.spatial-merch:focus-visible .spatial-merch-label{opacity:1;transform:translateY(0)}
+.spatial-fixture-wall:nth-of-type(odd){transform:perspective(980px) rotateY(9deg);transform-origin:right center}
+.spatial-fixture-wall:nth-of-type(even){transform:perspective(980px) rotateY(-9deg);transform-origin:left center}
+.spatial-fixture-shelf .spatial-fixture-rail{top:75%;height:8px;background:linear-gradient(#d9e1e5,#404b52)}
+.spatial-fixture-shelf .spatial-fixture-frame{background:transparent;border:0;box-shadow:none}
+.spatial-fixture-shelf .spatial-fixture-merch{padding:0 2% 10%;align-items:flex-end}
+.spatial-fixture-shelf .spatial-merch{height:95%;max-width:47%}
+.spatial-fixture-table .spatial-fixture-rail{top:67%;height:10px;background:linear-gradient(#c6cdd0,#343f48)}
+.spatial-fixture-table .spatial-fixture-frame{inset:67% 10% -35%;background:linear-gradient(115deg,#34434c,#111b22);border:1px solid #a3bbc146;transform:perspective(560px) rotateX(-8deg);box-shadow:0 15px 30px #000c}
+.spatial-fixture-table .spatial-fixture-merch{align-items:flex-start;padding:0 5% 35%}
+.spatial-fixture-table .spatial-merch{max-width:49%;height:100%}
+.spatial-fixture-mannequin .spatial-fixture-frame,.spatial-fixture-mannequin .spatial-fixture-rail{display:none}
+.spatial-fixture-mannequin .spatial-fixture-form{width:75%;height:80%;left:12%;top:10%;
+  clip-path:polygon(37% 0,63% 0,69% 10%,84% 16%,98% 35%,86% 43%,72% 28%,69% 90%,61% 100%,54% 100%,50% 60%,46% 100%,37% 100%,31% 90%,28% 28%,14% 43%,2% 35%,16% 16%,31% 10%);
+  background:linear-gradient(90deg,#11181e,#6c7b88 50%,#151b22);opacity:.55;filter:drop-shadow(0 10px 8px #000)}
+.spatial-fixture-mannequin .spatial-fixture-stand{width:2px;left:50%;top:84%;height:18%;background:#94a5af;box-shadow:0 0 6px #000}
+.spatial-fixture-mannequin .spatial-fixture-stand::after{content:"";position:absolute;bottom:0;left:-30px;width:60px;height:6px;border-radius:100%;background:#6b808f}
+.spatial-fixture-mannequin .spatial-fixture-merch{padding:3% 0 8%}
+.spatial-fixture-mannequin .spatial-merch{max-width:100%;height:84%}
+.spatial-floor-caption{position:absolute;z-index:8;right:3%;bottom:2%;color:#b3c2ce;letter-spacing:.18em;font-size:9px;text-shadow:0 2px 8px #000}
+.spatial-room-shadow{--wall:#14181a;--wall-deep:#050607;--floor:#0c0f12;--trim:#7a878d}
+.spatial-room-shadow .spatial-back-wall{background:repeating-linear-gradient(90deg,#ffffff03 0 3px,transparent 3px 56px),linear-gradient(170deg,#1e252b,#070a0c)}
+.spatial-room-shadow .spatial-fixture-frame{border-color:#adb3b633}
+.spatial-room-echoverse{--wall:#25172e;--wall-deep:#080611;--floor:#110d1b;--trim:#9b6dc4}
+.spatial-room-echoverse .spatial-back-wall{background:radial-gradient(circle at 50% 37%,#a463b52c,transparent 30%),repeating-radial-gradient(circle at 50% 37%,transparent 0 25px,#9670bd16 26px 28px,transparent 29px 85px),linear-gradient(170deg,#201429,#080611)}
+.spatial-room-echoverse .spatial-ceiling{background:linear-gradient(#090611,#28172f)}
+.spatial-room-echoverse .spatial-fixture-frame{border-color:#c18cf044;box-shadow:inset 0 0 24px #783baa44,0 0 20px #65318a22}
+.spatial-room-architect{--wall:#263034;--wall-deep:#0c1517;--floor:#13191a;--trim:#bbad80}
+.spatial-room-architect .spatial-back-wall{background:linear-gradient(90deg,#d8bd7731 1px,transparent 1px),linear-gradient(#d8bd7731 1px,transparent 1px),linear-gradient(160deg,#243039,#0b151b);background-size:45px 45px,45px 45px,auto}
+.spatial-room-architect .spatial-fixture-frame{border-style:dashed;border-color:#cfbc8c6b}
+.spatial-room-northline{--wall:#20364a;--wall-deep:#0a1727;--floor:#172e3c;--trim:#a5cfdf}
+.spatial-room-northline .spatial-back-wall{background:linear-gradient(180deg,#112237a1,#0b192aee),url('/store/northline-room.svg') center/cover}
+.spatial-room-northline .spatial-rear-glow{background:radial-gradient(ellipse at 50% 50%,#95caee36,transparent 65%)}
+.spatial-room-northline .spatial-fixture-frame{background:linear-gradient(130deg,#3c596445,#0915217c)}
+.themed-mobile-intro{display:none}
+.themed-products{display:none}
+@media(max-width:900px){
+ .spatial-room{display:none}
+ .themed-mobile-intro{display:block}
+ .themed-products{display:block}
+}
+@media(min-width:901px){
+ .themed-room .themed-environment.themed-mobile-intro{display:none}
+}
+@media(prefers-reduced-motion:reduce){.spatial-merch{transition:none}.spatial-merch-label{transition:none}}

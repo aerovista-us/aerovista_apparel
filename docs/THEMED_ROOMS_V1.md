@@ -42,3 +42,18 @@ Only items present in the catalog can be clicked; absent IDs are omitted without
 ## Future extension
 
 Add rooms by appending a themed-room configuration, keyed by a unique URL-safe ID. Customize `theme-<art>` CSS and `layout` markup only when a bespoke interaction is justified. Put new sales products through the catalog/checkout audit before adding them to a live themed room. A drop can evolve independently without changing permanent floors.
+
+## Spatial fixtures v2 — desktop physical-room display
+
+The Desktop spatial layer (viewport width >900px) is a true authored **2.5D spatial illusion**, not a row of merchandise cards and not a WebGL world. Inspired by the Men's Gallery, it separates architectural background, fixed-position physical fixture shells, and clickable merchandise items.
+
+- `src/data/roomFixtures.js`: per-room rack, shelf, table/plinth, and mannequin coordinates (percentages of the scene stage), and which indexed curated products appear on them.
+- `src/room-spatial.css`: painted ceiling, back wall, side walls, perspective floor, rail structures, mannequin form, surfaces and lighting, with material treatments for NorthLine, Shadow, EchoVerse and Architect.
+- `ThemedSpatialScene` and `RoomFixture` in `src/main.jsx`: canonical product resolution and physical placement. The item uses the existing `ProductImage`, existing product drawer, bag, checkout and saved-items paths.
+- Desktop stage images are eagerly loaded to avoid apparent empty racks while moving through a room. Mobile retains the previous themed card grid and editorial header. Only one display model is visible per breakpoint.
+- All visual geometry is CSS and regular accessible buttons: keyboard, product names, and standard browser controls work without WebGL.
+- The catalog may gain additional products; to include them in the desktop scene, deliberately allocate a physical slot (and expand the fixture layout where necessary). Do not silently dump the full catalog into one room.
+
+### QA acceptance
+
+At 1440×900, all four room stages rendered and all 29 (10+9+3+7) preview-host merchandise slots loaded images, with zero detected merchandise rectangle collisions, horizontal overflow, or runtime errors. Clicking a product in each physical fixture opened the canonical product drawer with a live selectable variation. At 390×900 the physical stage is hidden and the mobile edit is visible with no overflow. NorthLine's Mount Sled supplementary item is intentionally host-gated during localhost testing; it appears on the canonical Apparel hostname when the backend sticker contract is enabled.

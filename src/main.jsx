@@ -6,6 +6,7 @@ import {
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
 import { themedRooms, dropRoomIds } from './data/themedRooms'
+import { fixturesForRoom } from './data/roomFixtures'
 import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog, loadStickerBundleContract } from './commerce/client'
 import { identityStanding } from './commerce/identity'
@@ -30,6 +31,7 @@ import './illusion-polish.css'
 import './entry-gallery.css'
 import './women-studio.css'
 import './themed-rooms.css'
+import './room-spatial.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -122,7 +124,7 @@ function GarmentArt({ type, accent = '#00AEEF' }) {
   )
 }
 
-function ProductImage({ product, image = product?.image, alt = product?.name, large = false, stage = false }) {
+function ProductImage({ product, image = product?.image, alt = product?.name, large = false, stage = false, eager = false }) {
   const [failed, setFailed] = useState(false)
   const stageImage = stage && product?.display?.stageImageSuffix
     ? product.images?.find(candidate => candidate.endsWith(product.display.stageImageSuffix))
@@ -137,7 +139,7 @@ function ProductImage({ product, image = product?.image, alt = product?.name, la
             src={resolvedImage}
             alt={alt}
             style={style}
-            loading={large ? 'eager' : 'lazy'}
+            loading={large || eager ? 'eager' : 'lazy'}
             decoding="async"
             fetchPriority={large ? 'high' : 'low'}
             draggable={false}
@@ -643,6 +645,51 @@ function ThemedProductTile({ product, onProduct }) {
   </button>
 }
 
+function RoomFixture({ fixture, onProduct }) {
+  return <div className={`spatial-fixture spatial-fixture-${fixture.type}`} data-spatial-fixture={fixture.id}
+    style={{left: `${fixture.x}%`, top: `${fixture.y}%`,width:`${fixture.w}%`,height:`${fixture.h}%`}}>
+    <div className="spatial-fixture-structure" aria-hidden="true">
+      <span className="spatial-fixture-frame"/>
+      <span className="spatial-fixture-rail"/>
+      <span className="spatial-fixture-stand"/>
+      <span className="spatial-fixture-surface"/>
+      <span className="spatial-fixture-form"/>
+    </div>
+    <span className="spatial-fixture-inscription">{fixture.id.replaceAll('-', ' ')}</span>
+    <div className="spatial-fixture-merch">
+      {fixture.items.map((product,index) => <button key={product.id} className="spatial-merch"
+        data-product={product.id} type="button" onClick={() => onProduct(product)}
+        aria-label={`View ${product.name}`} aria-haspopup="dialog"
+        style={{'--slot-index':index,'--fixture-count':fixture.items.length, '--accent':product.accent}}>
+        <ProductImage product={product} stage eager/>
+        <span className="spatial-merch-label"><b>{product.shortName}</b><small>{priceLabel(product)}</small></span>
+      </button>)}
+    </div>
+  </div>
+}
+
+function ThemedSpatialScene({ config, sections, onProduct }) {
+  const display = sections.flatMap(section => section.products)
+  const fixtures = fixturesForRoom(config.id, display)
+  return <div className={`spatial-room spatial-room-${config.id}`} data-spatial-room={config.id}>
+    <div className="spatial-architecture" aria-hidden="true">
+      <div className="spatial-ceiling"/><div className="spatial-back-wall"/>
+      <div className="spatial-left-wall"/><div className="spatial-right-wall"/>
+      <div className="spatial-floor"/><div className="spatial-rear-glow"/>
+      <div className="spatial-sign">AV / {config.name}</div>
+    </div>
+    <div className="spatial-room-copy">
+      <span className="themed-eyebrow">{config.eyebrow}</span>
+      <h1>{config.heading}</h1>
+      <p>{config.subheading}</p>
+    </div>
+    <div className="spatial-fixture-layer">
+      {fixtures.map(fixture => <RoomFixture key={fixture.id} fixture={fixture} onProduct={onProduct}/>)}
+    </div>
+    <span className="spatial-floor-caption">EXPLORE THE ROOM · SELECT A PIECE</span>
+  </div>
+}
+
 function ThemedRoom({ roomId, products, catalogState, onExit, onDrops, onProduct, onBag, bagCount, accountControl }) {
   const config = themedRooms[roomId]
   const productMap = useMemo(() => new Map(products.map(p => [p.id,p])),[products])
@@ -656,7 +703,8 @@ function ThemedRoom({ roomId, products, catalogState, onExit, onDrops, onProduct
   return <section className={`themed-room theme-${config.art}`} style={{ '--room-accent': config.accent }}
     data-room={roomId} data-catalog-status={catalogState.status}>
     <ThemedRoomHeader onExit={onExit} onDrops={onDrops} bagCount={bagCount} onBag={onBag} accountControl={accountControl} inDrops={inDrops}/>
-    <div className="themed-environment">
+    <ThemedSpatialScene config={config} sections={resolvedSections} onProduct={onProduct}/>
+    <div className="themed-environment themed-mobile-intro">
       <div className="themed-architecture" aria-hidden="true"><span/><span/></div>
       <div className="themed-hero-copy">
         <span className="themed-eyebrow">{config.eyebrow}</span>
