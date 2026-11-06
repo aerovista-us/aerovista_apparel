@@ -295,3 +295,21 @@
 @media (prefers-reduced-motion: reduce){
   .sticker-piece{transition:none}
 }
+
+.sticker-precart{background:#14151c;color:#fff;border:1px solid #a08e7f;padding:12px;display:grid;gap:8px}
+.sticker-precart header,.sticker-precart footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sticker-precart span,.sticker-precart small{font-size:12px}
+.sticker-progress{height:8px;background:#524c4c;border-radius:8px;overflow:hidden}
+.sticker-progress span{display:block;height:100%;background:#00aeef}
+.sticker-selected-list{display:flex;flex-wrap:wrap;gap:6px;max-height:80px;overflow:auto}
+.sticker-selected{display:flex;gap:6px;align-items:center;border:1px solid #555;padding:4px;font-size:12px}
+.sticker-selected img{height:26px;width:26px;object-fit:contain;background:#fff}
+.sticker-precart button,.sticker-pick-card button{cursor:pointer;padding:8px;border:1px solid #9edbeb;background:#08384d;color:#fff}
+.sticker-precart button:disabled,.sticker-pick-card button:disabled{opacity:.45;cursor:not-allowed}
+.sticker-pick-mask{position:absolute;inset:0;background:#090c10ed;display:grid;place-items:center;z-index:50;padding:16px}
+.sticker-pick-card{display:grid;gap:10px;max-width:90%;width:340px;background:#1a2330;border:1px solid #8b9cad;padding:20px;color:#fff}
+.sticker-pick-card img{height:125px;max-width:100%;object-fit:contain;justify-self:center}
+.sticker-pick-card select{padding:10px;background:white;color:black}
+.sticker-bag-group{padding:12px;background:#182b39;color:white;display:flex;justify-content:space-between;gap:8px}
+.sticker-bag-group button{background:transparent;border:1px solid white;color:white;padding:6px;cursor:pointer}
+@media(max-width:700px){.sticker-board{height:96vh}.sticker-precart{padding:8px}.sticker-precart footer{align-items:stretch}}

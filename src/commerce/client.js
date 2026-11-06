@@ -1,4 +1,5 @@
 import { checkoutPayload } from './promotions'
+import { STICKER_BUNDLE_CONTRACT, stickerSurcharges } from './stickerPricing'
 
 const STORE_ID = 'aerovista-apparel'
 const MODE = String(import.meta.env.VITE_COMMERCE_MODE || 'legacy').trim().toLowerCase()
@@ -76,6 +77,11 @@ export async function loadCommerceCatalog() {
   return MODE === 'v1' ? loadV1Catalog() : loadLegacyCatalog()
 }
 
+export async function loadStickerBundleContract() {
+  if (browserHost() !== 'apparel.aerovista.us' || MODE !== 'legacy') return null
+  return fetchJson(API_BASE + '/api/apparel/stickers/contract', { cache: 'no-store' })
+}
+
 export async function loadCommerceBootstrap() {
   if (MODE === 'v1') return { mode: 'v1', currency: 'USD' }
   // The prototype domain serves the room, not the legacy Gear API. Without an
@@ -115,13 +121,23 @@ async function beginLegacyCheckout(bag) {
     sku: bag[index] ? cartKeyForVariant(bag[index].variant) : '',
     variationId: line.variantId,
     qty: line.quantity,
+    ...(bag[index]?.bundleId ? { bundleId: bag[index].bundleId } : {}),
   }))
   const invalid = cart.find(line => !line.productId || !line.variationId || !line.sku)
   if (invalid) throw new Error('One or more bag items are missing a verified catalog variation.')
 
   const result = await fetchJson(`${API_BASE}/api/square/checkout`, {
     method: 'POST',
-    body: JSON.stringify({ cart, currency: 'USD' }),
+    body: JSON.stringify({
+      cart,
+      currency: 'USD',
+      ...(browserHost() === 'apparel.aerovista.us' && bag.some(item =>
+        item.bundleId || Number.isInteger(stickerSurcharges[item.variant?.providerVariationId])
+      ) ? {
+        storeId: STORE_ID,
+        bundleContract: STICKER_BUNDLE_CONTRACT,
+      } : {}),
+    }),
   })
   if (!result?.checkoutUrl) throw new Error('Checkout did not return a payment link.')
   return result
