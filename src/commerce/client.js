@@ -1,5 +1,5 @@
 import { checkoutPayload } from './promotions'
-import { STICKER_BUNDLE_CONTRACT } from './stickerPricing'
+import { STICKER_BUNDLE_CONTRACT, stickerSurcharges } from './stickerPricing'
 
 const STORE_ID = 'aerovista-apparel'
 const MODE = String(import.meta.env.VITE_COMMERCE_MODE || 'legacy').trim().toLowerCase()
@@ -131,7 +131,9 @@ async function beginLegacyCheckout(bag) {
     body: JSON.stringify({
       cart,
       currency: 'USD',
-      ...(bag.some(item => item.bundleId) ? {
+      ...(browserHost() === 'apparel.aerovista.us' && bag.some(item =>
+        item.bundleId || Number.isInteger(stickerSurcharges[item.variant?.providerVariationId])
+      ) ? {
         storeId: STORE_ID,
         bundleContract: STICKER_BUNDLE_CONTRACT,
       } : {}),

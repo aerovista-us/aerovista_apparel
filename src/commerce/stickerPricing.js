@@ -51,8 +51,14 @@ export function bagStickerPricePreview(bag, manifest = null) {
   let totalCents = 0
   for (const line of bag) {
     if (!line.bundleId) {
-      if (!Number.isFinite(line.variant?.price)) return null
-      totalCents += Math.round(line.variant.price * 100) * Number(line.quantity || 1)
+      const vid = String(line.variant?.providerVariationId || line.variant?.id || '')
+      const apparelSticker = stickerUnitPriceCents(vid, 1, manifest)
+      if (apparelSticker !== null) {
+        totalCents += apparelSticker * Number(line.quantity || 1)
+      } else {
+        if (!Number.isFinite(line.variant?.price)) return null
+        totalCents += Math.round(line.variant.price * 100) * Number(line.quantity || 1)
+      }
       continue
     }
     if (!groups.has(line.bundleId)) groups.set(line.bundleId, [])

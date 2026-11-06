@@ -10,7 +10,7 @@ import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatal
 import { identityStanding } from './commerce/identity'
 import { fulfillmentNote } from './commerce/fulfillment'
 import { StickerBox, StickerBoxButton } from './sticker-box'
-import { bagStickerPricePreview, stickerBundlePreview } from './commerce/stickerPricing'
+import { bagStickerPricePreview, stickerBundlePreview, stickerUnitPriceCents, stickerSurcharges } from './commerce/stickerPricing'
 import {
   beginIdentityLogin,
   beginIdentityRegistration,
@@ -32,6 +32,19 @@ import './women-studio.css'
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 function priceLabel(product, variant = null) {
+  if (product?.type === 'sticker') {
+    if (variant) {
+      const cents = stickerUnitPriceCents(variant.providerVariationId || variant.id, 1)
+      if (cents !== null) return money.format(cents / 100)
+    }
+    const retail = (product?.commerce?.variants || [])
+      .map(v => stickerUnitPriceCents(v.providerVariationId || v.id, 1))
+      .filter(n => Number.isInteger(n))
+    if (retail.length) {
+      const low = Math.min(...retail), high = Math.max(...retail)
+      return low === high ? money.format(low / 100) : 'From '+money.format(low / 100)
+    }
+  }
   if (variant && Number.isFinite(variant.price)) return money.format(variant.price)
   if (product?.commerceStatus === 'presentation') return 'Preview'
   if (product?.commerceStatus === 'unavailable') return 'Unavailable'
@@ -297,8 +310,10 @@ function BagDrawer({ bag, contract, onClose, onRemove, onCheckout, checkoutBusy,
   const hasUnready = bag.some(item => !item.variant || !Number.isFinite(item.variant.price))
   const previewCents = bagStickerPricePreview(bag, contract)
   const hasBundle = bundleIds.length > 0
+  const hasSticker = bag.some(line => Number.isInteger(stickerSurcharges[line.variant?.providerVariationId]))
   const bundleReady = Boolean(contract?.enabled && commerceConfig.mode === 'legacy')
-  const total = hasBundle ? (previewCents == null ? null : previewCents / 100) : bag.reduce((sum, item) => sum + (Number.isFinite(item.variant?.price) ? item.variant.price * (item.quantity || 1) : 0), 0)
+  const stickerBlocked = hasSticker && !bundleReady
+  const total = hasBundle || hasSticker ? (previewCents == null ? null : previewCents / 100) : bag.reduce((sum, item) => sum + (Number.isFinite(item.variant?.price) ? item.variant.price * (item.quantity || 1) : 0), 0)
   return (
     <div className="drawer-shell" role="dialog" aria-modal="true" aria-label="Shopping bag">
       <button className="drawer-scrim" onClick={onClose} aria-label="Close bag"/>
@@ -310,14 +325,14 @@ function BagDrawer({ bag, contract, onClose, onRemove, onCheckout, checkoutBusy,
           {bag.length === 0 ? <p className="empty">Nothing here yet. Explore the walls and select a piece.</p> : bag.map((item, index) => (
             <div className="bag-row" key={`${item.product.id}-${item.variant?.id || item.size}-${index}`}>
               <ProductImage product={item.product}/>
-              <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{priceLabel(item.product, item.variant)}</span></div>
+              <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{item.bundleId ? money.format((stickerUnitPriceCents(item.variant?.providerVariationId,bag.filter(x=>x.bundleId===item.bundleId).length,contract) || 0)/100) + ' bundle unit preview' : priceLabel(item.product,item.variant)}</span></div>
               <button className="icon-btn" onClick={() => onRemove({index})} disabled={Boolean(item.bundleId)} aria-label={`Remove ${item.product.shortName} from bag`}><Minus size={15}/></button>
             </div>
           ))}
           <div className="bag-total"><span>{hasBundle ? 'Estimated bundle total' : 'Total'}</span><b>{hasUnready || total==null ? 'TBD' : money.format(total)}</b></div>
-          {hasBundle && !bundleReady && <p className="checkout-error" role="status">Sticker bundle checkout is gated until NXCore verifies current Square catalog prices. You can remove complete bundles or continue shopping.</p>}
+          {stickerBlocked && <p className="checkout-error" role="status">Apparel sticker prices are awaiting backend activation. Other merchandise remains available for purchase after removing the sticker lines or bundles.</p>}
           {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
-          <button className={`primary wide ${checkoutBusy ? 'is-busy' : ''}`} disabled={!bag.length || hasUnready || checkoutBusy || (hasBundle && !bundleReady) || total==null} onClick={onCheckout} aria-live="polite">
+          <button className={`primary wide ${checkoutBusy ? 'is-busy' : ''}`} disabled={!bag.length || hasUnready || checkoutBusy || stickerBlocked || total==null} onClick={onCheckout} aria-live="polite">
             {checkoutBusy ? 'Opening secure checkout…' : <>Checkout <ArrowRight size={17}/></>}
           </button>
           <small>Square confirms the amount. Creating checkout does not mark an order paid or redeem a promotion.</small>
@@ -1157,7 +1172,7 @@ function App() {
   />
 
   async function checkout() {
-    if(bag.some(x=>x.bundleId) && !stickerContract?.enabled){setCheckoutError("Bundle checkout awaits Square price verification.");return}
+    if(bag.some(x=>x.bundleId || Number.isInteger(stickerSurcharges[x.variant?.providerVariationId])) && !stickerContract?.enabled){setCheckoutError("Apparel sticker checkout is awaiting backend activation.");return}
     setCheckoutBusy(true); setCheckoutError('')
     try {
       const result = await beginCheckout(bag)
