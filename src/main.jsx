@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import { fixtures } from './data/fixtures'
 import { retailZones } from './data/merchandising'
+import { themedRooms, dropRoomIds } from './data/themedRooms'
 import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
 import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog, loadStickerBundleContract } from './commerce/client'
 import { identityStanding } from './commerce/identity'
@@ -28,6 +29,7 @@ import './product-gallery.css'
 import './illusion-polish.css'
 import './entry-gallery.css'
 import './women-studio.css'
+import './themed-rooms.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -502,14 +504,16 @@ function StoreHeader({ products, bagCount, onBag, onExit, collection, onCollecti
 const galleryDestinations = [
   { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A curated edit of women-specific and unisex pieces.', status: 'OPEN', live: true },
   { id: 'mens', direction: 'RIGHT', name: "Men's Gallery", note: 'Apparel, headwear and current editions.', status: 'OPEN', live: true },
-  { id: 'place', direction: 'AHEAD', name: 'NorthLine', note: 'Ridgeline, After Dark, Blue Divide, and the rest of the line.', status: 'OPEN', live: true },
+  { id: 'northline', direction: 'AHEAD', name: 'NorthLine', note: 'A separate alpine gallery for the Inland Northwest.', status: 'OPEN', live: true },
+  { id: 'drops', direction: 'BEYOND', name: 'The Drops Corridor', note: 'Shadow Wear, EchoVerse and Architect / Nexus in their own worlds.', status: 'OPEN', live: true },
   { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and the sticker box on the center table.', status: 'ON VIEW', live: true },
 ]
 
-function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenObjects, bagCount, onBag, accountControl }) {
+function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenDrops, onOpenObjects, bagCount, onBag, accountControl }) {
   const openDestination = id => {
     if (id === 'womens') return onOpenWomens()
-    if (id === 'place') return onOpenPlace()
+    if (id === 'northline') return onOpenPlace()
+    if (id === 'drops') return onOpenDrops()
     if (id === 'objects') return onOpenObjects()
     return onOpenMens()
   }
@@ -616,6 +620,96 @@ function WomenStudio({ products, catalogState, onExit, onProduct, bagCount, onBa
   </section>
 }
 
+// Themed rooms share only catalog identity, product drawer, bag and account.
+function ThemedRoomHeader({ onExit, onDrops, bagCount, onBag, accountControl, inDrops }) {
+  return <header className="themed-header">
+    <button className="wordmark" onClick={onExit} aria-label="Return to entry gallery"><span className="apex">/\</span> AEROVISTA</button>
+    <span className="themed-header-actions">
+      {accountControl}
+      {inDrops && <button type="button" className="themed-back" onClick={onDrops}>All drops</button>}
+      <button type="button" className="themed-back" onClick={onExit}><ChevronLeft size={14}/> Gallery</button>
+      <button className="bag-button" onClick={onBag} aria-label={`Shopping bag, ${bagCount} items`}><ShoppingBag size={18}/>{bagCount > 0 && <span>{bagCount}</span>}</button>
+    </span>
+  </header>
+}
+
+function ThemedProductTile({ product, onProduct }) {
+  return <button type="button" className="themed-product" data-product={product.id}
+    onClick={() => onProduct(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog">
+    <ProductImage product={product} stage/>
+    <span className="themed-product-title">{product.shortName}</span>
+    <span className="themed-product-price">{priceLabel(product)}</span>
+    <span className="themed-product-status">{product.commerceStatus === 'connected' ? 'See available sizes' : 'Preview · checkout unavailable'}</span>
+  </button>
+}
+
+function ThemedRoom({ roomId, products, catalogState, onExit, onDrops, onProduct, onBag, bagCount, accountControl }) {
+  const config = themedRooms[roomId]
+  const productMap = useMemo(() => new Map(products.map(p => [p.id,p])),[products])
+  if (!config) return null
+  const inDrops = roomId !== 'northline'
+  const resolvedSections = config.sections.map(section => ({
+    ...section,
+    products: section.productIds.map(id => productMap.get(id)).filter(Boolean),
+  }))
+  const count = resolvedSections.reduce((sum,section)=>sum+section.products.length,0)
+  return <section className={`themed-room theme-${config.art}`} style={{ '--room-accent': config.accent }}
+    data-room={roomId} data-catalog-status={catalogState.status}>
+    <ThemedRoomHeader onExit={onExit} onDrops={onDrops} bagCount={bagCount} onBag={onBag} accountControl={accountControl} inDrops={inDrops}/>
+    <div className="themed-environment">
+      <div className="themed-architecture" aria-hidden="true"><span/><span/></div>
+      <div className="themed-hero-copy">
+        <span className="themed-eyebrow">{config.eyebrow}</span>
+        <h1>{config.heading}</h1>
+        <p>{config.subheading}</p>
+        <small>{config.note}</small>
+        <button type="button" className="themed-explore" onClick={() => document.getElementById(`themed-products-${roomId}`)?.scrollIntoView({behavior:'smooth',block:'start'})}>
+          Explore the collection <ArrowRight size={14}/>
+        </button>
+      </div>
+    </div>
+    <div className="themed-products" id={`themed-products-${roomId}`}>
+      <div className="themed-products-intro">
+        <span className="themed-section-label">{config.eyebrow}</span>
+        <h2>{config.name}</h2>
+        <p>{catalogState.status === 'loading' ? 'Preparing the collection…' : catalogState.status === 'offline' ? 'Live catalog unavailable. Shopping is paused.' : `${count} curated pieces · Choose a piece to see live sizes and availability.`}</p>
+      </div>
+      <div className="themed-room-nav" aria-label="Room sections">
+        {resolvedSections.map(section => <button type="button" key={section.id} onClick={() => document.getElementById(`room-section-${roomId}-${section.id}`)?.scrollIntoView({behavior:'smooth',block:'start'})}>{section.label}</button>)}
+        {inDrops && <button type="button" onClick={onDrops}>Explore other drops</button>}
+      </div>
+      {resolvedSections.map(section => <section key={section.id} className="themed-section" id={`room-section-${roomId}-${section.id}`}>
+        <header className="themed-section-header"><h3>{section.label}</h3><p>{section.note}</p></header>
+        {section.products.length ? <div className="themed-product-grid">
+          {section.products.map(product => <ThemedProductTile key={product.id} product={product} onProduct={onProduct}/>)}
+        </div> : <p className="themed-empty">{catalogState.status === 'loading' ? 'Preparing display…' : 'This edit is awaiting its next verified catalog release.'}</p>}
+      </section>)}
+    </div>
+  </section>
+}
+
+function DropsCorridor({ onExit, onEnter, bagCount, onBag, accountControl }) {
+  return <section className="drops-corridor" data-room="drops">
+    <ThemedRoomHeader onExit={onExit} bagCount={bagCount} onBag={onBag} accountControl={accountControl}/>
+    <header className="drops-hero">
+      <span className="themed-eyebrow">AEROVISTA · LIMITED ENVIRONMENTS</span>
+      <h1>The Drops Corridor.</h1>
+      <p>Three distinct spaces, each built around a collection's own visual language. The same AeroVista bag and checkout follow you through every door.</p>
+    </header>
+    <div className="drops-grid">
+      {dropRoomIds.map(id => {
+        const room = themedRooms[id]
+        return <button type="button" className={`drops-door ${id}`} key={id} onClick={() => onEnter(id)} aria-label={`Enter ${room.name}`}>
+          <span className="themed-eyebrow">{room.eyebrow}</span>
+          <strong>{room.name}</strong>
+          <small>{room.note}</small>
+          <em>ENTER DROP <ArrowRight size={13}/></em>
+        </button>
+      })}
+    </div>
+  </section>
+}
+
 function Exterior({ entering, onEnter, onWarm }) {
   return <section className={`exterior ${entering ? 'entering' : ''}`}>
     <div className="exterior-image"><span className="exterior-sign-logo" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}img/aa_logo.png`} alt=""/></span></div><div className="vignette"/>
@@ -693,7 +787,8 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, 
 
 function readStoreRoute() {
   const params = new URLSearchParams(window.location.search)
-  const space = ['foyer', 'mens', 'womens'].includes(params.get('space')) ? params.get('space') : 'outside'
+  const requestedSpace = params.get('space')
+  const space = ['foyer', 'mens', 'womens', 'northline', 'drops', ...dropRoomIds].includes(requestedSpace) ? requestedSpace : 'outside'
   const view = spaceViews.some(item => item.id === params.get('view')) ? params.get('view') : 'room'
   const checkout = params.get('checkout') === 'success' || params.get('checkout') === 'cancel' ? params.get('checkout') : ''
   return { space, view, product: params.get('product') || '', checkout, stickerBox: space === 'mens' && params.get('box') === 'stickers' }
@@ -711,6 +806,7 @@ function App() {
   const [stickerDraft, setStickerDraft] = useState([])
   const [stickerContract, setStickerContract] = useState(null)
   const [showroomProducts, setShowroomProducts] = useState([])
+  const [allCatalogProducts, setAllCatalogProducts] = useState([])
   const [womenStudioProducts, setWomenStudioProducts] = useState([])
   const [catalogState, setCatalogState] = useState({ status: 'idle', visibleCatalogCount: 0, showroomCount: 0 })
   useEffect(() => {
@@ -739,8 +835,8 @@ function App() {
     [savedState.items],
   )
   const productById = useMemo(
-    () => new Map([...showroomProducts, ...womenStudioProducts].map(product => [product.id, product])),
-    [showroomProducts, womenStudioProducts],
+    () => new Map([...allCatalogProducts, ...showroomProducts, ...womenStudioProducts].map(product => [product.id, product])),
+    [allCatalogProducts, showroomProducts, womenStudioProducts],
   )
   const savedProducts = useMemo(
     () => savedState.items.map(item => ({ item, product: productById.get(item.productId) || null })),
@@ -758,12 +854,14 @@ function App() {
       if (catalogResult.status === 'fulfilled') {
         const bootstrap = bootstrapResult.status === 'fulfilled' ? bootstrapResult.value : null
         const report = buildCatalogProducts(catalogResult.value, bootstrap)
+        setAllCatalogProducts(report.products)
         setShowroomProducts(report.showroomProducts)
         setWomenStudioProducts(report.womenStudioProducts)
         const nextState = { status: 'ready', ...report, bootstrapReady: Boolean(bootstrap) }
         setCatalogState(nextState)
         return nextState
       }
+      setAllCatalogProducts([])
       setShowroomProducts([])
       setWomenStudioProducts([])
       const nextState = { status: 'offline', visibleCatalogCount: 0, showroomCount: 0, error: catalogResult.reason?.message || 'Catalog unavailable' }
@@ -869,12 +967,12 @@ function App() {
 
   useEffect(() => {
     if (!pendingProduct) return undefined
-    const product = [...showroomProducts, ...womenStudioProducts].find(item => item.id === pendingProduct)
+    const product = productById.get(pendingProduct)
     if (!product) return undefined
     setSelected(product)
     setPendingProduct('')
     return undefined
-  }, [pendingProduct, showroomProducts, womenStudioProducts])
+  }, [pendingProduct, productById])
 
   useEffect(() => {
     const modalOpen = Boolean(selected || bagOpen || stickerBox || accountOpen)
@@ -904,6 +1002,8 @@ function App() {
   function goOutside() { setSelected(null); setBagOpen(false); setStickerBox(false); setSpace('outside') }
   function openMensGallery(view = 'room') { warmCommerce(); setMensView(view); setSpace('mens') }
   function openWomensStudio() { warmCommerce(); setSpace('womens') }
+  function openThemedRoom(id) { if (!themedRooms[id]) return; warmCommerce(); setSpace(id) }
+  function openDrops() { warmCommerce(); setSpace('drops') }
   function returnToFoyer() { setSelected(null); setBagOpen(false); setStickerBox(false); setSpace('foyer') }
   function add(product, size, variant) {
     setBag(current => [...current, { product, size, variant, quantity: 1 }])
@@ -1196,8 +1296,8 @@ function App() {
       <button type="button" onClick={() => setCheckoutNotice('')}>Dismiss</button>
     </div>}
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
-    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
-    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView} onOpenBox={() => setStickerBox(true)} accountControl={accountControl}/>}
+    {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openThemedRoom('northline')} onOpenDrops={openDrops} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
+    {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={next => next === 'place' ? openThemedRoom('northline') : setMensView(next)} onOpenBox={() => setStickerBox(true)} accountControl={accountControl}/>}
     {space === 'mens' && stickerBox && <StickerBox products={showroomProducts} priceLabel={priceLabel} onClose={() => setStickerBox(false)} onSelect={setSelected} contract={stickerContract} draft={stickerDraft} onDraftChange={setStickerDraft} onAddBundle={lines=>{
     if(lines.length<3)return
     const bundleId='sticker-'+Date.now()+'-'+Math.random().toString(36).slice(2)
@@ -1206,6 +1306,8 @@ function App() {
     setStickerBox(false)
     setBagOpen(true)
   }}/>}
+    {space === 'drops' && <DropsCorridor onExit={returnToFoyer} onEnter={openThemedRoom} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
+    {themedRooms[space] && <ThemedRoom roomId={space} products={allCatalogProducts} catalogState={catalogState} onExit={returnToFoyer} onDrops={openDrops} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
     {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
     <ProductDrawer
       product={selected}
