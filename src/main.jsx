@@ -127,7 +127,7 @@ function ProductImage({ product, image = product?.image, alt = product?.name, la
             draggable={false}
             onError={() => setFailed(true)}
           />
-        : <GarmentArt type={product?.type || 'object'} accent={product?.accent}/>} 
+        : <GarmentArt type={product?.type || 'object'} accent={product?.accent}/>}
     </div>
   )
 }
@@ -292,6 +292,7 @@ function ProductDrawer({
 }
 
 function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutError }) {
+  const bundleIds = [...new Set(bag.map(x=>x.bundleId).filter(Boolean))]
   const hasUnready = bag.some(item => !item.variant || !Number.isFinite(item.variant.price))
   const total = bag.reduce((sum, item) => sum + (Number.isFinite(item.variant?.price) ? item.variant.price * (item.quantity || 1) : 0), 0)
   return (
@@ -301,16 +302,18 @@ function BagDrawer({ bag, onClose, onRemove, onCheckout, checkoutBusy, checkoutE
         <button className="icon-btn drawer-close" onClick={onClose} aria-label="Close shopping bag"><X size={20}/></button>
         <div className="drawer-content bag-content">
           <span className="eyebrow">AEROVISTA STORE</span><h2>Your bag</h2>
+          {bundleIds.map(id=><div className="sticker-bag-group" key={id}><b>Sticker bundle · {bag.filter(x=>x.bundleId===id).length} stickers</b><button type="button" onClick={()=>onRemove({bundleId:id})}>Remove entire bundle</button></div>)}
           {bag.length === 0 ? <p className="empty">Nothing here yet. Explore the walls and select a piece.</p> : bag.map((item, index) => (
             <div className="bag-row" key={`${item.product.id}-${item.variant?.id || item.size}-${index}`}>
               <ProductImage product={item.product}/>
               <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{priceLabel(item.product, item.variant)}</span></div>
-              <button className="icon-btn" onClick={() => onRemove(index)} aria-label={`Remove ${item.product.shortName} from bag`}><Minus size={15}/></button>
+              <button className="icon-btn" onClick={() => onRemove({index})} disabled={Boolean(item.bundleId)} aria-label={`Remove ${item.product.shortName} from bag`}><Minus size={15}/></button>
             </div>
           ))}
           <div className="bag-total"><span>Total</span><b>{hasUnready ? 'TBD' : money.format(total)}</b></div>
+          {bundleIds.length>0 && <p className="checkout-error" role="status">Bundle checkout is paused until the discount is enforced by Square. Remove the full bundle to check out other items.</p>}
           {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
-          <button className={`primary wide ${checkoutBusy ? 'is-busy' : ''}`} disabled={!bag.length || hasUnready || checkoutBusy} onClick={onCheckout} aria-live="polite">
+          <button className={`primary wide ${checkoutBusy ? 'is-busy' : ''}`} disabled={!bag.length || hasUnready || checkoutBusy || bundleIds.length>0} onClick={onCheckout} aria-live="polite">
             {checkoutBusy ? 'Opening secure checkout…' : <>Checkout <ArrowRight size={17}/></>}
           </button>
           <small>Square confirms the amount. Creating checkout does not mark an order paid or redeem a promotion.</small>
@@ -665,7 +668,7 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, 
       <ViewNav view={view} onView={onView}/>
       <div className="center-prompt floor-status" data-status={catalogState.status} role="status" aria-live="polite"><Sparkles size={14}/><span>{floorMessage}</span></div>
     </div>
-    {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} onOpenBox={onOpenBox} catalogState={catalogState}/>} 
+    {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} onOpenBox={onOpenBox} catalogState={catalogState}/>}
   </section>
 }
 
@@ -686,6 +689,7 @@ function App() {
   const [selected, setSelected] = useState(null)
   const [bagOpen, setBagOpen] = useState(false)
   const [bag, setBag] = useState([])
+  const [stickerDraft, setStickerDraft] = useState([])
   const [showroomProducts, setShowroomProducts] = useState([])
   const [womenStudioProducts, setWomenStudioProducts] = useState([])
   const [catalogState, setCatalogState] = useState({ status: 'idle', visibleCatalogCount: 0, showroomCount: 0 })
@@ -1141,6 +1145,7 @@ function App() {
   />
 
   async function checkout() {
+    if(bag.some(x=>x.bundleId)){setCheckoutError("Bundle checkout is not yet enabled.");return}
     setCheckoutBusy(true); setCheckoutError('')
     try {
       const result = await beginCheckout(bag)
@@ -1166,7 +1171,14 @@ function App() {
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
     {space === 'foyer' && <Foyer onOutside={goOutside} onOpenMens={() => openMensGallery('room')} onOpenWomens={openWomensStudio} onOpenPlace={() => openMensGallery('place')} onOpenObjects={() => openMensGallery('objects')} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
     {space === 'mens' && <Interior products={showroomProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} view={mensView} onView={setMensView} onOpenBox={() => setStickerBox(true)} accountControl={accountControl}/>}
-    {space === 'mens' && stickerBox && <StickerBox products={showroomProducts} priceLabel={priceLabel} onClose={() => setStickerBox(false)} onSelect={setSelected}/>}
+    {space === 'mens' && stickerBox && <StickerBox products={showroomProducts} priceLabel={priceLabel} onClose={() => setStickerBox(false)} onSelect={setSelected} draft={stickerDraft} onDraftChange={setStickerDraft} onAddBundle={lines=>{
+    if(lines.length<3)return
+    const bundleId='sticker-'+Date.now()+'-'+Math.random().toString(36).slice(2)
+    setBag(current=>[...current,...lines.map(line=>({...line,bundleId}))])
+    setStickerDraft([])
+    setStickerBox(false)
+    setBagOpen(true)
+  }}/>}
     {space === 'womens' && <WomenStudio products={womenStudioProducts} catalogState={catalogState} onExit={returnToFoyer} onProduct={setSelected} bagCount={bag.length} onBag={() => setBagOpen(true)} accountControl={accountControl}/>}
     <ProductDrawer
       product={selected}
@@ -1180,7 +1192,7 @@ function App() {
       onToggleSaved={toggleSavedPiece}
       onLogin={() => beginIdentityLogin()}
     />
-    {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={index => setBag(current => current.filter((_, i) => i !== index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>} 
+    {bagOpen && <BagDrawer bag={bag} onClose={() => setBagOpen(false)} onRemove={target => setBag(current => target.bundleId ? current.filter(x=>x.bundleId!==target.bundleId) : current.filter((_,i)=>i!==target.index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>}
     {accountOpen && identityState.status === 'authenticated' && <MyAeroVistaDrawer
       identityState={identityState}
       summaryState={accountSummaryState}
