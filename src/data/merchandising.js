@@ -89,6 +89,14 @@ export const productPresentation = Object.freeze({
       ],
     },
   },
+  'aerovista-skyline-drone-crest-sticker': {
+    shortName: 'Skyline Drone Crest', accent: '#00AEEF', type: 'sticker', collection: 'Accessories',
+    fallback: { name: 'AeroVista Skyline Drone Crest Sticker', images: ['/img/skyline_sticker.png'] },
+  },
+  'powder-peaks-8-ball-sticker-black-white-ink': {
+    shortName: 'Powder Peaks 8-Ball', accent: '#D6E5F3', type: 'sticker', collection: 'NorthLine',
+    fallback: { name: 'Powder Peaks 8-Ball Sticker', images: ['/img/POWDER_PEAKS.png'] },
+  },
   'can-cooler': { shortName: 'Pattern Can Cooler', accent: '#AEB4BA', type: 'cooler', collection: 'Accessories', display: { stageImageSuffix: '/10-front-01.webp', objectPosition: '50% 50%' } },
 
   // Women's Studio exclusives. Shared unisex layers continue to use the
