@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { X } from 'lucide-react'
+import { stickerBundlePreview, stickerUnitPriceCents } from './commerce/stickerPricing'
 
 const roomImage = `${import.meta.env.BASE_URL}store/interior.svg`
 
@@ -98,7 +99,7 @@ export function StickerBoxButton({ products, onOpen }) {
   )
 }
 
-export function StickerBox({ products, priceLabel, onClose, onSelect, draft = [], onDraftChange, onAddBundle }) {
+export function StickerBox({ products, priceLabel, onClose, onSelect, draft = [], onDraftChange, onAddBundle, contract }) {
   const boardRef = useRef(null)
   const closeRef = useRef(null)
   const piecesRef = useRef(null)
@@ -116,6 +117,10 @@ export function StickerBox({ products, priceLabel, onClose, onSelect, draft = []
   const [picker, setPicker] = useState(null)
   const [variantId, setVariantId] = useState('')
   const pieces = piecesRef.current
+  const pricePreview = stickerBundlePreview(draft, contract)
+  const dollars = cents => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(cents/100)
+  const pricingReady = Boolean(contract?.enabled)
+
 
   useEffect(() => {
     const next = stickerPieces(products)
@@ -319,16 +324,16 @@ export function StickerBox({ products, priceLabel, onClose, onSelect, draft = []
             <span style={{width:String(100 * Math.min(draft.length, draft.length < 3 ? 3 : 5)/(draft.length < 3 ? 3 : 5))+'%'}}/>
           </div>
           <div className="sticker-selected-list">{draft.map((line,index)=><div className="sticker-selected" key={index}><img src={line.product.image} alt=""/><span>{line.product.shortName} · {line.variant.size}</span><button type="button" aria-label={'Remove '+line.product.shortName} onClick={()=>onDraftChange(draft.filter((_,i)=>i!==index))}>Remove</button></div>)}</div>
-          <footer><span>Catalog subtotal: {new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(draft.reduce((n,l)=>n+l.variant.price,0))}</span><button type="button" disabled={draft.length < 3} onClick={()=>onAddBundle(draft)}>Add full bundle to bag</button></footer>
-          <small>Bundle discounts are pending server-side Square verification. Checkout is disabled for bundles until then.</small>
+          <footer><span>{pricePreview ? 'Bundle preview: '+dollars(pricePreview.subtotalCents)+' · '+dollars(pricePreview.unitBaseCents)+' base each + size/material' : 'Select eligible stickers'}</span><button type="button" disabled={draft.length < 3 || !pricePreview} onClick={()=>onAddBundle(draft)}>Add full bundle to bag</button></footer>
+          <small>{pricingReady ? 'Savings are checked again by Square when you proceed to checkout.' : 'Bundle creation is available; checkout opens after backend prices are verified.'}</small>
         </div>
         {picker && <div className="sticker-pick-mask"><div className="sticker-pick-card" role="dialog" aria-label="Choose sticker variation">
           <strong>{picker.shortName}</strong><img src={picker.image} alt=""/>
           <label htmlFor="sticker-pick-variant">Variation</label>
           <select id="sticker-pick-variant" value={variantId} onChange={e=>setVariantId(e.target.value)}><option value="">Select variation</option>
-            {(picker.commerce?.variants || []).filter(v=>v.availability==='available' && v.providerVariationId && Number.isFinite(v.price)).map(v=><option key={v.id} value={v.id}>{v.color} / {v.size} — {'$'+v.price.toFixed(2)}</option>)}
+            {(picker.commerce?.variants || []).filter(v=>v.availability==='available' && v.providerVariationId && stickerUnitPriceCents(v.providerVariationId, Math.max(1,draft.length+1),contract)!==null).map(v=><option key={v.id} value={v.id}>{[v.color,v.size].filter(Boolean).join(' / ')} — {dollars(stickerUnitPriceCents(v.providerVariationId, Math.max(1,draft.length+1),contract))} preview</option>)}
           </select>
-          <button type="button" disabled={!variantId} onClick={()=>{const v=picker.commerce.variants.find(v=>v.id===variantId); if(v)onDraftChange([...draft,{product:picker,variant:v,size:v.size,quantity:1}]);setPicker(null)}}>Add to sticker box</button>
+          <button type="button" disabled={!variantId} onClick={()=>{const v=picker.commerce.variants.find(v=>v.id===variantId); if(v && stickerUnitPriceCents(v.providerVariationId,3,contract)!==null)onDraftChange([...draft,{product:picker,variant:v,size:v.size,quantity:1}]);setPicker(null)}}>Add to sticker box</button>
           <button type="button" onClick={()=>setPicker(null)}>Cancel</button>
         </div></div>}
 
