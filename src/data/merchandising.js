@@ -97,6 +97,13 @@ export const productPresentation = Object.freeze({
     shortName: 'Powder Peaks 8-Ball', accent: '#D6E5F3', type: 'sticker', collection: 'NorthLine',
     fallback: { name: 'Powder Peaks 8-Ball Sticker', images: ['/img/POWDER_PEAKS.png'] },
   },
+  'mount-sled-sticker': {
+    shortName: 'Mount Sled', accent: '#00AEEF', type: 'sticker', collection: 'NorthLine',
+    fallback: {
+      name: 'Mount Sled Sticker',
+      images: ['/products/mount-sled-sticker/01-hero.webp'],
+    },
+  },
   'can-cooler': { shortName: 'Pattern Can Cooler', accent: '#AEB4BA', type: 'cooler', collection: 'Accessories', display: { stageImageSuffix: '/10-front-01.webp', objectPosition: '50% 50%' } },
 
   // Women's Studio exclusives. Shared unisex layers continue to use the

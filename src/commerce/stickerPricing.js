@@ -4,6 +4,7 @@
 export const STICKER_BUNDLE_CONTRACT = 'apparel-stickers-v1'
 
 export const stickerSurcharges = Object.freeze({
+  'CCL2FBPVTS5FCGMBCWJM2SDD': 100,
   '3R4MZTGTSZKFOAOT3ZNXU6B3': 0,
   '2WYP3AIVG3SHS6FXXP5JG7IE': 0,
   'QWQ5TR6LE5OYVSTXGEFPVWBQ': 100,
