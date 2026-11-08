@@ -803,10 +803,6 @@ function MobileStore({ products, productMap, collection, onCollection, onProduct
   </section>
 }
 
-function ViewNav({ view, onView }) {
-  return <nav className="view-nav" aria-label="Look around the store">{spaceViews.map(space => <button key={space.id} className={view === space.id ? 'active' : ''} onClick={() => onView(space.id)} aria-pressed={view === space.id}><i aria-hidden="true"/><span>{space.label}</span></button>)}</nav>
-}
-
 function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, view, onView, onOpenBox, accountControl }) {
   const [collection, setCollection] = useState('All')
   const compact = useCompactStore()
@@ -828,7 +824,6 @@ function Interior({ products, catalogState, onExit, onProduct, bagCount, onBag, 
       <div className="scene-label"><span className="eyebrow">{currentView.label}</span><h1>{collection === 'All' ? 'Apparel & Objects' : collection}</h1><p>{currentView.note}</p></div>
       <button className="walk-back" onClick={onExit}><ChevronLeft size={16}/> Entry Gallery</button>
       {!compact && <div className="fixture-layer">{fixtures.filter(fixture => fixtureVisible(fixture, view)).map(fixture => <Fixture key={fixture.id} fixture={fixture} productMap={productMap} products={products} collection={collection} onOpen={onProduct} onOpenBox={onOpenBox}/>)}</div>}
-      <ViewNav view={view} onView={onView}/>
       <div className="center-prompt floor-status" data-status={catalogState.status} role="status" aria-live="polite"><Sparkles size={14}/><span>{floorMessage}</span></div>
     </div>
     {compact && <MobileStore products={products} productMap={productMap} collection={collection} onCollection={setCollection} onProduct={onProduct} onOpenBox={onOpenBox} catalogState={catalogState}/>}
