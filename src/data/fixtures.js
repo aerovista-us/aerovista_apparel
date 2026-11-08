@@ -2,6 +2,8 @@
 // Coordinates are calibrated to public/store/interior.svg (1672 x 941).
 // Product IDs are canonical IDs from square_products_latest.json.
 // Commerce fields never live here: this file only places real catalog products in space.
+// visualScale calibrates the visible artwork inside a fixed, clickable fixture slot.
+// It never changes the purchased product, real-world dimensions, or fixture position.
 export const fixtures = [
   {
     id: 'left-wall-rack',
@@ -11,14 +13,14 @@ export const fixtures = [
     views: ['room', 'left'],
     slots: [
       // Front is the outer edge. Each rail rises slightly toward the back of the wall.
-      { productId: 'aerovista-apex-vintage-tee', x: 16, y: 33, scale: 1.02, tilt: -1 },
-      { productId: 'aerovista-apex-glitch-tee-black', x: 38, y: 31.5, scale: 1.02, tilt: 0 },
-      { productId:  'aerovista-av-07-grid-pocket-tee-slate-gray', x: 60, y: 29.9, scale: 1.02, tilt: 0 },
-      { productId: 'aerovista-core-tee', x: 82, y: 28.4, scale: 1.02, tilt: 1 },
-      { productId: 'shadow-wear-tactical-bomber-jacket-summit-edition', x: 16, y: 104, scale: 1.02, tilt: -1 },
-      { productId: 'aerovista-apex-pattern-bomber-jacket', x: 38, y: 95, scale: 1.02, tilt: 0 },
-      { productId: 'shadow-pants', x: 60, y: 86, scale: 1.02, tilt: 0 },
-      { productId:  'aerovista-glyph-field-long-sleeve-tee-archive-grid', x: 82, y: 77, scale: 1.02, tilt: 1 },
+      { productId: 'aerovista-apex-vintage-tee', x: 16, y: 33, scale: 1.02, tilt: -1, visualScale: 1.17 },
+      { productId: 'aerovista-apex-glitch-tee-black', x: 38, y: 31.5, scale: 1.02, tilt: 0, visualScale: 0.87 },
+      { productId:  'aerovista-av-07-grid-pocket-tee-slate-gray', x: 60, y: 29.9, scale: 1.02, tilt: 0, visualScale: 1.18 },
+      { productId: 'aerovista-core-tee', x: 82, y: 28.4, scale: 1.02, tilt: 1, visualScale: 1.18 },
+      { productId: 'shadow-wear-tactical-bomber-jacket-summit-edition', x: 16, y: 104, scale: 1.02, tilt: -1, visualScale: 1.14 },
+      { productId: 'aerovista-apex-pattern-bomber-jacket', x: 38, y: 95, scale: 1.02, tilt: 0, visualScale: 1.17 },
+      { productId: 'shadow-pants', x: 60, y: 86, scale: 1.02, tilt: 0, visualScale: 1.17 },
+      { productId:  'aerovista-glyph-field-long-sleeve-tee-archive-grid', x: 82, y: 77, scale: 1.02, tilt: 1, visualScale: 1.14 },
     ],
   },
   {
@@ -29,13 +31,13 @@ export const fixtures = [
     views: ['room', 'right'],
     slots: [
       // Right wall is the hoodie wall: clean, layered and intentionally dense.
-      { productId: 'aerovista-shadow-pattern-hoodie', x: 11, y: 39.2, scale: 1.02, tilt: -1 },
-      { productId:  'founders-mark-full-zip-hoodie', x: 36, y: 40.4, scale: 1.02, tilt: 0 },
-      { productId: 'aerovista-core-hoodie', x: 61, y: 41.7, scale: 1.02, tilt: 0 },
-      { productId: 'aerovista-division-hoodie', x: 86, y: 42.9, scale: 1.02, tilt: 1 },
-      { productId: 'aerovista-apex-draft-full-zip-hoodie-black', x: 15, y: 77.8, scale: 1.02, tilt: -1 },
-      { productId: 'aerovista-apex-draft-pullover-hoodie-black', x: 45, y: 86.3, scale: 1.02, tilt: 0 },
-      { productId: 'aerovista-the-blue-witness-urban-hoodie-black', x: 75, y: 94.8, scale: 1.02, tilt: 1 },
+      { productId: 'aerovista-shadow-pattern-hoodie', x: 11, y: 39.2, scale: 1.02, tilt: -1, visualScale: 1.17 },
+      { productId:  'founders-mark-full-zip-hoodie', x: 36, y: 40.4, scale: 1.02, tilt: 0, visualScale: 0.88 },
+      { productId: 'aerovista-core-hoodie', x: 61, y: 41.7, scale: 1.02, tilt: 0, visualScale: 1.25 },
+      { productId: 'aerovista-division-hoodie', x: 86, y: 42.9, scale: 1.02, tilt: 1, visualScale: 1.21 },
+      { productId: 'aerovista-apex-draft-full-zip-hoodie-black', x: 15, y: 77.8, scale: 1.02, tilt: -1, visualScale: 0.89 },
+      { productId: 'aerovista-apex-draft-pullover-hoodie-black', x: 45, y: 86.3, scale: 1.02, tilt: 0, visualScale: 0.89 },
+      { productId: 'aerovista-the-blue-witness-urban-hoodie-black', x: 75, y: 94.8, scale: 1.02, tilt: 1, visualScale: 0.89 },
     ],
   },
   {
@@ -45,11 +47,11 @@ export const fixtures = [
     position: { x: 4.7, y: 74, w: 25.7, h: 18 },
     views: ['room', 'left'],
     slots: [
-      { productId: 'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark', x: 9, y: 41, scale: .96, tilt: -2 },
-      { productId:  'aerovista-retro-trucker-hat-orbit-a-gray', x: 29, y: 41, scale: .96, tilt: 1 },
-      { productId: 'glitch-orbit-logo-black', x: 49, y: 41, scale: .96, tilt: 0 },
-      { productId: 'aerovista-apex-mesh-trucker-cap', x: 69, y: 41, scale: .96, tilt: 1 },
-      { productId: 'docklife-drip-osprey-rope-cap', x: 89, y: 41, scale: .96, tilt: -1 },
+      { productId: 'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark', x: 9, y: 41, scale: .96, tilt: -2, visualScale: 1.00 },
+      { productId:  'aerovista-retro-trucker-hat-orbit-a-gray', x: 29, y: 41, scale: .96, tilt: 1, visualScale: 1.00 },
+      { productId: 'glitch-orbit-logo-black', x: 49, y: 41, scale: .96, tilt: 0, visualScale: 0.96 },
+      { productId: 'aerovista-apex-mesh-trucker-cap', x: 69, y: 41, scale: .96, tilt: 1, visualScale: 0.94 },
+      { productId: 'docklife-drip-osprey-rope-cap', x: 89, y: 41, scale: .96, tilt: -1, visualScale: 1.08 },
     ],
   },
   {
@@ -59,8 +61,8 @@ export const fixtures = [
     position: { x: 69.6, y: 74, w: 25.7, h: 18 },
     views: ['room', 'right'],
     slots: [
-      { productId: 'midnight-alpine-woodcut-repeat', x: 32, y: 40, scale: 1, tilt: -2 },
-      { productId: 'shadow-sneaks', x: 68, y: 40, scale: 1, tilt: 2 },
+      { productId: 'midnight-alpine-woodcut-repeat', x: 32, y: 40, scale: 1, tilt: -2, visualScale: 1.14 },
+      { productId: 'shadow-sneaks', x: 68, y: 40, scale: 1, tilt: 2, visualScale: 1.05 },
     ],
   },
   {
@@ -70,8 +72,8 @@ export const fixtures = [
     position: { x: 39.2, y: 62, w: 21.6, h: 24 },
     views: ['room', 'objects'],
     slots: [
-      { productId: 'aerovista-apex-relic-playing-cards', x: 64, y: 44, scale: .9, tilt: -4 },
-      { productId: 'can-cooler', x: 86, y: 36, scale: 1, tilt: 2 },
+      { productId: 'aerovista-apex-relic-playing-cards', x: 64, y: 44, scale: .9, tilt: -4, visualScale: 1.00 },
+      { productId: 'can-cooler', x: 86, y: 36, scale: 1, tilt: 2, visualScale: 1.03 },
     ],
   },
   {
@@ -81,7 +83,7 @@ export const fixtures = [
     // In the quiet rear-right pocket, clear of the center table and front shoe shelf.
     position: { x: 58.9, y: 57.8, w: 12.8, h: 18.2 },
     views: ['room'],
-    slots: [{ productId: 'shadow-camo-duffle-bag', x: 50, y: 52, scale: 1, tilt: -3 }],
+    slots: [{ productId: 'shadow-camo-duffle-bag', x: 50, y: 52, scale: 1, tilt: -3, visualScale: 0.92 }],
   },
   {
     id: 'place-line-wall',

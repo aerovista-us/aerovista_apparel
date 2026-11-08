@@ -33,6 +33,7 @@ import './women-studio.css'
 import './themed-rooms.css'
 import './room-spatial.css'
 import './duffel-floor.css'
+import './mens-merch-proportions.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -156,7 +157,7 @@ function MerchItem({ product, slot, onOpen, highlighted = true }) {
     left: `${slot.x}%`, top: `${slot.y}%`,
     '--item-scale': slot.scale ?? 1,
     '--item-tilt': `${slot.tilt ?? 0}deg`,
-    '--stage-scale': product.display?.stageScale ?? 1,
+    '--visual-scale': slot.visualScale ?? 1,
     '--accent': product.accent,
   }
   return (
@@ -168,7 +169,7 @@ function MerchItem({ product, slot, onOpen, highlighted = true }) {
       aria-label={`View ${product.name}`}
       aria-haspopup="dialog"
     >
-      <span className="merch-object"><ProductImage product={product} stage/></span>
+      <span className="merch-object"><ProductImage product={product} stage eager/></span>
       <span className="merch-pin"/>
       <span className="merch-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
     </button>

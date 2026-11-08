@@ -1,0 +1,13 @@
+/* Per-slot image crop/alpha normalization for the physical Men's Gallery.
+   Keep hitboxes and merchandise locations stable: only the rendered image scales.
+   Do not apply to mobile cards, gallery imagery, or the themed Drop rooms. */
+@media (min-width: 901px) {
+  .interior-scene .fixture-layer .merch-item .product-image.stage img {
+    transform: scale(var(--visual-scale, 1));
+    transform-origin: 50% 50%;
+  }
+  .interior-scene .fixture-layer .merch-item:focus-visible {
+    outline: 1px solid rgba(120, 210, 238, .7);
+    outline-offset: 3px;
+  }
+}
