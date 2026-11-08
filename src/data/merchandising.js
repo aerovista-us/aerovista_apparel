@@ -50,24 +50,24 @@ export const productPresentation = Object.freeze({
   'shadow-sneaks': {
     shortName: 'Shadow Sneaks', accent: '#8A9198', type: 'shoe', collection: 'Footwear',
     image: '/products/shadow-sneaks/01-hero.webp',
-    display: { stageImageSuffix: '/50-side.webp', objectPosition: '50% 62%' },
+    display: { stageImageSuffix: '/45-right-front-01.webp', objectPosition: '50% 68%' },
     fallback: {
       name: 'Shadow Sneaks',
       images: [
         '/products/shadow-sneaks/01-hero.webp',
-        '/products/shadow-sneaks/50-side.webp',
+        '/products/shadow-sneaks/45-right-front-01.webp',
       ],
     },
   },
   'midnight-alpine-woodcut-repeat': {
     shortName: 'Midnight Alpine', accent: '#6E8CA8', type: 'shoe', collection: 'Footwear',
     image: '/products/midnight-alpine-woodcut-repeat/01-hero.webp',
-    display: { stageImageSuffix: '/40-right-01.webp', objectPosition: '50% 58%' },
+    display: { stageImageSuffix: '/35-left-front-01.webp', objectPosition: '50% 68%' },
     fallback: {
       name: 'Midnight Alpine Woodcut Repeat',
       images: [
         '/products/midnight-alpine-woodcut-repeat/01-hero.webp',
-        '/products/midnight-alpine-woodcut-repeat/40-right-01.webp',
+        '/products/midnight-alpine-woodcut-repeat/35-left-front-01.webp',
       ],
     },
   },
@@ -236,10 +236,10 @@ export const productGalleryAdditions = Object.freeze({
     '/products/aerovista-apex-pattern-print-swimsuit-one-piece/swimsuit.png',
   ],
   'shadow-sneaks': [
-    '/products/shadow-sneaks/50-side.webp',
+    '/products/shadow-sneaks/45-right-front-01.webp',
   ],
   'midnight-alpine-woodcut-repeat': [
-    '/products/midnight-alpine-woodcut-repeat/40-right-01.webp',
+    '/products/midnight-alpine-woodcut-repeat/35-left-front-01.webp',
   ],
 })
 
