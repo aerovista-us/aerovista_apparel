@@ -4,6 +4,25 @@
 
 export const productPresentation = Object.freeze({
   // Left wall: tees, bombers and bottoms.
+  // Approved Nov 7 men's-gallery product pass: four one-for-one replacements.
+  'aerovista-av-07-grid-pocket-tee-slate-gray': { shortName: 'AV-07 Grid Pocket', accent: '#9FA8B4', type: 'tee', collection: 'Core' },
+  'aerovista-glyph-field-long-sleeve-tee-archive-grid': { shortName: 'Glyph Field Long Sleeve', accent: '#B8C0CB', type: 'tee', collection: 'Shadow Wear', display: { stageImageSuffix: '/10-front-03.webp', stageScale: 1.05 } },
+  'founders-mark-full-zip-hoodie': { shortName: 'Founders Mark Zip', accent: '#C4C5C7', type: 'hoodie', collection: 'Core' },
+  'aerovista-retro-trucker-hat-orbit-a-gray': { shortName: 'Retro Orbit A', accent: '#A9B3C1', type: 'cap', collection: 'Accessories' },
+  'shadow-camo-duffle-bag': {
+    shortName: 'Shadow Camo Duffle', accent: '#90A0A9', type: 'bag', collection: 'Accessories',
+    image: '/products/duffle-bag/01-stage.webp',
+    display: { objectPosition: '50% 76%', stageScale: 1 },
+    fallback: {
+      name: 'Shadow Camo Duffle Bag',
+      images: [
+        '/products/duffle-bag/01-stage.webp',
+        '/products/duffle-bag/all-over-print-duffle-bag-white-right-front-6aeff31c50a0c.png',
+        '/products/duffle-bag/all-over-print-duffle-bag-white-back-6aeff31c4f281.png',
+        '/products/duffle-bag/all-over-print-duffle-bag-white-inside-pocket-6aeff31c52e4c.png',
+      ],
+    },
+  },
   'aerovista-apex-vintage-tee': { shortName: 'Apex Vintage Tee', accent: '#00AEEF', display: { stageScale: 1.43 } },
   'aerovista-apex-glitch-tee-black': { shortName: 'Apex Glitch Tee', accent: '#00AEEF', display: { stageScale: 1 } },
   'architect-field-issue-tee-black': { shortName: 'Field Issue Tee', accent: '#D5D7DA', display: { stageScale: 1.34 } },
@@ -233,12 +252,12 @@ export const retailZones = Object.freeze([
     productIds: [
       'aerovista-apex-vintage-tee',
       'aerovista-apex-glitch-tee-black',
-      'architect-field-issue-tee-black',
+       'aerovista-av-07-grid-pocket-tee-slate-gray',
       'aerovista-core-tee',
       'shadow-wear-tactical-bomber-jacket-summit-edition',
       'aerovista-apex-pattern-bomber-jacket',
       'shadow-pants',
-      'men-s-ghost-shorts',
+       'aerovista-glyph-field-long-sleeve-tee-archive-grid',
     ],
   },
   {
@@ -248,7 +267,7 @@ export const retailZones = Object.freeze([
     kind: 'wall',
     productIds: [
       'aerovista-shadow-pattern-hoodie',
-      'architect-built-different-hoodie-black',
+       'founders-mark-full-zip-hoodie',
       'aerovista-core-hoodie',
       'aerovista-division-hoodie',
       'aerovista-apex-draft-full-zip-hoodie-black',
@@ -263,7 +282,7 @@ export const retailZones = Object.freeze([
     kind: 'shelf',
     productIds: [
       'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark',
-      'aerovista-apex-camo-flexfit-hat',
+       'aerovista-retro-trucker-hat-orbit-a-gray',
       'glitch-orbit-logo-black',
       'aerovista-apex-mesh-trucker-cap',
       'docklife-drip-osprey-rope-cap',
@@ -287,6 +306,7 @@ export const retailZones = Object.freeze([
     productIds: [
       'aerovista-apex-relic-playing-cards',
       'can-cooler',
+      'shadow-camo-duffle-bag',
     ],
   },
   {

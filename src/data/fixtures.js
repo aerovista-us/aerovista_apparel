@@ -13,12 +13,12 @@ export const fixtures = [
       // Front is the outer edge. Each rail rises slightly toward the back of the wall.
       { productId: 'aerovista-apex-vintage-tee', x: 16, y: 33, scale: 1.02, tilt: -1 },
       { productId: 'aerovista-apex-glitch-tee-black', x: 38, y: 31.5, scale: 1.02, tilt: 0 },
-      { productId: 'architect-field-issue-tee-black', x: 60, y: 29.9, scale: 1.02, tilt: 0 },
+      { productId:  'aerovista-av-07-grid-pocket-tee-slate-gray', x: 60, y: 29.9, scale: 1.02, tilt: 0 },
       { productId: 'aerovista-core-tee', x: 82, y: 28.4, scale: 1.02, tilt: 1 },
       { productId: 'shadow-wear-tactical-bomber-jacket-summit-edition', x: 16, y: 104, scale: 1.02, tilt: -1 },
       { productId: 'aerovista-apex-pattern-bomber-jacket', x: 38, y: 95, scale: 1.02, tilt: 0 },
       { productId: 'shadow-pants', x: 60, y: 86, scale: 1.02, tilt: 0 },
-      { productId: 'men-s-ghost-shorts', x: 82, y: 77, scale: 1.02, tilt: 1 },
+      { productId:  'aerovista-glyph-field-long-sleeve-tee-archive-grid', x: 82, y: 77, scale: 1.02, tilt: 1 },
     ],
   },
   {
@@ -30,7 +30,7 @@ export const fixtures = [
     slots: [
       // Right wall is the hoodie wall: clean, layered and intentionally dense.
       { productId: 'aerovista-shadow-pattern-hoodie', x: 11, y: 39.2, scale: 1.02, tilt: -1 },
-      { productId: 'architect-built-different-hoodie-black', x: 36, y: 40.4, scale: 1.02, tilt: 0 },
+      { productId:  'founders-mark-full-zip-hoodie', x: 36, y: 40.4, scale: 1.02, tilt: 0 },
       { productId: 'aerovista-core-hoodie', x: 61, y: 41.7, scale: 1.02, tilt: 0 },
       { productId: 'aerovista-division-hoodie', x: 86, y: 42.9, scale: 1.02, tilt: 1 },
       { productId: 'aerovista-apex-draft-full-zip-hoodie-black', x: 15, y: 77.8, scale: 1.02, tilt: -1 },
@@ -46,7 +46,7 @@ export const fixtures = [
     views: ['room', 'left'],
     slots: [
       { productId: 'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark', x: 9, y: 41, scale: .96, tilt: -2 },
-      { productId: 'aerovista-apex-camo-flexfit-hat', x: 29, y: 41, scale: .96, tilt: 1 },
+      { productId:  'aerovista-retro-trucker-hat-orbit-a-gray', x: 29, y: 41, scale: .96, tilt: 1 },
       { productId: 'glitch-orbit-logo-black', x: 49, y: 41, scale: .96, tilt: 0 },
       { productId: 'aerovista-apex-mesh-trucker-cap', x: 69, y: 41, scale: .96, tilt: 1 },
       { productId: 'docklife-drip-osprey-rope-cap', x: 89, y: 41, scale: .96, tilt: -1 },
@@ -73,6 +73,15 @@ export const fixtures = [
       { productId: 'aerovista-apex-relic-playing-cards', x: 64, y: 44, scale: .9, tilt: -4 },
       { productId: 'can-cooler', x: 86, y: 36, scale: 1, tilt: 2 },
     ],
+  },
+  {
+    id: 'back-right-floor-duffel',
+    type: 'floor-display',
+    label: 'Shadow Camo Duffle',
+    // In the quiet rear-right pocket, clear of the center table and front shoe shelf.
+    position: { x: 58.9, y: 57.8, w: 12.8, h: 18.2 },
+    views: ['room'],
+    slots: [{ productId: 'shadow-camo-duffle-bag', x: 50, y: 52, scale: 1, tilt: -3 }],
   },
   {
     id: 'place-line-wall',
