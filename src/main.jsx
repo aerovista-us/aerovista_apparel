@@ -32,6 +32,7 @@ import './entry-gallery.css'
 import './women-studio.css'
 import './themed-rooms.css'
 import './room-spatial.css'
+import './duffel-floor.css'
 
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
@@ -182,6 +183,7 @@ function FixtureShell({ fixture, children }) {
         {fixture.type === 'wall-rack' && <><i className="rail"/><i className="rack-leg a"/><i className="rack-leg b"/></>}
         {fixture.type === 'table-stack' && <><i className="table-top"/><i className="table-base"/></>}
         {fixture.type === 'hat-shelf' && <><i className="shelf a"/><i className="shelf b"/></>}
+        {fixture.type === 'floor-display' && <i className="floor-contact"/>}
       </div>
       {children}
     </div>
