@@ -31,6 +31,16 @@ export const themedRooms = Object.freeze({
       { id: 'signal', label: 'SIGNAL DIAL', note: 'Stay tuned.', productIds: ['echoverse-signal-dial-chest-emblem-hoodie'] },
     ],
   },
+  afterdark: {
+    id: 'afterdark', eyebrow: 'DROP 004 · AEROVISTA AFTER DARK', name: 'AeroVista After Dark',
+    heading: 'When the lights go out.', subheading: 'Neon pulse. Ghost frequencies. The hours that belong to us.',
+    note: 'The midnight capsule: four pieces in a neon-lit after-hours showroom.',
+    art: 'afterdark', layout: 'neon-vault', accent: '#f18cdb', orientation: 'landscape',
+    sections: [
+      { id: 'midnight', label: 'MIDNIGHT SIGNAL', note: 'A signal through the dark.', productIds: ['afterdark-midnight-signal-hoodie','afterdark-neon-velocity-hoodie'] },
+      { id: 'ghost', label: 'GHOST FREQUENCY', note: 'Wear the afterimage.', productIds: ['afterdark-haunted-mixtape-hoodie','afterdark-ghost-frequency-beanie'] },
+    ],
+  },
   architect: {
     id: 'architect', eyebrow: 'DROP 003 · ARCHITECT / NEXUS', name: 'Architect / Nexus',
     heading: 'Form follows intention.', subheading: 'Blueprint lines / engineered details / clean cuts.',
@@ -42,7 +52,7 @@ export const themedRooms = Object.freeze({
     ],
   },
 })
-export const dropRoomIds = Object.freeze(['shadow','echoverse','architect'])
+export const dropRoomIds = Object.freeze(['shadow','echoverse','architect','afterdark'])
 export function roomProductIds(room) {
   return [...new Set(room.sections.flatMap(section => section.productIds))]
 }

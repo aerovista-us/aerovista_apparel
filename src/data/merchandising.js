@@ -23,6 +23,14 @@ export const productPresentation = Object.freeze({
       ],
     },
   },
+  'aerovista-arrow-racerback-cropped-tank': {
+    shortName: 'Follow Your Path · Cropped Tank', accent: '#dfb1d5', type: 'tank', collection: 'Women’s Studio',
+    image: '/products/aerovista-arrow-racerback-cropped-tank/01-hero.webp',
+  },
+  'afterdark-midnight-signal-hoodie': { shortName: 'Midnight Signal', accent: '#ec76c7', type: 'hoodie', collection: 'AeroVista After Dark' },
+  'afterdark-neon-velocity-hoodie': { shortName: 'Neon Velocity', accent: '#67dcee', type: 'hoodie', collection: 'AeroVista After Dark' },
+  'afterdark-haunted-mixtape-hoodie': { shortName: 'Haunted Mixtape', accent: '#bd96eb', type: 'hoodie', collection: 'AeroVista After Dark' },
+  'afterdark-ghost-frequency-beanie': { shortName: 'Ghost Frequency', accent: '#e9b1ff', type: 'cap', collection: 'AeroVista After Dark' },
   'aerovista-apex-vintage-tee': { shortName: 'Apex Vintage Tee', accent: '#00AEEF', display: { stageScale: 1.43 } },
   'aerovista-apex-glitch-tee-black': { shortName: 'Apex Glitch Tee', accent: '#00AEEF', display: { stageScale: 1 } },
   'architect-field-issue-tee-black': { shortName: 'Field Issue Tee', accent: '#D5D7DA', display: { stageScale: 1.34 } },
@@ -214,6 +222,7 @@ const womenExclusiveProductIds = new Set([
 export const showroomProductIds = Object.freeze(Object.keys(productPresentation).filter(id => !womenExclusiveProductIds.has(id)))
 
 export const womenStudioProductIds = Object.freeze([
+  'aerovista-arrow-racerback-cropped-tank',
   'aerovista-apex-pattern-skater-dress',
   'aerovista-apex-pattern-print-swimsuit-one-piece',
   'aerovista-wave-mark-full-zip-hoodie-white',
