@@ -954,9 +954,14 @@ function App() {
       .then(response => {
         if (!active) return
         const status=response?.status === 'confirmed' ? 'confirmed' : response?.status === 'pending' ? 'pending' : 'unverified'
-        if (status === 'confirmed' && mayClearPaidBag(checkoutRef, bag)) {
-          setBag([])
-          forgetPendingCheckout()
+        if (status === 'confirmed') {
+          // Evaluate the current cart inside React's state updater. Never clear
+          // items added while Square verification was in flight.
+          setBag(current => {
+            if (!mayClearPaidBag(checkoutRef, current)) return current
+            forgetPendingCheckout()
+            return []
+          })
         }
         setCheckoutNotice(status)
       })
@@ -1425,7 +1430,11 @@ function App() {
         setCheckoutNotice('checking')
         verifyCheckoutReturn(checkoutRef).then(result => {
           const status=['confirmed','pending'].includes(result?.status) ? result.status : 'unverified'
-          if(status==='confirmed' && mayClearPaidBag(checkoutRef,bag)) {setBag([]);forgetPendingCheckout()}
+          if (status === 'confirmed') setBag(current => {
+            if (!mayClearPaidBag(checkoutRef, current)) return current
+            forgetPendingCheckout()
+            return []
+          })
           setCheckoutNotice(status)
         }).catch(error=>setCheckoutNotice(error?.status === 404 ? 'unverified' : 'unavailable'))
       }}>Check again</button>}

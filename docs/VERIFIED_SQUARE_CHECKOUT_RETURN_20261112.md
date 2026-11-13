@@ -28,3 +28,9 @@ A browser return URL is not evidence of payment. Canonical Apparel hosted checko
 ## Limitations
 
 No actual paid-card acceptance test was performed. A complete successful payment must still be witnessed in production with a genuine purchase and checked against the Square order/webhook/Printful pipeline before certification of the entire paid-to-fulfillment lifecycle. The simulated completed payment verifies code branches only, not Square's live capture behavior.
+
+## Follow-up: delayed response / bag mutation
+
+A delayed verified response must not clear a bag changed while network validation was in progress. The verified-success branch and the manual Check Again path now evaluate `mayClearPaidBag` against the latest cart inside a React functional state update, rather than against a captured stale render. Browser testing at 1440px and 390px intercepted checkout verification and held the provider response while a shopper increased the Idaho After Dark tee quantity from one to two. The simulated completed response arrived afterward; the bag correctly retained quantity two, with no JavaScript errors.
+
+Backend verification also rejects canceled Square orders and any refunded amount on an otherwise COMPLETED payment. The Square payment object retains COMPLETED status after refund; payment status alone is insufficient. Commerce API PR #9 contains the pure tests and four no-payment checkout regression cases for Apparel hoodie, three-sticker bundle, Gear legacy checkout, and bundle isolation.
