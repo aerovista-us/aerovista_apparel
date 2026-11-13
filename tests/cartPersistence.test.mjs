@@ -66,3 +66,15 @@ test('complete 3-piece sticker bundle survives rehydration as one group',()=>{
  assert.equal(restored.length,3)
  assert.equal(new Set(restored.map(x=>x.bundleId)).size,1)
 })
+
+test('quantity edits are bounded and bundle lines are immutable',async()=>{
+ const {adjustBagQuantity}=await import('../src/commerce/cartPersistence.js')
+ assert.equal(adjustBagQuantity(raw,0,1)[0].quantity,2)
+ assert.equal(adjustBagQuantity(raw,0,-1).length,0)
+ assert.equal(adjustBagQuantity([{...raw[0],quantity:50}],0,1)[0].quantity,50)
+ assert.equal(adjustBagQuantity([{...raw[0],bundleId:'sticker-abc1234'}],0,1)[0].quantity,1)
+ assert.equal(adjustBagQuantity(raw,99,1),raw)
+})
+test('oversized carts are rejected rather than silently truncated',()=>{
+ assert.equal(serializeBag(Array.from({length:81},()=>raw[0]),NOW),null)
+})

@@ -144,3 +144,12 @@
 .account-saved-remove:disabled{opacity:.45;cursor:wait}
 .account-saved-empty,.account-saved-more{margin:8px 0 0;color:#74808a;font-size:8px;line-height:1.5}
 .account-saved-more{text-align:right;text-transform:uppercase;letter-spacing:.08em}
+
+/* Persistent bag controls: keep size and actions usable at narrow widths. */
+.bag-quantity{display:inline-flex!important;align-items:center;gap:9px;margin-top:5px}
+.bag-quantity button{width:30px;height:30px;border:1px solid #7a9bab70;background:#16212a;color:#e7f4fc;cursor:pointer;font-size:16px}
+.bag-quantity button:disabled{opacity:.3;cursor:default}
+.bag-quantity output{min-width:14px;text-align:center;font-size:12px;color:#e7f4fc}
+.bag-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;font-size:10px;color:#8899a6}
+.bag-actions button{padding:7px 10px;background:transparent;border:1px solid #a7b8c452;color:#d2e3ed;cursor:pointer}
+.bag-actions button:disabled{opacity:.35}
