@@ -119,3 +119,11 @@
 
 .spatial-room-afterdark .spatial-fixture-wall .spatial-merch:only-child{max-width:86%;height:99%}
 .spatial-room-afterdark .spatial-fixture-wall .spatial-fixture-merch{justify-content:center;padding:5% 7% 8%}
+
+/* After Dark guest tee stations, intentionally subordinate to the neon hoodie trio. */
+.spatial-room-afterdark .spatial-fixture[data-spatial-fixture="night-shift-left"],
+.spatial-room-afterdark .spatial-fixture[data-spatial-fixture="night-shift-right"]{z-index:5}
+.spatial-room-afterdark .spatial-fixture[data-spatial-fixture^="night-shift-"] .spatial-merch{
+  max-width:84%;height:94%;filter:drop-shadow(0 9px 9px #000a)}
+.spatial-room-afterdark .spatial-fixture[data-spatial-fixture^="night-shift-"] .spatial-fixture-rail{
+  background:linear-gradient(#83d5df,#352e51);box-shadow:0 0 13px #48cddd64}

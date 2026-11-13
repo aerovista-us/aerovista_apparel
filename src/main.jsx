@@ -1,3 +1,4 @@
+import { readCart, restoreBag, writeCart } from './commerce/cartPersistence'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
@@ -850,6 +851,8 @@ function App() {
   const [selected, setSelected] = useState(null)
   const [bagOpen, setBagOpen] = useState(false)
   const [bag, setBag] = useState([])
+  const [bagHydrated, setBagHydrated] = useState(false)
+  const bagHydrationAttempted = useRef(false)
   const [stickerDraft, setStickerDraft] = useState([])
   const [stickerContract, setStickerContract] = useState(null)
   const [showroomProducts, setShowroomProducts] = useState([])
@@ -885,6 +888,24 @@ function App() {
     () => new Map([...allCatalogProducts, ...showroomProducts, ...womenStudioProducts].map(product => [product.id, product])),
     [allCatalogProducts, showroomProducts, womenStudioProducts],
   )
+  // Delay rehydration until live catalog has resolved. Persist only identities,
+  // and always recalculate live product imagery, availability and prices.
+  useEffect(() => {
+    if (catalogState.status !== 'ready' || bagHydrationAttempted.current) return
+    bagHydrationAttempted.current = true
+    const previous = readCart()
+    setBag(current => current.length ? current : restoreBag(previous, productById))
+    setBagHydrated(true)
+  }, [catalogState.status, productById])
+
+  useEffect(() => {
+    if (catalogState.status !== 'ready' || !bagHydrated) return
+    writeCart(bag)
+  }, [bag, bagHydrated, catalogState.status])
+
+  // Restore the bag even when returning to the initial exterior after a browser restart.
+  useEffect(() => { void warmCommerce() }, [])
+
   const savedProducts = useMemo(
     () => savedState.items.map(item => ({ item, product: productById.get(item.productId) || null })),
     [savedState.items, productById],

@@ -26,6 +26,9 @@ export const roomFixtures = Object.freeze({
     rack('velocity-form', 64, 34, 17, 53, [1], 'mannequin'),
     rack('mixtape-rail', 39, 35, 22, 34, [2], 'wall'),
     rack('ghost-frequency-shelf', 42, 74, 16, 18, [3], 'shelf'),
+    // Small, low-profile tees flank the core displays rather than crowd the hoodie rail.
+    rack('night-shift-left', 5, 69, 17, 18, [4], 'shelf'),
+    rack('night-shift-right', 78, 69, 17, 18, [5], 'shelf'),
   ],
   architect: [
     rack('field-rail', 5, 32, 31, 31, [1, 2], 'wall'),

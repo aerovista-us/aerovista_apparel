@@ -34,11 +34,12 @@ export const themedRooms = Object.freeze({
   afterdark: {
     id: 'afterdark', eyebrow: 'DROP 004 · AEROVISTA AFTER DARK', name: 'AeroVista After Dark',
     heading: 'When the lights go out.', subheading: 'Neon pulse. Ghost frequencies. The hours that belong to us.',
-    note: 'The midnight capsule: four pieces in a neon-lit after-hours showroom.',
+    note: 'The midnight capsule plus two after-hours guest editions; the four core displays stay curated.',
     art: 'afterdark', layout: 'neon-vault', accent: '#f18cdb', orientation: 'landscape',
     sections: [
       { id: 'midnight', label: 'MIDNIGHT SIGNAL', note: 'A signal through the dark.', productIds: ['afterdark-midnight-signal-hoodie','afterdark-neon-velocity-hoodie'] },
       { id: 'ghost', label: 'GHOST FREQUENCY', note: 'Wear the afterimage.', productIds: ['afterdark-haunted-mixtape-hoodie','afterdark-ghost-frequency-beanie'] },
+      { id: 'night-shift', label: 'THE NIGHT SHIFT', note: 'Two lighter-weight guest editions for late sets and mountain nights.', productIds: ['aerovista-idaho-after-dark-tee','echoverse-frost-circuit-tee'] },
     ],
   },
   architect: {

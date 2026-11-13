@@ -8,6 +8,7 @@ const localStageHeroes = Object.freeze({
   'aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark': 'products/aerovista-premium-embroidered-hat-black-cap-with-signature-apex-mark/01-hero.webp',
   'aerovista-ridgeline-tee': 'products/aerovista-ridgeline-tee/01-hero.webp',
   'aerovista-idaho-after-dark-tee': 'products/aerovista-idaho-after-dark-tee/01-hero.webp',
+  'echoverse-frost-circuit-tee': 'products/echoverse-frost-circuit-tee/01-hero.webp',
   'aerovista-blue-divide-tee': 'products/aerovista-blue-divide-tee/01-hero.webp',
   'aerovista-blue-divide-sticker': 'products/aerovista-blue-divide-sticker/01-hero.webp',
   'aerovista-source-code-tee': 'products/aerovista-source-code-tee/01-hero.webp',
