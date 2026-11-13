@@ -21,6 +21,12 @@ export const roomFixtures = Object.freeze({
     rack('signal-form', 64, 37, 19, 52, [2], 'mannequin'),
     rack('frost-circuit-plinth', 41, 67, 18, 24, [1], 'table'),
   ],
+  afterdark: [
+    rack('neon-signal-form', 19, 34, 17, 53, [0], 'mannequin'),
+    rack('velocity-form', 64, 34, 17, 53, [1], 'mannequin'),
+    rack('mixtape-rail', 39, 35, 22, 34, [2], 'wall'),
+    rack('ghost-frequency-shelf', 42, 74, 16, 18, [3], 'shelf'),
+  ],
   architect: [
     rack('field-rail', 5, 32, 31, 31, [1, 2], 'wall'),
     rack('systems-rail', 66, 29, 28, 32, [4, 5, 6], 'wall'),

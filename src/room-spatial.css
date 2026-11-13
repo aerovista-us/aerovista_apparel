@@ -103,3 +103,19 @@
  .themed-room .themed-environment.themed-mobile-intro{display:none}
 }
 @media(prefers-reduced-motion:reduce){.spatial-merch{transition:none}.spatial-merch-label{transition:none}}
+.spatial-room-afterdark{--wall:#201026;--wall-deep:#060713;--floor:#110c1d;--trim:#d454a4}
+.spatial-room-afterdark .spatial-back-wall{background:
+  repeating-linear-gradient(90deg,#f36abc0d 0 2px,transparent 2px 80px),
+  radial-gradient(ellipse at 50% 40%,#a626865e,transparent 55%),
+  linear-gradient(155deg,#241029,#080711)}
+.spatial-room-afterdark .spatial-ceiling{background:linear-gradient(#080612,#351538 94%,#df54a448)}
+.spatial-room-afterdark .spatial-floor{background:
+  linear-gradient(90deg,#4de2f524 1px,transparent 1px),
+  linear-gradient(#e251a024 1px,transparent 1px),linear-gradient(#1b1029,#080611);
+  background-size:65px 65px,65px 65px,auto}
+.spatial-room-afterdark .spatial-fixture-frame{border-color:#ed62ac70;box-shadow:0 0 22px #e44ba839,inset 0 0 28px #ba287a35}
+.spatial-room-afterdark .spatial-fixture-rail{box-shadow:0 0 11px #e64bac8c}
+.spatial-room-afterdark .spatial-sign{text-shadow:0 0 16px #ef5cba,0 0 33px #df4eb7}
+
+.spatial-room-afterdark .spatial-fixture-wall .spatial-merch:only-child{max-width:86%;height:99%}
+.spatial-room-afterdark .spatial-fixture-wall .spatial-fixture-merch{justify-content:center;padding:5% 7% 8%}

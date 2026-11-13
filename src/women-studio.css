@@ -76,3 +76,19 @@
 }
 
 @media(max-width:430px){.women-mobile-grid>button{min-height:218px}.women-mobile-grid .product-image.stage{height:165px}}
+
+/* A dedicated central foreground plinth, rather than adding a seventh hanger to an already full wall. */
+.studio-center-plinth{left:41.7%;top:65%;width:16.6%;height:23%;z-index:8;border:1px solid #cf9cce32;
+  background:radial-gradient(ellipse at 50% 30%,#927e9ac9,#49354ec8 53%,#150f1bdc 95%);
+  box-shadow:0 15px 30px #000a,inset 0 0 24px #fff1}
+.studio-center-plinth::before{content:"";position:absolute;left:-8%;right:-8%;bottom:-9%;height:15%;
+  transform:perspective(200px) rotateX(55deg);background:linear-gradient(90deg,#46334a,#a77a9c,#392941);
+  border:1px solid #c3a6b755;box-shadow:0 10px 14px #0009}
+.studio-center-plinth .product-image.stage{position:absolute;inset:-25% 8% 5%;width:84%;height:115%}
+.studio-center-plinth .product-image.stage img{object-position:center bottom;transform-origin:50% 78%}
+.studio-center-plinth .studio-product-tag{top:auto;bottom:-13%}
+@media(max-width:760px){.studio-center-plinth{display:none}}
+
+.studio-center-plinth::after{content:'FOLLOW YOUR PATH · CROPPED TANK';position:absolute;bottom:3%;left:4%;right:4%;text-align:center;color:#f0d9f0;font-size:7px;letter-spacing:.1em;text-shadow:0 1px 7px #000;pointer-events:none}
+.studio-center-plinth .product-image.stage{z-index:1;inset:-31% 3% 8%;width:94%;height:120%;filter:drop-shadow(0 11px 8px #000a)}
+.studio-center-plinth .studio-product-tag{z-index:3}

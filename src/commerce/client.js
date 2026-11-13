@@ -1,3 +1,4 @@
+import flagshipSquareEditions from '../data/flagshipSquareEditions.json'
 import { checkoutPayload } from './promotions'
 import { STICKER_BUNDLE_CONTRACT, stickerSurcharges } from './stickerPricing'
 
@@ -88,6 +89,20 @@ async function applyFlagshipStickerAdditions(catalog) {
   }
 }
 
+// The flagship can carry reviewed items before the shared Gear feed is released.
+// All provider IDs and prices are confirmed with Square and Printful. Checkout
+// resolves these exact variation IDs through the NXCore variation map.
+function applyFlagshipSquareEditions(catalog) {
+  if (browserHost() !== 'apparel.aerovista.us') return catalog
+  const existing = new Set((catalog.products || []).map(item => item.square_item_id || item.id))
+  return {
+    ...catalog,
+    products: [...(catalog.products || []), ...flagshipSquareEditions.filter(item =>
+      !existing.has(item.square_item_id) && !existing.has(item.id)
+    )],
+  }
+}
+
 async function loadLegacyCatalog() {
   let lastError = null
   for (const url of legacyCatalogCandidates()) {
@@ -95,7 +110,7 @@ async function loadLegacyCatalog() {
       // The public catalog is versioned upstream and safe to use from the browser cache.
       // Bootstrap and checkout remain no-store below because they carry live commerce state.
       const catalog = await fetchJson(url, { cache: 'default' })
-      if (Array.isArray(catalog?.products)) return applyFlagshipStickerAdditions({ mode: 'legacy', sourceUrl: url, ...catalog })
+      if (Array.isArray(catalog?.products)) return applyFlagshipStickerAdditions(applyFlagshipSquareEditions({ mode: 'legacy', sourceUrl: url, ...catalog }))
     } catch (error) {
       lastError = error
     }

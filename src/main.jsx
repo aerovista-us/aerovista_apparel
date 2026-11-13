@@ -510,7 +510,7 @@ const galleryDestinations = [
   { id: 'womens', direction: 'LEFT', name: "Women's Studio", note: 'A curated edit of women-specific and unisex pieces.', status: 'OPEN', live: true },
   { id: 'mens', direction: 'RIGHT', name: "Men's Gallery", note: 'Apparel, headwear and current editions.', status: 'OPEN', live: true },
   { id: 'northline', direction: 'AHEAD', name: 'NorthLine', note: 'A separate alpine gallery for the Inland Northwest.', status: 'OPEN', live: true },
-  { id: 'drops', direction: 'BEYOND', name: 'The Drops Corridor', note: 'Shadow Wear, EchoVerse and Architect / Nexus in their own worlds.', status: 'OPEN', live: true },
+  { id: 'drops', direction: 'BEYOND', name: 'The Drops Corridor', note: 'Shadow Wear, EchoVerse, Architect / Nexus and After Dark — each in its own world.', status: 'OPEN', live: true },
   { id: 'objects', direction: 'IN GALLERY', name: 'Objects & Editions', note: 'Cards, cooler, and the sticker box on the center table.', status: 'ON VIEW', live: true },
 ]
 
@@ -562,6 +562,7 @@ function Foyer({ onOutside, onOpenMens, onOpenWomens, onOpenPlace, onOpenDrops, 
 }
 
 const womenStudioDisplays = [
+  { id: 'aerovista-arrow-racerback-cropped-tank', slot: 'center-plinth', image: 'products/aerovista-arrow-racerback-cropped-tank/01-hero.webp', scale: 1 },
   { id: 'aerovista-apex-pattern-skater-dress', slot: 'left-near', image: 'products/aerovista-apex-pattern-skater-dress/10-front-03.webp', scale: 1.12 },
   { id: 'vespra-moonscript-hoodie', slot: 'left-mid', image: 'products/vespra-moonscript-hoodie/01-hero.webp', scale: 1.2 },
   { id: 'night-ranger-bear-pullover-hoodie', slot: 'left-far', image: 'products/night-ranger-bear-pullover-hoodie/01-hero.webp', scale: 1 },
@@ -574,7 +575,7 @@ function WomenStudioPiece({ display, product, onOpen }) {
   if (!product) return null
   const image = display.image ? `${import.meta.env.BASE_URL}${display.image}` : product.image
   return <button className={`studio-piece studio-${display.slot}`} data-product={product.id} onClick={() => onOpen(product)} aria-label={`View ${product.name}`} aria-haspopup="dialog" style={{ '--piece-scale': display.scale || 1 }}>
-    <ProductImage product={product} image={image} stage/>
+    <ProductImage product={product} image={image} stage eager/>
     <span className="studio-product-tag"><b>{product.shortName}</b><em>{priceLabel(product)}</em></span>
   </button>
 }
@@ -745,7 +746,7 @@ function DropsCorridor({ onExit, onEnter, bagCount, onBag, accountControl }) {
     <header className="drops-hero">
       <span className="themed-eyebrow">AEROVISTA · LIMITED ENVIRONMENTS</span>
       <h1>The Drops Corridor.</h1>
-      <p>Three distinct spaces, each built around a collection's own visual language. The same AeroVista bag and checkout follow you through every door.</p>
+      <p>Four distinct spaces, each built around a collection's own visual language. The same AeroVista bag and checkout follow you through every door.</p>
     </header>
     <div className="drops-grid">
       {dropRoomIds.map(id => {
