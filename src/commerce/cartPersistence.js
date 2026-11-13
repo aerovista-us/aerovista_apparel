@@ -16,8 +16,8 @@ function validIdentity(record) {
 }
 
 export function serializeBag(bag, now = Date.now()) {
-  if (!Array.isArray(bag)) return null
-  const lines = bag.slice(0, MAX_LINES).map(line => ({
+  if (!Array.isArray(bag) || bag.length > MAX_LINES) return null
+  const lines = bag.map(line => ({
     productId: line?.product?.id,
     variationId: line?.variant?.providerVariationId || line?.variant?.id,
     quantity: line?.quantity ?? 1,
@@ -77,4 +77,16 @@ export function writeCart(bag, storage = globalThis.localStorage, now = Date.now
     else storage?.setItem(CART_STORAGE_KEY, JSON.stringify(value))
     return true
   } catch { return false }
+}
+
+// Only ordinary merchandise lines can be independently edited. Bundles are
+// atomic to preserve the minimum 3-sticker commercial contract.
+export function adjustBagQuantity(bag, index, delta) {
+  if (!Array.isArray(bag) || !Number.isInteger(index) || !Number.isInteger(delta) || !delta) return bag
+  if (index < 0 || index >= bag.length || bag[index]?.bundleId) return bag
+  const current = bag[index]
+  const next = (current.quantity || 1) + delta
+  if (next <= 0) return bag.filter((_, i) => i !== index)
+  if (next > MAX_QUANTITY) return bag
+  return bag.map((item, i) => i === index ? { ...item, quantity: next } : item)
 }

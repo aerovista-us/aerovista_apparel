@@ -1,4 +1,4 @@
-import { readCart, restoreBag, writeCart } from './commerce/cartPersistence'
+import { CART_STORAGE_KEY, adjustBagQuantity, parseSavedCart, readCart, restoreBag, writeCart } from './commerce/cartPersistence'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
@@ -313,7 +313,7 @@ function ProductDrawer({
   )
 }
 
-function BagDrawer({ bag, contract, onClose, onRemove, onCheckout, checkoutBusy, checkoutError }) {
+function BagDrawer({ bag, contract, onClose, onRemove, onQuantity, onClear, onCheckout, checkoutBusy, checkoutError }) {
   const bundleIds = [...new Set(bag.map(x=>x.bundleId).filter(Boolean))]
   const hasUnready = bag.some(item => !item.variant || !Number.isFinite(item.variant.price))
   const previewCents = bagStickerPricePreview(bag, contract)
@@ -333,10 +333,16 @@ function BagDrawer({ bag, contract, onClose, onRemove, onCheckout, checkoutBusy,
           {bag.length === 0 ? <p className="empty">Nothing here yet. Explore the walls and select a piece.</p> : bag.map((item, index) => (
             <div className="bag-row" key={`${item.product.id}-${item.variant?.id || item.size}-${index}`}>
               <ProductImage product={item.product}/>
-              <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{item.bundleId ? money.format((stickerUnitPriceCents(item.variant?.providerVariationId,bag.filter(x=>x.bundleId===item.bundleId).length,contract) || 0)/100) + ' bundle unit preview' : priceLabel(item.product,item.variant)}</span></div>
-              <button className="icon-btn" onClick={() => onRemove({index})} disabled={Boolean(item.bundleId)} aria-label={`Remove ${item.product.shortName} from bag`}><Minus size={15}/></button>
+              <div><b>{item.product.shortName}</b><span>{item.variant?.size || item.size}</span><span>{item.bundleId ? money.format((stickerUnitPriceCents(item.variant?.providerVariationId,bag.filter(x=>x.bundleId===item.bundleId).reduce((sum,line)=>sum+(line.quantity||1),0),contract) || 0)/100) + ' bundle unit preview' : priceLabel(item.product,item.variant)}</span>
+              {item.bundleId ? <span>{item.quantity || 1} in bundle</span> : <div className="bag-quantity" role="group" aria-label={`Quantity for ${item.product.shortName}`}>
+                <button type="button" onClick={() => onQuantity(index,-1)} aria-label={`Decrease ${item.product.shortName} quantity`} disabled={checkoutBusy}>−</button>
+                <output aria-label="Quantity">{item.quantity || 1}</output>
+                <button type="button" onClick={() => onQuantity(index,1)} aria-label={`Increase ${item.product.shortName} quantity`} disabled={checkoutBusy || (item.quantity || 1)>=50}>+</button>
+              </div>}</div>
+              <button className="icon-btn" onClick={() => onRemove({index})} disabled={Boolean(item.bundleId) || checkoutBusy} aria-label={`Remove ${item.product.shortName} from bag`}><Minus size={15}/></button>
             </div>
           ))}
+          {bag.length > 0 && <div className="bag-actions"><span>Saved in this browser</span><button type="button" disabled={checkoutBusy} onClick={onClear}>Clear bag</button></div>}
           <div className="bag-total"><span>{hasBundle ? 'Estimated bundle total' : 'Total'}</span><b>{hasUnready || total==null ? 'TBD' : money.format(total)}</b></div>
           {stickerBlocked && <p className="checkout-error" role="status">Apparel sticker prices are awaiting backend activation. Other merchandise remains available for purchase after removing the sticker lines or bundles.</p>}
           {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
@@ -853,6 +859,7 @@ function App() {
   const [bag, setBag] = useState([])
   const [bagHydrated, setBagHydrated] = useState(false)
   const bagHydrationAttempted = useRef(false)
+  const suppressNextCartWrite = useRef(false)
   const [stickerDraft, setStickerDraft] = useState([])
   const [stickerContract, setStickerContract] = useState(null)
   const [showroomProducts, setShowroomProducts] = useState([])
@@ -900,8 +907,35 @@ function App() {
 
   useEffect(() => {
     if (catalogState.status !== 'ready' || !bagHydrated) return
+    if (suppressNextCartWrite.current) {
+      suppressNextCartWrite.current = false
+      return
+    }
     writeCart(bag)
   }, [bag, bagHydrated, catalogState.status])
+
+  useEffect(() => {
+    if (catalogState.status !== 'ready' || !bagHydrated) return undefined
+    const onStorage = event => {
+      if (event.key !== CART_STORAGE_KEY || event.storageArea !== window.localStorage) return
+      const updated = restoreBag(parseSavedCart(event.newValue), productById)
+      // Avoid ping-pong writes between tabs by suppressing the echo of this update.
+      suppressNextCartWrite.current = true
+      setBag(current => {
+        const fingerprint = items => JSON.stringify(items.map(item => [
+          item.product?.id, item.variant?.providerVariationId || item.variant?.id,
+          item.quantity || 1, item.bundleId || ''
+        ]))
+        if (fingerprint(current) === fingerprint(updated)) {
+          suppressNextCartWrite.current = false
+          return current
+        }
+        return updated
+      })
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [catalogState.status, bagHydrated, productById])
 
   // Restore the bag even when returning to the initial exterior after a browser restart.
   useEffect(() => { void warmCommerce() }, [])
@@ -1389,7 +1423,7 @@ function App() {
       onToggleSaved={toggleSavedPiece}
       onLogin={() => beginIdentityLogin()}
     />
-    {bagOpen && <BagDrawer bag={bag} contract={stickerContract} onClose={() => setBagOpen(false)} onRemove={target => setBag(current => target.bundleId ? current.filter(x=>x.bundleId!==target.bundleId) : current.filter((_,i)=>i!==target.index))} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>}
+    {bagOpen && <BagDrawer bag={bag} contract={stickerContract} onClose={() => setBagOpen(false)} onRemove={target => setBag(current => target.bundleId ? current.filter(x=>x.bundleId!==target.bundleId) : current.filter((_,i)=>i!==target.index))} onQuantity={(index,delta)=>setBag(current=>adjustBagQuantity(current,index,delta))} onClear={()=>setBag([])} onCheckout={checkout} checkoutBusy={checkoutBusy} checkoutError={checkoutError}/>}
     {accountOpen && identityState.status === 'authenticated' && <MyAeroVistaDrawer
       identityState={identityState}
       summaryState={accountSummaryState}
