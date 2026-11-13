@@ -228,6 +228,11 @@ async function beginV1Checkout(bag) {
   return result
 }
 
+export async function verifyCheckoutReturn(reference) {
+  if (!/^[A-Za-z0-9_-]{43}$/.test(reference || '')) throw new Error('Invalid checkout reference')
+  return fetchJson(API_BASE + '/api/apparel/checkout-return/' + encodeURIComponent(reference), { cache: 'no-store' })
+}
+
 export async function beginCheckout(bag) {
   if (!Array.isArray(bag) || bag.length === 0) throw new Error('Your bag is empty.')
   const unready = bag.find(item => !item?.variant || !item?.product?.commerce?.productId)

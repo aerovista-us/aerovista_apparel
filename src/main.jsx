@@ -1,4 +1,5 @@
 import { CART_STORAGE_KEY, adjustBagQuantity, parseSavedCart, readCart, restoreBag, writeCart } from './commerce/cartPersistence'
+import { savePendingCheckout, mayClearPaidBag, forgetPendingCheckout, returnMessage } from './commerce/checkoutReturn'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
@@ -9,7 +10,7 @@ import { retailZones } from './data/merchandising'
 import { themedRooms, dropRoomIds } from './data/themedRooms'
 import { fixturesForRoom } from './data/roomFixtures'
 import { buildCatalogProducts, selectCommerceVariant } from './commerce/catalog'
-import { beginCheckout, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog, loadStickerBundleContract } from './commerce/client'
+import { beginCheckout, verifyCheckoutReturn, commerceConfig, loadCommerceBootstrap, loadCommerceCatalog, loadStickerBundleContract } from './commerce/client'
 import { identityStanding } from './commerce/identity'
 import { fulfillmentNote } from './commerce/fulfillment'
 import { StickerBox, StickerBoxButton } from './sticker-box'
@@ -844,8 +845,9 @@ function readStoreRoute() {
   const requestedSpace = params.get('space')
   const space = ['foyer', 'mens', 'womens', 'northline', 'drops', ...dropRoomIds].includes(requestedSpace) ? requestedSpace : 'outside'
   const view = spaceViews.some(item => item.id === params.get('view')) ? params.get('view') : 'room'
-  const checkout = params.get('checkout') === 'success' || params.get('checkout') === 'cancel' ? params.get('checkout') : ''
-  return { space, view, product: params.get('product') || '', checkout, stickerBox: space === 'mens' && params.get('box') === 'stickers' }
+  const checkout = ['success','cancel','return'].includes(params.get('checkout')) ? params.get('checkout') : ''
+  const checkoutRef = params.get('checkout_ref') || ''
+  return { space, view, product: params.get('product') || '', checkout, checkoutRef, stickerBox: space === 'mens' && params.get('box') === 'stickers' }
 }
 
 function App() {
@@ -875,7 +877,9 @@ function App() {
   }, [])
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
-  const [checkoutNotice, setCheckoutNotice] = useState(initialRoute.checkout)
+  const [checkoutNotice, setCheckoutNotice] = useState(initialRoute.checkout === 'return' ? 'checking' : (initialRoute.checkout || ''))
+  const [checkoutRef, setCheckoutRef] = useState(initialRoute.checkoutRef || '')
+  const verifiedCheckoutRef = useRef(null)
   const [pendingProduct, setPendingProduct] = useState(initialRoute.product)
   const [routeReady, setRouteReady] = useState(false)
   const [identityState, setIdentityState] = useState({ status: 'loading', authenticated: false, identity: null, csrfToken: null, error: null })
@@ -936,6 +940,29 @@ function App() {
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
   }, [catalogState.status, bagHydrated, productById])
+
+  useEffect(() => {
+    if (!bagHydrated || catalogState.status !== 'ready') return
+    if (!initialRoute.checkout || verifiedCheckoutRef.current) return
+    if (initialRoute.checkout !== 'return' || !/^[A-Za-z0-9_-]{43}$/.test(checkoutRef)) {
+      setCheckoutNotice(initialRoute.checkout === 'cancel' ? 'cancel' : 'unverified')
+      return
+    }
+    verifiedCheckoutRef.current = checkoutRef
+    let active = true
+    verifyCheckoutReturn(checkoutRef)
+      .then(response => {
+        if (!active) return
+        const status=response?.status === 'confirmed' ? 'confirmed' : response?.status === 'pending' ? 'pending' : 'unverified'
+        if (status === 'confirmed' && mayClearPaidBag(checkoutRef, bag)) {
+          setBag([])
+          forgetPendingCheckout()
+        }
+        setCheckoutNotice(status)
+      })
+      .catch(error => { if(active) setCheckoutNotice(error?.status === 404 ? 'unverified' : 'unavailable') })
+    return () => { active = false }
+  }, [bagHydrated, catalogState.status, checkoutRef])
 
   // Restore the bag even when returning to the initial exterior after a browser restart.
   useEffect(() => { void warmCommerce() }, [])
@@ -1378,6 +1405,7 @@ function App() {
     setCheckoutBusy(true); setCheckoutError('')
     try {
       const result = await beginCheckout(bag)
+      if (result.checkoutRef) savePendingCheckout(result.checkoutRef, bag)
       window.location.assign(result.checkoutUrl)
     } catch (error) {
       setCheckoutError(error?.message || 'Checkout is temporarily unavailable.')
@@ -1391,10 +1419,16 @@ function App() {
       <button type="button" onClick={() => setIdentityState(current => ({ ...current, error: null }))}>Dismiss</button>
     </div>}
     {checkoutNotice && <div className="checkout-return" role="status">
-      <p>{checkoutNotice === 'success'
-        ? 'You came back from checkout. This return is not payment proof. An order is confirmed only after Square verifies payment.'
-        : 'Checkout was canceled. Nothing was paid, and no promotion was redeemed.'}</p>
+      <p>{returnMessage(checkoutNotice)}</p>
       <p>{fulfillmentNote}</p>
+      {['pending','unavailable','unverified'].includes(checkoutNotice) && checkoutRef && <button type="button" onClick={() => {
+        setCheckoutNotice('checking')
+        verifyCheckoutReturn(checkoutRef).then(result => {
+          const status=['confirmed','pending'].includes(result?.status) ? result.status : 'unverified'
+          if(status==='confirmed' && mayClearPaidBag(checkoutRef,bag)) {setBag([]);forgetPendingCheckout()}
+          setCheckoutNotice(status)
+        }).catch(error=>setCheckoutNotice(error?.status === 404 ? 'unverified' : 'unavailable'))
+      }}>Check again</button>}
       <button type="button" onClick={() => setCheckoutNotice('')}>Dismiss</button>
     </div>}
     {space === 'outside' && <Exterior entering={entering} onEnter={enter} onWarm={warmCommerce}/>}
