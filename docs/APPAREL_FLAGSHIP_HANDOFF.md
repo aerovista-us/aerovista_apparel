@@ -2,8 +2,24 @@
 
 **Status:** active living handoff  
 **Canonical location:** `aerovista-us/aerovista_apparel/docs/APPAREL_FLAGSHIP_HANDOFF.md`  
-**Last reconciled:** 2026-10-16 America/Los_Angeles  
+**Last reconciled:** 2026-11-14 America/Los_Angeles (GitHub source; runtime reread pending)  
 **Update rule:** every accepted production change, authority change, runtime promotion, or closed/open gate that affects Apparel must update this file in the same work cycle. Do not treat this as a historical report.
+
+---
+
+## 2026-11-14 — Revalidation checkpoint (source verified, runtime access unavailable)
+
+**Release authority:** Apparel main `f93635ec96dc294c0d82bf44907af2a97417e0aa` prior to this working branch; Commerce main `7ccdea731d3baaa37edc2a529a7c557e246dcf8e`; Catalog Console main `28dda848f7211ed5049d2fe6a3ab21a8621fee46`; Store main `43ab80747a9424bb9d51a30144d323e03b7ffdda`. These are GitHub source SHAs, **not newly verified production image SHAs**.
+
+**Runtime access limitation:** NXCore Remote Desktop Commander was offline on November 14 (last connection approximately two hours before check). No new runtime promotion, Docker rollback, state migration or paid test was performed. The last known NXCore running configuration is retained as historical evidence only until an authorized live reread.
+
+**GitHub gates still open:** [Catalog Console #21](https://github.com/aerovista-us/aerovista-catalog-console/issues/21) (October image-management parity + persistence + authenticated staging) and [Apparel #30](https://github.com/aerovista-us/aerovista_apparel/issues/30) (canonical variation, image, pricing and fulfillment parity). Neither may be marked complete on source tests alone.
+
+**New source work:** isolated quality-gates workflow (runs all existing cart/checkout unit tests, build, and overlay identity checks); `scripts/audit-apparel-release.mjs` (source check and offline matrix generator); `docs/reconciliation/STATIC_VARIANT_MATRIX_20261114.csv` (636 records: 611 legacy Gear variants + 24 curated + one Mount Sled); `docs/reconciliation/SQUARE_ONLY_DISPOSITIONS_20261114.csv` (14 unmerchandised Square-only records classified from November 12 audit). Today's static matrix is NOT a current Square/Printful live audit; all provider-current status columns explicitly mark NOT_VERIFIED.
+
+**Open decisions/gates:** do not merge an October Console build over working production image-pull operations; do not publish the five product candidates automatically; do not activate Saved/My Orders or Commerce v1 from a source-only result. Perform the no-payment Checkout staging matrix and then request separate explicit founder approval for any real charge/fulfillment. Existing deployed checkout-return semantics remain historical evidence from November 12 until runtime reverified.
+
+**Follow-up on NXCore recovery:** (1) obtain fresh container digests and Compose/mounted-map checksums; (2) compare canonical Catalog Console with live image-pull endpoints, UI and state volumes; (3) run staged authenticated and persistence tests; (4) rerun current Square and Printful inventory/variation mapping; (5) no-payment checkout acceptance and cleanup; (6) only then consider controlled production promotions.
 
 ---
 
