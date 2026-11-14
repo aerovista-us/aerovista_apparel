@@ -1,0 +1,34 @@
+name: Apparel source quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apparel-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-contract:
+    name: Cart, payment-return and production-build contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Run cart, sticker and checkout-return tests
+        run: node --test tests/*.test.mjs
+      - name: Compile production storefront
+        run: npm run build
+      - name: Validate storefront release identities
+        run: node scripts/audit-apparel-release.mjs --check
