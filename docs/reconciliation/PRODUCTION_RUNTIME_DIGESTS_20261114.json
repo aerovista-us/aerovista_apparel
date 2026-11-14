@@ -1,0 +1,77 @@
+{
+  "checked_at": "2026-11-14T18:49:42.352984+00:00",
+  "services": {
+    "av-store-api": {
+      "image": "av-store-api:apparel-verified-return-refunds-20261112",
+      "image_digest": "sha256:145d77cbc92d2a106f786a1092265b894557eb2905af1c6515fe6c941ac5c6da",
+      "state": "running",
+      "health": "healthy",
+      "compose_files": [
+        "docker-compose.yml",
+        "docker-compose.sticker-v1.yml",
+        "docker-compose.editions-20261112.yml",
+        "docker-compose.checkout-return-20261112.yml",
+        "docker-compose.checkout-refund-20261112.yml"
+      ],
+      "mounts": [
+        {
+          "destination": "/app/sku_map.generated.json",
+          "source_base": "apparel-editions-sku-map-20261112.json",
+          "mode": "ro"
+        },
+        {
+          "destination": "/app/square_products_latest.json",
+          "source_base": "square_products_latest.json",
+          "mode": "ro"
+        },
+        {
+          "destination": "/app/img",
+          "source_base": "img",
+          "mode": "ro"
+        },
+        {
+          "destination": "/app/store",
+          "source_base": "store",
+          "mode": "ro"
+        }
+      ]
+    },
+    "av-catalog-console": {
+      "image": "av-catalog-console:store-editor-20261017",
+      "image_digest": "sha256:d586993961d519f763008e17f9ab3f339ed8483c8d41487258d135be30b06403",
+      "state": "running",
+      "health": null,
+      "compose_files": [
+        "docker-compose.yml",
+        "override.yml"
+      ],
+      "mounts": [
+        {
+          "destination": "/app/console-backups",
+          "source_base": "backups",
+          "mode": "rw"
+        },
+        {
+          "destination": "/app/store",
+          "source_base": "store",
+          "mode": "rw"
+        },
+        {
+          "destination": "/app/public",
+          "source_base": "public",
+          "mode": "ro"
+        },
+        {
+          "destination": "/app/img",
+          "source_base": "img",
+          "mode": "ro"
+        }
+      ]
+    }
+  },
+  "sku_map": {
+    "entry_count": 240,
+    "sha256": "40fe8946d3d1016ccb6db3e60bb81d2c741c2b7a348c916bdea29834dae673ad",
+    "mount_destination": "/app/sku_map.generated.json"
+  }
+}
