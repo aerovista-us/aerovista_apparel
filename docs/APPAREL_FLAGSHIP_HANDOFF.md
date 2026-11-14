@@ -2,8 +2,25 @@
 
 **Status:** active living handoff  
 **Canonical location:** `aerovista-us/aerovista_apparel/docs/APPAREL_FLAGSHIP_HANDOFF.md`  
-**Last reconciled:** 2026-11-14 America/Los_Angeles (GitHub source; runtime reread pending)  
+**Last reconciled:** 2026-11-14 America/Los_Angeles (source + NXCore runtime/selected providers)
 **Update rule:** every accepted production change, authority change, runtime promotion, or closed/open gate that affects Apparel must update this file in the same work cycle. Do not treat this as a historical report.
+
+---
+
+## 2026-11-14 — Recovered runtime and provider acceptance update
+
+The NXCore Desktop Commander connection recovered during the same work cycle. Read-only production snapshots were captured after recovery; the earlier offline warning further down is **historical and superseded** by this checkpoint.
+
+- Commerce production image av-store-api:apparel-verified-return-refunds-20261112, digest sha256:145d77cbc92d2a106f786a1092265b894557eb2905af1c6515fe6c941ac5c6da, healthy. All five layered Compose filenames retained; mounted read-only SKU map has **240 entries**, SHA-256 40fe8946d3d1016ccb6db3e60bb81d2c741c2b7a348c916bdea29834dae673ad.
+- Catalog Console production remains av-catalog-console:store-editor-20261017, digest sha256:d586993961d519f763008e17f9ab3f339ed8483c8d41487258d135be30b06403. Its October host/UI image-pull routes exist in production, but its running mounts do **not** include canonical catalog-control/routing volumes. No Console production replacement occurred.
+- Canonical Catalog Console PR #23 merged; October image worker + UI controls ported into canonical source, provider fetch protected by HTTPS allowlist, bounded bytes and timeout, auth and destination isolation. **122 Node tests passed** in NXCore and canonical GitHub CI succeeded. New isolated image av-catalog-console:image-parity-stage-20261114 built, but authenticated staging SSO, state restore and exact operator UI parity remain **OPEN**; no production cutover.
+- Live Square Catalog API readback: **141 items / 662 variations**. The 636 Gear+Apparel+Mount Sled variation IDs all exist; **635 have exact populated retail price matches**, with the one non-comparable hidden Consultation example service carrying no Square price. See LIVE_SQUARE_VARIANT_MATRIX_20261114.csv.
+- Printful relevant synced cohort 14 products; 24 curated Apparel variations plus Mount Sled match exact external variation IDs. Five pending merch candidate groups also have provider matches; not approved for publication or margins. Full 611 Gear Printful mapping remains a separate gate.
+- Remaining 14 Square-only items and 41 missing-primary-image records have explicit reconciliation queues and remain unpublished unless separately approved.
+- Commerce API PR #10 fixed clean-runner fixture failures. GitHub source CI 117 tests passed; 16 additional mocked no-payment checkout/return tests executed inside healthy production image. No actual Square payment or Printful order performed.
+- Apparel frontend quality gate: 14 tests, Vite build and overlay identity checks green; canonical Vercel production deploy was READY on source release SHA 3d4bad9. Later docs releases are publication evidence only.
+- Nonsecret production image/mount digest snapshot: docs/reconciliation/PRODUCTION_RUNTIME_DIGESTS_20261114.json. This does not replace offhost backup or restore proof.
+- Open gates: Console authenticated isolated state/SSO/backup/rollback; approved complete Printful+shipping margin mapping; checkout sandbox staging provider test; and a **separately approved genuine payment-to-fulfillment certification**. Do not mark Console #21 or Apparel #30 closed.
 
 ---
 
